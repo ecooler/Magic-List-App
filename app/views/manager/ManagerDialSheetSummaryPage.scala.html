@@ -1,0 +1,93 @@
+@import components._
+
+@(managerDialSheets: java.util.List[model.dialsheet.ManagerDialSheet])
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Management Activity Sheets")
+
+    <main>
+
+        <div class="row"></div>
+
+        <div class="container row">
+
+            <div class="row"></div>
+
+            <div class="row col s12">
+
+                <div class="card z-depth-2">
+
+                    <div class="card-content">
+                        <table class="responsive-table bordered highlight">
+
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <i class="material-icons left">arrow_drop_down</i>
+                                        Date
+                                    </th>
+                                    <th>
+                                    Total Dials
+                                    </th>
+                                    <th>
+                                    Total Contacts
+                                    </th>
+                                    <th>
+                                    Total Appointments
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if(managerDialSheets.isEmpty) {
+                                    <tr class="no-results-found">
+                                        <td colspan="4" class="center-align">
+                                            You have no team activity sheets to show yet
+                                            <br>
+                                            Recruit your team on Magic List to start tracking their progress
+                                        </td>
+                                    </tr>
+                                }
+                                @for(dialSheet: model.dialsheet.ManagerDialSheet <- managerDialSheets) {
+                                    <tr>
+                                        <td>
+                                            <a href="@routes.ManagerDialSheetController.getDialSheetDatePage(dialSheet.getDateForHref)">
+                                            @utilities.DateUtility.getLongDateForUi(dialSheet.getDate)
+                                            </a>
+                                        </td>
+                                        <td>
+                                        @dialSheet.getDialCount
+                                        </td>
+                                        <td>
+                                        @dialSheet.getContactsCount
+                                        </td>
+                                        <td>
+                                        @dialSheet.getAppointmentCount
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row"></div>
+
+    </main>
+
+        @BaseFooter()
+
+    </body>
+
+</html>

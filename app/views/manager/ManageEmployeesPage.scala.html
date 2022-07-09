@@ -1,0 +1,164 @@
+@import components._
+@import model.manager.Employee
+@(employeeList: java.util.List[Employee])
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Management")
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="container row">
+
+                <div class="col s12">
+
+                    <div class="card z-depth-3">
+
+                        <div class="card-content">
+
+                            <div>
+                                <span class="card-title activator grey-text text-darken-4">
+                                    Manage your Team
+                                    <i class="material-icons right">add</i>
+                                </span>
+                            </div>
+
+                            <div class="row"></div>
+
+                            <div class="col s12">
+
+                                <table class="highlight bordered" id="employee-table">
+
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Name
+                                                <i class="left material-icons">arrow_drop_up</i>
+                                            </th>
+                                            <th>Email</th>
+                                            <th>Team Join Date</th>
+                                            <th>Options</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        @for(employee <- employeeList) {
+                                            <tr id="employee-@employee.getEmployeeId">
+                                                <td id="employee-name-@employee.getEmployeeId">@employee.getName</td>
+                                                <td>@employee.getEmail</td>
+                                                <td>@utilities.DateUtility.getLongDateForUi(employee.getTeamJoinDate)</td>
+                                                <td>
+                                                    <a class="btn-flat waves-effect dropdown-button" data-constrainwidth="false"
+                                                    data-activates="menu-@employee.getEmployeeId" data-alignment="right">
+                                                        <i class="material-icons">more_vert</i>
+                                                    </a>
+                                                    <ul class="dropdown-content" id="menu-@employee.getEmployeeId">
+                                                        <li>
+                                                            <a class="waves-effect"
+                                                            onclick="showTransferAllContactsDialog('@employee.getEmployeeId')">
+                                                                <i class="material-icons">save</i>
+                                                                Recover All Contacts
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="waves-effect"
+                                                            onclick="showDeleteEmployeeDialog('@employee.getEmployeeId');">
+                                                                <i class="material-icons">delete</i>
+                                                                Remove Team Member
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        }
+
+                                        <tr class="no-results-found hide-on-load-only">
+                                            <td colspan="4" class="center-align">
+                                                <p>
+                                                    You have no team members yet.
+                                                </p>
+                                                <p>
+                                                    Press the "+" button above to get started
+                                                </p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                            <div class="row"></div>
+
+                        </div>
+
+                        <div class="card-reveal">
+
+                            <span class="card-title grey-text text-darken-4">
+                                Add a Team Member
+                                <i class="material-icons right">close</i>
+                            </span>
+
+                            <div class="row"></div>
+
+                            <div class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s11">
+                                        <i class="material-icons prefix">search</i>
+                                        <input type="text" id="employee-search">
+                                        <label for="employee-search">Team Member Name or Email</label>
+                                    </div>
+                                    <div class="col s1">
+                                        <div id="employee-search-spinner" class="preloader-wrapper small right-margin">
+                                            <div class="spinner-layer spinner-green-only">
+                                                <div class="circle-clipper left">
+                                                    <div class="circle"></div>
+                                                </div><div class="gap-patch">
+                                                <div class="circle"></div>
+                                            </div><div class="circle-clipper right">
+                                                <div class="circle"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12">
+                                <div class="row">
+                                    <div id="user-results" class="collection">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        @if(!employeeList.isEmpty) {
+            <script>
+                    $('.no-results-found').hide();
+            </script>
+        }
+
+    </body>
+
+</html>

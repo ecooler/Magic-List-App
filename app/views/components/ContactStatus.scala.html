@@ -1,0 +1,9 @@
+@import model.prospect.ProspectState
+@(entityId: String, entityName: String, currentState: ProspectState, shouldSendStateClicksToServer: Boolean = true,
+        isDisabled: Boolean = false, clickType: ProspectState.ClickType, isAppointment: Boolean = false)
+@****************************** WARNING ************************@
+@* DO NOT MODIFY THIS FILE WITHOUT LOOKING AT the contact-status.js file and modifying the appropriate method *@
+<span class="contact-status-wrapper btn contact-status-button" id="@entityId-contact-status" data-id="@entityId" 
+data-name="@entityName" data-state="@currentState.getStateType" data-state-class="@currentState.getStateClass"
+data-state-description="@currentState.getStateDescription" data-send-clicks-to-server="@shouldSendStateClicksToServer"
+data-is-disabled="@isDisabled" data-click-type="@clickType.getRawText" data-is-appointment="@isAppointment"></span>

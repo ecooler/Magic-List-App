@@ -1,0 +1,55 @@
+@(title: String, bodyText: String, imageUrl: String, isLeftAdjusted: Boolean)
+<div class="section row regular-padding">
+
+    @if(isLeftAdjusted) {
+        <h4 class="hide-on-small-only left-padding">@title</h4>
+    } else {
+        <div class="col offset-m5 m7 no-padding hide-on-small-only">
+
+            <h4 class="left-padding">@title</h4>
+
+        </div>
+    }
+
+    @if(isLeftAdjusted) {
+        <div class="col s12 m7 hide-on-small-only no-padding flow-text">
+
+            <p class="side-padding">@Html(bodyText)</p>
+
+        </div>
+    } else {
+        <div class="col m5 hide-on-small-only center-align">
+
+            <img class="z-depth-2 responsive-img" src="@routes.Assets.versioned(imageUrl)">
+
+        </div>
+    }
+
+    @if(isLeftAdjusted) {
+        <div class="col m5 hide-on-small-only center-align">
+
+            <img class="z-depth-2 responsive-img" src="@routes.Assets.versioned(imageUrl)">
+
+        </div>
+    } else {
+        <div class="col hide-on-small-only m7 no-padding flow-text">
+
+            <p class="left-padding">@Html(bodyText)</p>
+
+        </div>
+    }
+
+
+<div class="col s12 hide-on-med-and-up side-padding">
+
+    <h5>@Html(title)</h5>
+
+</div>
+
+<div class="col s12 hide-on-med-and-up side-padding flow-text">
+
+    <p>@Html(bodyText)</p>
+
+</div>
+
+</div>

@@ -1,0 +1,160 @@
+@import com.stripe.model.Card
+@import components._
+@import dialogs._
+@import model.stripe.CvcCheck
+@(cards: java.util.List[Card], defaultPaymentId: String)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+    <main>
+
+        <div class="container row">
+
+            <div class="row"></div>
+
+            <div class="l8 offset-l2 m12 s12">
+
+                <div class="card z-depth-1 centered">
+
+                    <div class="card-content">
+
+                        <span class="card-title" style="display: inline-block !important;">
+                                Your Cards
+                        </span>
+
+                        <a class="btn-flat indigo-text waves-effect waves-light right"
+                        href="@routes.PlanController.addNewCard().url">
+                                Add New Card
+                        </a>
+
+                        <div class="row">
+
+                        @for(card <- cards) {
+
+                            <div class="col l6 m8 offset-m2 s12">
+
+                                <div class="card z-depth-2" id="@card.getId">
+                                    <div class="card-content">
+                                        <span class="card-title">@card.getBrand ****@card.getLast4</span>
+                                        @* Tell the user if his/her credit card was verified*@
+                                        CVC Verification:
+                                        @if(CvcCheck.createFromStripeApi(card.getCvcCheck) == CvcCheck.PASS) {
+                                            <span id="cvcVerification" class="green-text">
+                                            @CvcCheck.createFromStripeApi(card.getCvcCheck).toString
+                                            </span>
+                                        } else {
+                                            <span id="cvcVerification" class="red-text">
+                                            @CvcCheck.createFromStripeApi(card.getCvcCheck).toString
+                                            </span>
+                                        }
+                                        <br>
+                                        Expires @card.getExpMonth / @card.getExpYear
+                                    </div>
+
+                                    <div class="card-action">
+                                        @* Check if it's the default card *@
+                                        @if(defaultPaymentId.equals(card.getId)) {
+                                            <button id="default_card_button_@card.getId" class="btn-flat waves-effect disabled"
+                                            onclick="changeDefaultCard('@card.getId')">
+                                                <i id="default_card_icon_@card.getId" class="left material-icons green-text">
+                                                    check_circle
+                                                </i>
+                                                <span id="default_card_text_@card.getId">Default Card</span>
+                                            </button>
+                                        } else {
+                                            <button class="btn-flat waves-effect" id="default_card_button_@card.getId"
+                                            onclick="changeDefaultCard('@card.getId')">
+                                                <i id="default_card_icon_@card.getId" class="left material-icons grey-text">
+                                                    check_circle
+                                                </i>
+                                                <span id="default_card_text_@card.getId">Make Default</span>
+                                            </button>
+                                        }
+
+                                    <button class="btn-flat waves-effect delete side-padding-small tooltipped" id="delete_@card.getId"
+                                    onclick="showDeleteCardDialog('@card.getId', '@card.getLast4')" data-delay="50"
+                                    data-tooltip="Delete">
+                                        <i class="material-icons">delete</i>
+                                    </button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </div>
+
+    </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+    <script>
+                var defaultCardId;
+
+                @for(card <- cards) {
+                @if(defaultPaymentId.equals(card.getId)) {
+                defaultCardId = '@card.getId';
+                }
+                }
+
+                function changeDefaultCard(cardId) {
+                    var json = {};
+                    json.card_id = cardId;
+
+                    $('#progress_dialog').modal("open");
+
+                    doPost("@routes.PlanApiController.changeDefaultCreditCard.url",
+                            json,
+                            function () {
+                                $('.modal').modal('close');
+
+                                var $oldDefaultIcon = $('#default_card_icon_' + defaultCardId);
+                                var $newDefaultIcon = $('#default_card_icon_' + cardId);
+
+                                var $oldText = $('#default_card_text_' + defaultCardId);
+                                var $newText = $('#default_card_text_' + cardId);
+
+                                $oldDefaultIcon.removeClass("green-text");
+                                $oldDefaultIcon.addClass("grey-text");
+                                $('#default_card_button_' + defaultCardId).removeClass("disabled");
+                                $oldText.html("Make Default");
+
+                                $newDefaultIcon.removeClass("grey-text");
+                                $newDefaultIcon.addClass("green-text");
+                                $('#default_card_button_' + cardId).addClass("disabled");
+                                $newText.html("Default Card");
+
+                                defaultCardId = cardId;
+
+                                showToast("Default card successfully changed");
+                            },
+                            function () {
+                                $('.modal').modal('close');
+                                showToast("Could not change default card");
+                            }
+                    );
+                }
+        </script>
+
+    </body>
+
+</html>

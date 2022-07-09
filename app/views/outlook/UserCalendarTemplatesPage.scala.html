@@ -1,0 +1,147 @@
+@import components._
+
+@(templateList: java.util.List[model.calendar.BaseCalendarTemplate], flashText: String)
+<!DOCTYPE HTML>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Calendar Invite Templates")
+
+        <main>
+
+            <div class="container row">
+
+                <div class="row"></div>
+
+                <div class="row">
+
+                    @if(templateList != null) {
+
+                        @for(template <- templateList) {
+
+                            <div class="col l4 m6 s10 calendar-template scale-transition scale-out" id="@template.getTemplateId">
+
+                                <div class="card z-depth-2">
+
+                                    <div class="card-image top-padding-small">
+                                        <img class="outlook-logo-small" src="@routes.Assets.versioned("images/outlook.png")">
+                                    </div>
+
+                                    <div class="card-content side-padding-small top-padding-small bottom-padding-small">
+                                        <span class="card-title oauth-card-title truncate center-align">
+                                        @template.getTemplateName
+                                        </span>
+                                    </div>
+
+                                    <div class="card-action right-align">
+                                        <a class="btn-icon btn-flat right-margin-small waves-effect waves-light tooltipped"
+                                        data-tooltip="Delete" data-delay="50" onclick="showDeleteTemplateDialog('@template.getTemplateId')">
+                                            <i class="black-text material-icons">delete</i>
+                                        </a>
+                                        <a class="btn-icon btn-flat right-margin-small waves-effect waves-light tooltipped"
+                                        data-tooltip="Preview" data-delay="50" onclick="showCalendarPreview('@template.getTemplateId')">
+                                            <i class="black-text material-icons">visibility</i>
+                                        </a>
+                                        <a class="btn-icon btn-flat right-margin-small waves-effect waves-light tooltipped"
+                                        data-tooltip="Edit" data-delay="50"
+                                        href="@routes.OutlookController.getEditTemplatePage(template.getTemplateId)">
+                                            <i class="black-text material-icons">mode_edit</i>
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        }
+                    }
+
+                </div>
+
+                <div class="no-templates row hide-on-load-only">
+
+                    <div class="col s10 offset-s1">
+
+                        <div class="card-panel z-depth-3 white-background center-align">
+
+                            <i class="material-icons indigo-text promo-caption">event_busy</i>
+
+                            <p class="promo-caption grey-text">
+                                You have no calendar invite templates yet.
+                            </p>
+
+                            <p class="promo-caption grey-text">
+                                <a href="@routes.OutlookController.getCreateTemplatePage.url">Get started and create one</a>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="no-accounts row hide-on-load-only">
+
+                    <div class="col s10 offset-s1">
+
+                        <div class="card-panel z-depth-3 white-background center-align">
+
+                            <i class="material-icons indigo-text promo-caption">person_add</i>
+
+                            <p class="promo-caption grey-text">
+                                You have no linked accounts yet.
+                            </p>
+                            <p class="promo-caption grey-text">
+                                <a href="@routes.OAuthController.getAccounts.url">Get started and link one</a>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <!--suppress JSJQueryEfficiency -->
+        <script>
+
+            @if(flashText != null) {
+            $(document).ready(function() {
+                showToast("@flashText");
+            });
+            }
+
+            @if(templateList != null && !templateList.isEmpty) {
+                $('.no-templates').hide();
+            }
+
+            @if(templateList == null) {
+                $('.no-templates').hide();
+                $('.no-accounts').show(300);
+            } else {
+                $('.no-accounts').hide();
+            }
+
+            $(document).ready(function() {
+                $('.scale-transition.scale-out').each(function(index) {
+                    const $element = $(this);
+                    setTimeout(function() {
+                        $element.addClass("scale-in");
+                    }, (index + 1) * 175);
+                })
+            })
+
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,25 @@
+@(dialSheet: model.dialsheet.DialSheet, isDialCountEditable: Boolean)
+<table class="bordered">
+    <thead class="white-background">
+        <tr>
+            <th>
+                @if(isDialCountEditable) {
+                    <a class="btn-flat btn-icon waves-effect waves-green dial-sheet-dials"
+                    onclick="showEditDialCountDialog('@dialSheet.getId');">
+                        Dials
+                        <i class="material-icons red-text right">mode_edit</i>
+                    </a>
+                } else {
+                    <span>Dials</span>
+                }
+            </th>
+            <th>Contacts</th>
+        </tr>
+    </thead>
+    <tbody class="prospecting-contact-status">
+        <tr>
+            <td class="dial-sheet-dials-count">@dialSheet.getDialCount</td>
+            <td>@dialSheet.getContactsCount</td>
+        </tr>
+    </tbody>
+</table>

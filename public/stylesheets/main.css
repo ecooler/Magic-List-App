@@ -1,0 +1,1437 @@
+body {
+    background: #F5F5F5;
+    display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    min-height: 100vh;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+}
+
+.color-primary {
+    background-color: #3f51b5 !important
+}
+
+.btn {
+    background-color: #3f51b5 !important;
+}
+
+.btn.contact-status-button {
+    background-color: rgba(255, 255, 255, 0) !important;
+    padding: 0 !important;
+}
+
+.btn-icon {
+    padding: 0 8px !important;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+@media only screen and (max-width: 600px) {
+    .tab-1 {
+        padding-left: 2em;
+    }
+}
+
+@media only screen and (min-width: 601px) {
+    .tab-1 {
+        padding-left: 3em;
+    }
+}
+
+#flame-canvas {
+    position: absolute;
+    z-index: 1;
+}
+
+td {
+    padding: 16px;
+}
+
+.toolbar-fixed {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    z-index: 5;
+}
+
+.regular-cursor {
+    cursor: auto !important;
+}
+
+#list-merge-preview {
+    position: fixed;
+    bottom: 108px;
+    right: 16px;
+    z-index: 5;
+    width: 25%;
+    max-width: 275px;
+}
+
+#list-merge-preview-collection {
+    max-height: 250px;
+    overflow-y: scroll;
+}
+
+.toolbar-fixed-button {
+    width: 49%;
+    text-align: center;
+}
+
+.hide-on-load-only {
+    display: none;
+}
+
+.oauth-card-title {
+    font-size: 16px !important;
+}
+
+.outlook-logo-small {
+    width: 64px !important;
+    height: 64px !important;
+    margin: auto;
+}
+
+.outlook-logo-extra-small {
+    width: 32px !important;
+    height: 32px !important;
+    margin: auto;
+}
+
+.white-background {
+    background: #fff;
+}
+
+.inline {
+    display: inline-block !important;
+}
+
+.background {
+    background: #F5F5F5;
+}
+
+.table-title {
+    background: #FFF;
+    margin: 0;
+    padding: 24px;
+}
+
+.light-color {
+    color: #C5CAE9
+}
+
+.light-background {
+    background: #E8EAF6;
+}
+
+.container {
+    margin: auto;
+}
+
+#select-order-by {
+    width: auto;
+}
+
+.auto-width {
+    width: auto;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.error {
+    color: red;
+    display: none;
+}
+
+#read_only_dialog {
+    width: 512px;
+}
+
+.dialog-wide {
+    width: 384px;
+}
+
+.calendar-event-link {
+    height: 36px !important;
+    display: flex;
+    align-items: center;
+}
+
+.card-wide {
+    width: 512px;
+}
+
+.green {
+    color: #4CAF50;
+}
+
+.red {
+    color: #F44336;
+}
+
+.gray {
+    color: #9E9E9E;
+}
+
+.white {
+    color: #FFFFFF;
+}
+
+.delete {
+    float: right;
+}
+
+#search_person_dialog {
+    width: 30%;
+}
+
+#search_container_wrapper {
+    width: 200%;
+    height: 250px;
+}
+
+.submit_container {
+    min-height: 40px;
+}
+
+.search_person_dialog.search_container {
+    display: inline-block;
+    width: 49%;
+    height: 100%;
+}
+
+.dial_sheet_button {
+    color: #FFFFFF;
+}
+
+.align-bottom {
+    bottom: 0;
+    position: absolute;
+}
+
+#main_menu {
+    background: #FFF;
+}
+
+.dial_sheet_details-appointment-title {
+    margin: 0;
+    display: inline-block;
+    text-align: left;
+    width: 98%;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.small {
+    font-size: 16px;
+}
+
+.menu-button {
+    text-align: left;
+    width: 90%;
+    margin: 8px auto;
+}
+
+.no-results-found {
+    text-align: center;
+    font-size: 24px;
+    padding: 32px;
+    opacity: 0.54;
+}
+
+.no-min-height {
+    min-height: unset !important;
+}
+
+.menu-status {
+    text-align: center;
+    height: 36px;
+}
+
+.person_details {
+    min-width: 140px;
+}
+
+.person_name {
+    width: 6%;
+    max-width: 6%;
+    min-width: 6%;
+}
+
+.company {
+    width: 250px;
+    max-width: 250px;
+    min-width: 250px;
+}
+
+.job_title {
+    width: 6%;
+    max-width: 6%;
+    min-width: 6%;
+}
+
+.phone_number {
+    width: 5%;
+    max-width: 5%;
+    min-width: 5%;
+}
+
+.email {
+    width: 6%;
+    max-width: 6%;
+    min-width: 6%;
+}
+
+.person_state {
+    width: 200px;
+    max-width: 200px;
+    min-width: 200px;
+}
+
+td.person_state {
+    text-align: right;
+    min-height: 36px;
+    max-height: 36px;
+    height: 36px;
+}
+
+.person_name {
+    width: 6%;
+    max-width: 6%;
+    min-width: 6%;
+}
+
+.job_title {
+    width: 6%;
+    max-width: 250px;
+    min-width: 6%;
+}
+
+.phone_number {
+    width: 200px;
+    max-width: 200px;
+    min-width: 200px;
+}
+
+.email {
+    width: 6%;
+    max-width: 6%;
+    min-width: 6%;
+}
+
+td.person_state {
+    text-align: left;
+}
+
+td.notes {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+td.notes:hover {
+    cursor: pointer;
+    background-color: #c5cae9;
+}
+
+td.search_notes {
+    width: 64px;
+    max-width: 64px;
+    min-width: 64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.drawer-background {
+    width: 350px;
+    height: 350px;
+    opacity: .92;
+}
+
+.profile-image {
+    width: 64px;
+    height: 64px;
+    visibility: hidden;
+}
+
+.centered {
+    margin: auto !important;
+}
+
+.full-margin {
+    margin: 32px;
+}
+
+.full-padding {
+    padding: 32px 64px;
+}
+
+.regular-padding {
+    padding: 16px !important;
+}
+
+.regular-padding-small {
+    padding: 8px !important;
+}
+
+.centered-content {
+    text-align: center !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.state-menu {
+    max-height: 175px;
+!important;
+    overflow-y: scroll;
+}
+
+.scroll-overflow-x {
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.right-content {
+    text-align: right;
+}
+
+.left-content {
+    text-align: left !important;
+}
+
+.top-margin {
+    margin-top: 16px !important;
+}
+
+.top-margin-large {
+    margin-top: 32px !important;
+}
+
+.secondary-content {
+    width: 160px;
+}
+
+.small-text {
+    font-size: .8rem;
+    color: #9e9e9e;
+}
+
+.top-margin-small {
+    margin-top: 4px !important;
+}
+
+.right-margin {
+    margin-right: 16px !important;
+}
+
+.right-margin-small {
+    margin-right: 8px !important;
+}
+
+.left-margin {
+    margin-left: 16px !important;
+}
+
+.left-margin-large {
+    margin-left: 64px !important;
+}
+
+.left-margin-small {
+    margin-left: 8px;
+}
+
+.bottom-margin {
+    margin-bottom: 16px
+}
+
+.full-bottom-margin {
+    margin-bottom: 64px;
+}
+
+.bottom-margin-small {
+    margin-bottom: 8px;
+}
+
+.side-nav {
+    width: 350px !important;
+}
+
+.bordered {
+    border: 1px solid #DFDFDF;
+    border-radius: 8px;
+}
+
+.appointment-collection-item {
+    min-height: 144px;
+}
+
+a.collection-item {
+    color: #3F51B5 !important;
+}
+
+/*.row-stretch {*/
+/*display: -webkit-flex;*/
+/*display: -ms-flexbox;*/
+/*display: flex;*/
+/*-webkit-flex-flow: row wrap;*/
+/*-ms-flex-flow: row wrap;*/
+/*flex-flow: row wrap;*/
+/*margin: 0 auto;*/
+/*-webkit-align-items: stretch;*/
+/*-ms-flex-align: stretch;*/
+/*align-items: stretch*/
+/*}*/
+
+.selectable {
+    cursor: pointer;
+}
+
+.selectable:hover {
+    opacity: 0.54;
+}
+
+.cancel-button {
+    margin-right: 16px;
+}
+
+.all-pages-dial-sheet-status-container {
+    padding: 16px;
+    white-space: nowrap;
+}
+
+.all_pages_dial_sheet_content {
+    width: 175px;
+    display: inline-block;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+li.navigation-item {
+    min-width: 70px;
+    text-align: center !important;
+}
+
+ul.right.main {
+    line-height: unset !important;
+}
+
+#search-options-container {
+    width: 15%;
+    min-width: 15%;
+    max-width: 15%;
+    float: left;
+    margin: 16px;
+    height: auto;
+}
+
+.create_search_container {
+    width: 300px !important;
+    margin-top: 48px !important;
+}
+
+#search-results-container {
+    width: 80%;
+    max-width: 80%;
+    min-width: 80%;
+    float: left;
+    margin: 16px;
+}
+
+#person_details_container {
+    width: 50%;
+    max-width: 50%;
+    min-width: 50%;
+    float: left;
+    margin: 16px;
+}
+
+#person_notifications_container {
+    width: 45%;
+    max-width: 45%;
+    min-width: 45%;
+    float: left;
+    margin: 16px;
+    overflow: visible;
+}
+
+#all_pages_dial_sheet-appointments.centered {
+    margin: auto;
+}
+
+.circle-badge {
+    line-height: 27px !important;
+    height: 1.7rem !important;
+    min-width: 1.7rem !important;
+}
+
+.allow-overflow {
+    overflow: visible !important;
+}
+
+.allow-overflow-y {
+    overflow-y: visible !important;
+}
+
+.opacity-hover:hover {
+    cursor: pointer;
+    opacity: 0.62 !important;
+}
+
+.collection-item.avatar {
+    z-index: auto !important;
+}
+
+.no-opacity-hover:hover {
+    opacity: 1.0 !important;
+}
+
+.scroll-overflow {
+    overflow: scroll;
+}
+
+.no-overflow {
+    overflow: hidden;
+    text-wrap: none;
+    text-overflow: ellipsis;
+}
+
+a {
+    cursor: pointer;
+}
+
+.float-right {
+    float: right;
+}
+
+.float-left {
+    float: left;
+}
+
+#home_page_menu {
+    width: 200px;
+}
+
+i.promo-caption {
+    margin: 32px 0;
+    font-size: 7rem;
+    display: block;
+}
+
+.promo-caption {
+    font-size: 1.7rem;
+    font-weight: 500;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+i.promo-caption-small {
+    margin: 16px 0;
+    font-size: 5rem;
+    display: block;
+}
+
+.promo-caption-small {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.top-padding-large {
+    padding-top: 24px !important;
+}
+
+.top-padding-small {
+    padding-top: 8px !important;
+}
+
+.bottom-padding-large {
+    padding-bottom: 24px !important;
+}
+
+.bottom-padding-small {
+    padding-bottom: 8px !important;
+}
+
+.side-padding {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+}
+
+.side-padding-large {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
+
+.side-padding-small {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+.side-padding-extra-small {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+
+.horizontal-margin {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+.horizontal-margin-small {
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+}
+
+.left-padding {
+    padding-left: 16px;
+}
+
+.left-padding-extra-small {
+    padding-left: 4px;
+}
+
+.right-padding {
+    padding-right: 16px !important;
+}
+
+nav.dummy {
+    box-shadow: none;
+    height: 100%;
+    line-height: 100%;
+    background-color: #FFF;
+}
+
+i.material-icons.right-padding {
+    display: inline;
+    height: auto;
+    line-height: normal;
+}
+
+.hidden-toggle {
+    /*display: none;*/
+    /*overflow: hidden;*/
+    /*height: 0;*/
+}
+
+.visible {
+    display: block;
+}
+
+.help-small {
+    height: 35px;
+}
+
+h6.help-small-title {
+    font-size: 14px;
+    margin: 0;
+}
+
+.no-padding {
+    padding: 0 !important;
+}
+
+.picker__close,
+.picker__clear,
+.picker__today {
+    color: #3f51b5 !important
+}
+
+.clockpicker-canvas-bg {
+    fill: #3f51b5 !important
+}
+
+.clockpicker-canvas line {
+    stroke: #3f51b5 !important
+}
+
+.clockpicker-canvas-bearing {
+    fill: #3f51b5 !important;
+}
+
+.picker__date-display {
+    background-color: #3f51b5 !important
+}
+
+.clockpicker-tick.active, .clockpicker-tick:hover {
+    background-color: rgba(63, 81, 181, .25) !important;
+}
+
+.picker__day.picker__day--today.picker__day--selected {
+    color: #FFFFFF !important;
+}
+
+.picker__day.picker__day--today {
+    color: #3f51b5 !important;
+}
+
+.picker__nav--prev:hover, .picker__nav--next:hover, .picker__today:focus, .picker__close:focus {
+    background-color: rgba(63, 81, 181, .25) !important;
+}
+
+.picker__day--selected, .picker__day--selected:hover, .picker--focused .picker__day--selected {
+    background-color: #3f51b5 !important
+}
+
+.contact-status-dropdown, .contact-status-item {
+    width: 180px !important;
+    min-width: 180px !important;
+}
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.no-vertical-margin {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+th.options-menu,
+td.options-menu {
+    min-width: 80px;
+    width: 80px;
+    max-width: 80px;
+    text-align: center;
+}
+
+h6#criteria {
+    margin-top: 16px;
+    margin-bottom: 0;
+}
+
+#date_picker {
+    font-size: 16px;
+    height: 30px;
+    border-radius: 2px;
+    border: 1px solid gray;
+    padding: 0 10px
+}
+
+#notification_table {
+    table-layout: fixed;
+}
+
+.notification_date {
+    width: 200px;
+    word-wrap: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notification_options {
+    width: 25%;
+    min-width: 25%;
+    max-width: 25%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification_options.upcoming {
+    width: 12.5%;
+    min-width: 12.5%;
+    max-width: 12.5%;
+}
+
+.notification_contact {
+    width: 25%;
+    min-width: 25%;
+    max-width: 25%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification_contact.upcoming {
+    width: 20%;
+    min-width: 20%;
+    max-width: 20%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (min-width: 1025px) {
+    #nav-header {
+        min-height: 64px;
+    }
+}
+
+@media (max-width: 1024px) {
+    #nav-header {
+        min-height: 56px;
+    }
+}
+
+nav {
+    background-color: #3F51B5 !important;
+}
+
+.notification_message.upcoming {
+    width: 45%;
+    min-width: 45%;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th.appointment_options,
+td.appointment_options {
+    width: 10%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th.appointment_name,
+td.appointment_name {
+    width: 25%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th.appointment_date,
+td.appointment_date {
+    width: 25%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th.appointment_notes,
+td.appointment_notes {
+    width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+td.appointment_notes:hover {
+    cursor: pointer;
+    background: #c5cae9;
+}
+
+.more-vert {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+}
+
+.dropdown-li {
+    height: 48px;
+}
+
+.pagination_content {
+    min-width: 32px;
+    padding: 0;
+    color: #FFFFFF;
+}
+
+.pagination_content--first {
+    min-width: 48px;
+    padding: 0;
+    color: #FFFFFF;
+}
+
+.pagination_content--last {
+    min-width: 48px;
+    padding: 0;
+    color: #FFFFFF;
+}
+
+#current_dial_sheet_dialog {
+    width: 75%;
+    margin: auto;
+    height: 70%;
+    overflow-y: scroll;
+
+    position: fixed;
+    left: 50%;
+    top: 30%;
+    -ms-transform: translate(-50%, -25%);
+    -moz-transform: translate(-50%, -25%);
+    -webkit-transform: translate(-50%, -25%);
+    transform: translate(-50%, -25%);
+}
+
+.bottom_shadow {
+    box-shadow: 0 4px 2px -2px gray;
+    -webkit-box-shadow: 0 4px 2px -2px gray;
+    -moz-box-shadow: 0 4px 2px -2px gray;
+}
+
+th, td {
+    padding: 16px 16px !important;
+}
+
+.dial-sheet-dials {
+    min-width: 96px !important;
+    text-transform: none !important;
+}
+
+.prospecting-contact-status {
+    background: #E0E0E0;
+}
+
+.not-contacted {
+    background: #FFF !important;
+}
+
+.appointment-contact-status, .dropdown-button.disabled.appointment-contact-status {
+    background: #c8e6c9 !important;
+}
+
+.indeterminate-contact-status, .dropdown-button.disabled.indeterminate-contact-status {
+    background: #fff9c4 !important;
+}
+
+.objection-contact-status, .dropdown-button.disabled.objection-contact-status {
+    background: #ffcdd2 !important;
+}
+
+.inventory-contact-status, .dropdown-button.disabled.inventory-contact-status {
+    background: #bbdefb !important;
+}
+
+.missed-appointment-contact-status, .dropdown-button.disabled.missed-appointment-contact-status {
+    /*background: #b2dfdb !important;*/
+    background: #e1bee7 !important;
+}
+
+.no-click {
+    cursor: default !important;
+    background-color: #FFFFFF !important;
+}
+
+.dropdown-content {
+    overflow-y: visible;
+}
+
+.dropdown-content .dropdown-content {
+    margin-left: 100%;
+}
+
+.dropdown-content li {
+    min-height: 24px !important;
+    line-height: 1rem !important;
+    z-index: 100;
+}
+
+.dropdown-content li.divider {
+    min-height: unset !important;
+    line-height: 1rem !important;
+}
+
+.dropdown-content li > a, .dropdown-content li > span {
+    color: #000 !important;
+    font-size: 14px !important;
+    line-height: 1rem !important;
+}
+
+#appointments_container {
+    max-height: 350px;
+    overflow-y: scroll;
+}
+
+#appointments_details_container {
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+#contacts_details_container {
+    max-height: 750px;
+    overflow-y: scroll;
+    padding: 30px 0 !important;
+    max-width: 95%;
+    margin: auto;
+}
+
+.person-row {
+}
+
+.person-row.active {
+    border: 4px solid #4caf50;
+    border-radius: 8px;
+}
+
+.chips.focus,
+input:not([type]):focus:not([readonly]),
+input:not([type]):focus,
+input:not([type]).valid,
+input[type=text]:focus,
+input[type=text].valid,
+input[type=password]:focus,
+input[type=password].valid,
+input[type=email]:focus,
+input[type=email].valid,
+input[type=url]:focus,
+input[type=url].valid,
+input[type=time]:focus,
+input[type=time].valid,
+input[type=date]:focus,
+input[type=date].valid,
+input[type=datetime]:focus,
+input[type=datetime].valid,
+input[type=datetime-local]:focus,
+input[type=datetime-local].valid,
+input[type=tel]:focus,
+input[type=tel].valid,
+input[type=number]:focus,
+input[type=number].valid,
+input[type=search]:focus,
+input[type=search].valid,
+textarea.materialize-textarea:focus,
+textarea.materialize-textarea.valid {
+    border-bottom: 1px solid #3f51b5 !important;
+    box-shadow: 0 1px 0 0 #3f51b5 !important;
+}
+
+.chips .input {
+    width: 50% !important;
+    min-width: 200px !important;
+}
+
+.chip.selected {
+    background-color: #3f51b5 !important;
+}
+
+.prefix.active {
+    color: #3f51b5 !important;
+}
+
+[type="checkbox"]:checked + label:before {
+    border-bottom: 2px solid #f44336 !important;
+    border-right: 2px solid #f44336 !important;
+}
+
+[type="radio"]:checked + label:after,
+[type="radio"].with-gap:checked + label:before,
+[type="radio"].with-gap:checked + label:after {
+    background-color: #3f51b5 !important;
+    border: 2px solid #3f51b5 !important;
+    /*background-color: #f44336 !important;*/
+    /*border: 2px solid #f44336 !important;*/
+}
+
+label.active {
+    color: #3f51b5 !important;
+}
+
+.switch label input[type=checkbox]:checked + .lever {
+    background-color: #7986cb !important;
+}
+
+.switch label input[type=checkbox]:checked + .lever:after {
+    background-color: #3f51b5 !important;
+}
+
+.search_results-name {
+    min-width: 150px !important;
+    width: 16% !important;
+}
+
+.search_results-phone {
+    min-width: 150px !important;
+    width: 10% !important;
+}
+
+.search_results-job_title {
+    min-width: 250px !important;
+    width: 24% !important;
+}
+
+.search_results-company_name {
+    min-width: 175px !important;
+    width: 20% !important;
+}
+
+.search_results-email {
+    min-width: 125px !important;
+    width: 12% !important;
+    max-width: 250px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search_results-contact_status {
+    min-width: 170px !important;
+    width: 13% !important;
+}
+
+.search_results-options {
+    min-width: 120px !important;
+    width: 5% !important;
+}
+
+.search_results-time {
+    min-width: 115px !important;
+    width: 10% !important;
+}
+
+.big_promotion_item {
+    margin: 64px 0 !important;
+    opacity: 0;
+}
+
+i.big_promotion_item {
+    display: block;
+    font-size: 10rem;
+    opacity: unset;
+    margin: unset;
+}
+
+.coming-soon {
+    font-size: 150px;
+    display: block;
+}
+
+.coming-soon-img {
+    width: 150px !important;
+    height: 150px !important;
+}
+
+.tap-target {
+    background-color: #3f51b5 !important;
+}
+
+.no-height-restriction {
+    height: unset;
+    line-height: unset;
+}
+
+#employee-table {
+    min-height: 300px;
+}
+
+.no-transform {
+    text-transform: none !important;
+}
+
+.account-notification-item {
+    max-width: 220px;
+    overflow-wrap: break-word;
+    max-height: 128px;
+    text-overflow: ellipsis;
+    overflow-y: hidden;
+    white-space: initial;
+}
+
+.card-title-clickable {
+    font-size: 32px;
+    padding: 24px !important;
+}
+
+.account-notification-item .dropdown-content li > a {
+    /*line-height: 1.5rem !important;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-height: 24px !important;
+    max-height: 100px;
+}
+
+.status-state {
+    border-radius: 2px;
+}
+
+#settings-status-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    border-radius: 2px;
+}
+
+#settings-status-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 12px;
+}
+
+.switch-wrapper-with-button {
+    height: 40px;
+}
+
+#header-top-bar {
+    background: #4CAF50; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #4CAF50, #3F51B5); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #4CAF50, #3F51B5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    height: 80%;
+    min-height: 480px;
+    width: 100%;
+    font-family: 'Saira', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.above-effects {
+    position: relative;
+    z-index: 100;
+}
+
+#app-name-title-large {
+    padding: 16px 10%;
+}
+
+#app-name-title-med {
+    padding: 16px;
+    text-align: center;
+}
+
+#app-name-title-large > img {
+    width: 144px;
+    height: 144px;
+}
+
+#app-name-title-med > img {
+    width: 96px;
+    height: 96px;
+}
+
+#slogan-title-large {
+    font-size: 2.28rem;
+    line-height: 110%;
+    margin: 1.14rem 0 .912rem 0;
+    padding: 16px 25%;
+}
+
+#slogan-title-med {
+    font-size: 2.28rem;
+    line-height: 110%;
+    margin: 1.14rem 0 .912rem 0;
+    padding: 16px;
+    text-align: center;
+}
+
+#scroll-down-fab-container {
+    flex-grow: 1;
+    align-self: center;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+}
+
+#scroll-down-fab {
+    position: relative;
+    top: 28px;
+    z-index: 100;
+}
+
+.image-large {
+    max-width: 360px !important;
+    max-height: 360px !important;
+}
+
+.image-medium {
+    max-width: 256px !important;
+    max-height: 256px !important;
+    width: 80%;
+    height: auto;
+}
+
+table.picker__table > tbody > tr > td {
+    padding: 0 !important;
+}
+
+.status-filter-select > div > ul {
+    overflow-y: scroll;
+    width: 250px !important;
+}
+
+.select-dropdown.multiple-select-dropdown > li.optgroup {
+    padding-top: 8px;
+}
+
+.select-dropdown.multiple-select-dropdown > li.optgroup-option, .select-dropdown.multiple-select-dropdown > li {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+#alerts-page-next-previous-container {
+    position: fixed;
+    right: 5%;
+    top: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#alerts-page-action-button {
+    position: absolute;
+    bottom: 64px;
+}
+
+.warmer-text {
+    color: #ef5350;
+    text-shadow: 2px 2px #444;
+}
+
+.cold-text {
+    color: #03a9f4;
+    text-shadow: 2px 2px #444;
+}
+
+.display-block {
+    display: block !important;
+}
+
+#activity-sheet-calendar {
+    overflow-x: scroll;
+}
+
+#activity-sheet-calendar > div {
+    min-width: 750px;
+}
+
+#activity-sheet-days-week {
+    margin: 0;
+    padding: 10px 0;
+    background-color: #ddd;
+    text-align: center;
+}
+
+#activity-sheet-days-week > li {
+    display: inline-block;
+    width: 13.6%;
+    color: #666;
+    text-align: center;
+}
+
+#activity-sheet-days-month {
+    padding: 10px;
+    background: #eee;
+    margin: 0;
+    text-align: center;
+}
+
+#activity-sheet-days-month > li {
+    display: inline-block;
+    width: 14.25%;
+    font-size: 12px;
+    color: #777;
+    border: 1px solid #666;
+    margin-right: -4px;
+    height: 108px;
+}
+
+#activity-sheet-days-month > li > div {
+    padding: 4px;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    text-align: left;
+}

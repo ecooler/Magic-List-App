@@ -1,0 +1,180 @@
+@import components._
+
+@()
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Management FAQ")
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="container row white z-depth-2">
+
+                <div class="row"></div>
+
+                <div class="row col s12 black-text">
+
+                    <ul id="coming_soon_list">
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="big_promotion_item indigo-text material-icons">track_changes</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>
+                                        Track and Monitor Your Candidate Recruits
+                                    </strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    With Magic List, building your team will be easier than ever. Using a similar
+                                    system for tracking contacts, you will be able to monitor candidates
+                                    and newly-hired team members. Magic List will help keep you organized, so you can
+                                    instead focus on the important interactions with candidates and team members.
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="big_promotion_item orange-text material-icons">insert_chart</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>
+                                        Statistics and Growth Measurement
+                                    </strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    View detailed statistics on your team's performance, which is based on past
+                                    activity sheets and all of their contacts. Statistics will be visualized to show
+                                    quick-to-analyze graphs and charts.
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon green-text material-icons">compare_arrows</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>Compare Performance</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    Compare your team's statistics amongst team members and aggregate each individual's
+                                    contribution to track overall performance.
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon material-icons blue-text">share</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>Sharing and Teamwork</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    Promote synergy amongst team members by allowing them to share contacts and lists
+                                    with each other.
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon indigo-text material-icons">save</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>Recovery Tools</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    Have you ever wondered how many potential contacts you have lost when you lose a
+                                    team member? With the help of Magic List's recovery tools, you will be able to
+                                    transfer and save your ex-team member's contacts and lists with ease.
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon orange-text material-icons">zoom_in</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>Take a Close Look, When Necessary</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    If you are worried about an individual team member's performances, Magic List allows
+                                    you to view your all activity sheets, in full detail! This unlocks new opportunities for
+                                    coaching and analyzing the successful strategies being used by your best team members.
+                                </p>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @BaseFooter()
+
+        <script>
+
+                $(document).ready(function () {
+                    Materialize.showStaggeredList('#coming_soon_list')
+                });
+
+        </script>
+
+    </body>
+
+</html>

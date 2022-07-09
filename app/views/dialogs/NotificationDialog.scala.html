@@ -1,0 +1,65 @@
+@()
+<div id="notification_dialog" class="modal modal-fixed-footer">
+
+    <div class="modal-content">
+
+        <h4 id="notification_dialog_title">Create Notification</h4>
+        <span id="notification_error" class="error"></span>
+
+        <label for="notification_date_picker">Date</label>
+        <input id="notification_date_picker" type="date" class="datepicker">
+
+        <label for="notification_timepicker">Time</label>
+        <input type="text" class="timepicker" id="notification_timepicker">
+
+        <div id="notification_message_field" class="input-field">
+            <div class="input-field">
+                <textarea class="materialize-textarea" rows= "3" id="notification_message_text"></textarea>
+                <label for="notification_message_text">
+                    Notification Message
+                </label>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <a class="modal-action btn-flat waves-effect close">Cancel</a>
+        <a id="notification_dialog_submit" class="modal-action btn-flat waves-effect submit">Create</a>
+    </div>
+</div>
+
+    <!--suppress ReservedWordAsName -->
+<script>
+        $('#notification_date_picker').pickadate({
+            selectMonths: true,
+            selectYears: 5,
+            min: new Date(),
+            autoclose: true,
+            close: 'CLOSE',
+            clear: '',
+            onSet: function (e) {
+                if(e["select"]) {
+                    setTimeout(function () {
+                        $('#notification_date_picker').pickadate('picker').close()
+                    }, 200);
+                }
+            },
+            onStart: function () {
+                $('.picker').appendTo('body');
+            }
+        });
+
+        $('#notification_timepicker').pickatime({
+            default: 'now',
+            fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+            twelvehour: true, // Use AM/PM or 24-hour format
+            donetext: 'OK', // text for done-button
+            cleartext: 'Clear', // text for clear-button
+            canceltext: 'Cancel', // Text for cancel-button
+            autoclose: false, // automatic close timepicker
+            ampmclickable: true, // make AM PM clickable
+            afterShow: function () {
+                $('.clockpicker').appendTo('body');
+            }
+        });
+</script>

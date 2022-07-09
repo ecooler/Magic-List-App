@@ -1,0 +1,121 @@
+@import components._
+@()
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("All Candidates")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet()
+
+            <div class="container row">
+
+                <div class="col s12">
+
+                    <div class="z-depth-2 white-background">
+
+                        <div class="full-padding">
+
+                            <h6>Showing 3 - 3 of 3</h6>
+
+                            <table class="responsive-table bordered highlight">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Files</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="amber lighten-4">
+                                        <td>John Smith</td>
+                                        <td>
+                                            <a class="btn-flat dropdown-button" data-activates="candidate-menu">
+                                                1st Interview
+                                            </a>
+                                            <ul class="dropdown-content" id="candidate-menu">
+                                                <li><a>1st Interview</a></li>
+                                                <li><a>2nd Interview</a></li>
+                                                <li><a>3rd Interview</a></li>
+                                                <li><a>Life & Health</a></li>
+                                                <li><a>Series 7</a></li>
+                                                <li><a>Series 66</a></li>
+                                                <li><a>PEP</a></li>
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <a>Resume</a>
+                                            <div class="row"></div>
+                                            <a>Cover Letter</a>
+                                        </td>
+                                        <td>
+                                            <a class="btn-flat dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="amber lighten-2">
+                                        <td>Rick Astley</td>
+                                        <td>
+                                            <a class="btn-flat dropdown-button">
+                                                2nd Interview
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a>Resume</a>
+                                        </td>
+                                        <td>
+                                            <a class="btn-flat dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="green lighten-4">
+                                        <td class="black-text">David Hassler</td>
+                                        <td>
+                                            <a class="btn-flat dropdown-button">
+                                                Life & Health
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a>Cover Letter</a>
+                                        </td>
+                                        <td>
+                                            <a class="btn-flat dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        @components.TablePagination(1, 1)
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+    </body>
+
+</html>

@@ -1,0 +1,44 @@
+@import model.prospect.{Prospect, Notification}
+
+@(notificationType: Notification.Type)
+
+<div class="inline right right-margin">
+
+        @sortBySelection(notificationType: Notification.Type, isAscending: Boolean) = {
+        @if(notificationType == Notification.Type.UPCOMING) {
+            @if(isAscending) {
+                selected
+            }
+        } else {
+            @if(!isAscending) {
+                selected
+            }
+        }
+        }
+
+        <form id="notification-form-@notificationType.getRawText" data-type="@notificationType.getRawText">
+
+            <div class="col s12 l6 m6">
+                <div class="input-field inline side-padding-small">
+                    <select name="sort_by" id="sort-by-notification-@notificationType.getRawText"
+                    onchange="$('#notification-form-@notificationType.getRawText').submit()">
+                        @for(sorter <- Notification.Sorter.values) {
+                                <option value="@sorter.getRawText">@sorter.toUiString</option>
+                        }
+                    </select>
+                    <label for="sort-by-notification-@notificationType.getRawText">Sort By</label>
+                </div>
+            </div>
+
+            <div class="col s12 l6 m6">
+                <div class="input-field inline side-padding-small">
+                    <select name="ascending" id="ascending-notification-@notificationType.getRawText"
+                    onchange="$('#notification-form-@notificationType.getRawText').submit()">
+                        <option @sortBySelection(notificationType, true) value="true">Ascending</option>
+                        <option @sortBySelection(notificationType, false) value="false">Descending</option>
+                    </select>
+                    <label for="ascending-notification-@notificationType.getRawText">Order</label>
+                </div>
+            </div>
+        </form>
+</div>

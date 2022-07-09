@@ -1,0 +1,68 @@
+@import components._
+@import model.prospect.Notification
+@import model.PagedList
+@import akka.japi.Pair
+
+@(notificationsForToday: PagedList[Notification])
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Today\'s Notifications")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet()
+
+            @notifications.NotificationContent(Notification.Type.CURRENT, notificationsForToday)
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <script>
+                $('select').material_select();
+
+                notificationCallbacks.onDocumentReady();
+
+                notificationCallbacks.onPushNotification = function (notification) {
+                    var type;
+                    if (moment(notification.notification_date).isSame(moment(), 'day')) {
+                        type = 'current';
+                    } else {
+                        type = 'upcoming';
+                    }
+
+                    addNotificationToListUi(notification, type);
+                    updatePaginationRange(true, type, true);
+                    notificationCountWatcher.onChange(type);
+                };
+
+                function onNotificationStateClick(entityId, entityName, stateType, stateDescription, stateClass) {
+                    const notificationDate = $('#' + entityId + '-date').attr("data-date");
+                    showEditTimeDialogForNotification(notificationDate, entityId, entityName, stateType, stateDescription,
+                            stateClass);
+                }
+
+                contactStatus.onClickFunctions.notifications.push(onNotificationStateClick);
+
+        </script>
+
+        <script>
+
+            notificationState.current.url = "/notification/today.json";
+
+        @if(notificationsForToday.isEmpty) {
+            $('#notification-current-no-results').show();
+        }
+
+        </script>
+
+    </body>
+
+</html>

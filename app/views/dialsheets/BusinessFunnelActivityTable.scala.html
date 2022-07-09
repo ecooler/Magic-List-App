@@ -1,0 +1,88 @@
+@(dialSheet: model.dialsheet.DialSheetDetails)
+<table class="bordered left-align">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Actual</th>
+            <th>Target</th>
+            <th>Actual Ratio</th>
+            <th>Target Ratio</th>
+            <th class="center-align">About</th>
+        </tr>
+    </thead>
+
+        @isTarget(statistic: model.dialsheet.BusinessFunnelStatistic) = {
+        @if(statistic.getActual < statistic.getTarget || (statistic.isInverse && statistic.getActual > statistic.getTarget)) {
+            objection-contact-status
+        } else {
+            appointment-contact-status
+        }
+        }
+
+        @tableRow(statistic: model.dialsheet.BusinessFunnelStatistic) = {
+            <td>@statistic.getCategory</td>
+            <td>@statistic.getActual</td>
+        @if(statistic.isInverse) {
+            <td><= @statistic.getTarget</td>
+        } else {
+            <td>@statistic.getTarget</td>
+        }
+            <td>@statistic.getActualRatio</td>
+        @if(statistic.isInverse) {
+            <td><= @statistic.getTargetRatio</td>
+        } else {
+            <td>@statistic.getTargetRatio</td>
+        }
+        }
+
+        <tbody>
+            <tr class="@isTarget(dialSheet.getContactsStatistic)">
+                @tableRow(dialSheet.getContactsStatistic)
+            <td class="center-align">
+                <a class="btn-flat waves-effect" onclick="showContactsHelpDialog()">
+                    <i class="material-icons indigo-text">help</i>
+                </a>
+            </td>
+            </tr>
+            <tr class="@isTarget(dialSheet.getFollowUpsStatistic)">
+                @tableRow(dialSheet.getFollowUpsStatistic)
+            <td class="center-align">
+                <a class="btn-flat waves-effect" onclick="showFollowUpsHelpDialog()">
+                    <i class="material-icons indigo-text">help</i>
+                </a>
+            </td>
+            </tr>
+            <tr class="@isTarget(dialSheet.getObjectionsStatistic)">
+                @tableRow(dialSheet.getObjectionsStatistic)
+            <td class="center-align">
+                <a class="btn-flat waves-effect" onclick="showObjectionsReceivedHelpDialog()">
+                    <i class="material-icons indigo-text">help</i>
+                </a>
+            </td>
+            </tr>
+            <tr class="@isTarget(dialSheet.getNewAppointmentsScheduledStatistic)">
+                @tableRow(dialSheet.getNewAppointmentsScheduledStatistic)
+            <td class="center-align">
+                <a class="btn-flat waves-effect" onclick="showNewAppointmentsScheduledHelpDialog()">
+                    <i class="material-icons indigo-text">help</i>
+                </a>
+            </td>
+            </tr>
+            <tr class="@isTarget(dialSheet.getNewAppointmentsKeptStatistic)">
+                @tableRow(dialSheet.getNewAppointmentsKeptStatistic)
+            <td class="center-align">
+                <a class="btn-flat waves-effect" onclick="showNewAppointmentsKeptHelpDialog()">
+                    <i class="material-icons indigo-text">help</i>
+                </a>
+            </td>
+            </tr>
+            <tr class="@isTarget(dialSheet.getClosesStatistic)">
+            @tableRow(dialSheet.getClosesStatistic)
+    <td class="center-align">
+        <a class="btn-flat waves-effect" onclick="showClosesHelpDialog()">
+            <i class="material-icons indigo-text">help</i>
+        </a>
+    </td>
+</tr>
+</tbody>
+</table>

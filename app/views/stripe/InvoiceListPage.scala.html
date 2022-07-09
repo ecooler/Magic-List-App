@@ -1,0 +1,121 @@
+@import java.util
+@import components._
+@import com.stripe.model.Invoice
+@import utilities.PriceUtility
+@import utilities.DateUtility
+@(invoiceList: util.List[Invoice])
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="row">
+
+                <div class="col l10 offset-l1 s12">
+                    <div class="col s12">
+
+                        <div class="card z-depth-3">
+
+                            <div class="card-content">
+
+                            @if(!invoiceList.isEmpty) {
+
+                                <span class="card-title grey-text text-darken-4">
+                                    Your Invoices
+                                </span>
+
+                                <div class="row"></div>
+
+                                <table class="responsive-table bordered highlight">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Period
+                                                <i class="material-icons left">arrow_drop_down</i>
+                                            </th>
+                                            <th>
+                                                Description
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    @for(invoice <- invoiceList) {
+                                        <tr>
+                                            <td>
+                                                <a href="@routes.PlanController.getInvoiceById(invoice.getId).url">
+                                                    <span>@DateUtility.getLongDateForUi(invoice.getPeriodStart * 1000)</span>
+                                                    <span>-</span>
+                                                    <span>@DateUtility.getLongDateForUi(invoice.getPeriodEnd * 1000)</span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                Monthly Subscription to Magic List
+                                            </td>
+                                            <td>
+                                            @PriceUtility.getPriceFromStripe(invoice.getTotal)
+                                            </td>
+                                            <td>
+                                            @if(invoice.getPaid) {
+                                                <span>
+                                                    <i class="material-icons left circle green white-text">
+                                                        check
+                                                    </i>
+                                                </span>
+                                            } else {
+                                                <span>
+                                                    Not Paid
+                                                    <i class="material-icons left circle red white-text">
+                                                        cancel
+                                                    </i>
+                                                </span>
+                                            }
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            } else {
+                                <span class="card-title grey-text text-darken-4">
+                                    You have no invoices to show yet
+                                </span>
+
+                                <div class="row"></div>
+
+                                <h6 class="grey-text">
+                                    As the upcoming billing period approaches, you will receive your first invoice.
+                                </h6>
+                            }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            @AllDialogs()
+
+        </main>
+
+        @BaseFooter()
+
+    </body>
+
+</html>

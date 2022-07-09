@@ -1,0 +1,25 @@
+@import model.outlook.CalendarTemplate
+@()
+<div id="preview_calendar_template_dialog" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h4>Preview this Calendar Template?</h4>
+        <p>
+            Would you like to preview this template by exporting it? Doing so will send you to the calendar event
+            preview page to create the calendar event and only invite you (the event's organizer) to the event.
+            Meaning, any default emails you may have set up for the template will <b>not</b>
+            be used. The following information will be automatically used for the template's variables:
+        </p>
+        <ul>
+            <li>@CalendarTemplate.VARIABLE_PROSPECT_NAME - John Smith</li>
+            <li>@CalendarTemplate.VARIABLE_PROSPECT_EMAIL - john.smith@@xyz.com</li>
+            <li>@CalendarTemplate.VARIABLE_PROSPECT_PHONE - (123) 123-1234</li>
+            <li>@CalendarTemplate.VARIABLE_PROSPECT_COMPANY - XYZ Company</li>
+            <li>@CalendarTemplate.VARIABLE_PROSPECT_JOB_TITLE - Manager</li>
+            <li>@CalendarTemplate.VARIABLE_APPOINTMENT_DATE - 1 hour from the <i>current</i> time</li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-action btn-flat waves-effect close">Close</a>
+        <a id="preview_calendar_template_dialog_submit" class="modal-action btn-flat waves-effect submit">Preview</a>
+    </div>
+</div>

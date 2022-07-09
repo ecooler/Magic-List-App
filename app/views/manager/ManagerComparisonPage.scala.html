@@ -1,0 +1,111 @@
+@import components._
+
+@(employeeList: java.util.List[model.manager.Employee])
+<html>
+    <head>
+
+        @BaseHead()
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("/stylesheets/manager-comparison.css")" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+    <script src="@routes.Assets.versioned("javascripts/masonry.pkgd.min.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/material-box-overwrite.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/graph-manager.js")"></script>
+
+    </head>
+    <body>
+
+        @BaseBodyHeader("Team Performance")
+
+        <main>
+
+            <div class="row">
+
+                <div id="sidebar" class="col l3 m4 s6 no-padding no-transition">
+                    <div class="z-depth-3">
+                        <div id="sidebar-inner">
+                            <a id="sidebar-title" class="waves-effect">
+                                <span>Team Members</span>
+                                <i id="expansion-icon" class="material-icons right">expand_less</i>
+                            </a>
+                            <div class="divider"></div>
+                            <div id="employees-wrapper" class="regular-padding">
+                                <div id="employees">
+                                @for(employee <- employeeList) {
+                                    <div class="employee" id="e@employee.getEmployeeId" data-name="@employee.getName">
+                                        <div class="color-block" id="c@employee.getEmployeeId"></div>
+                                        @employee.getName
+                                    </div>
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="date-chooser-wrapper" class="col l9 offset-l3 m8 offset-m4 s6 offset-s6 no-transition">
+                @components.GraphDatePicker()
+                </div>
+
+                <div id="stats" class="grid col l9 offset-l3 m8 offset-m4 s6 offset-s6">
+                </div>
+
+                <div id="graph-progress" class="manager-loading-bar col l9 offset-l3 m8 offset-m4 s6 offset-s6 no-padding">
+                    <div class="preloader-wrapper big active">
+                        <div class="spinner-layer spinner-blue-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div><div class="gap-patch">
+                            <div class="circle"></div>
+                        </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        @AllDialogs()
+
+        <script>
+
+                graphUrl = '@routes.ManagerComparisonController.getCompareEmployeesOverRange("").url';
+
+                var windowHeight = $(window).height();
+                var windowWidth = $(window).width();
+
+                $(window).resize(function(){
+                    windowHeight = $(window).height();
+                    windowWidth = $(window).width();
+
+                    PageAdjustments.onLoad();
+                });
+
+                const PageAdjustments = {
+                    onLoad: function () {
+                        const $sidebar = $('#sidebar');
+                        const $stats = $('#stats');
+                        const $graphProgress = $('#graph-progress');
+                        const $dateChooserWrapper = $('#date-chooser-wrapper');
+
+                        $stats.css("margin-left", $sidebar.css("width"));
+                        $graphProgress.css("margin-left", $sidebar.css("width"));
+                        $dateChooserWrapper.css("margin-left", $sidebar.css("width"));
+
+                        $stats.css("width", windowWidth - $sidebar.width() - 16);
+                        $graphProgress.css("width", windowWidth - $sidebar.width() - 16);
+                        $dateChooserWrapper.css("width", windowWidth - $sidebar.width() - 16);
+                    }
+                };
+
+                PageAdjustments.onLoad();
+
+
+        </script>
+
+    </body>
+</html>

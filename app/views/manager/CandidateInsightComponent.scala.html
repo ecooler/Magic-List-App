@@ -1,0 +1,226 @@
+@()
+<div class="col s4 center-align offset-s2">
+
+    <div id="demo2" class="stat-wrapper">
+        <div class="small-stat">
+            <div class="stat-title">
+                Average Time to Pass Each Exam
+                <br>
+                (In Days)
+            </div>
+            <div class="row"></div>
+            <div class="stat-graph" onClick="expand('demo2');">
+                <canvas id="myChart2" width="330px" height="280px"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="col s4 center-align">
+    <div id="demo4" class="stat-wrapper">
+        <div class="small-stat">
+            <div class="stat-title">
+                Top Recruiting Sources
+            </div>
+                <!--<div class="graph-trigger"></div>-->
+            <div class="stat-graph" onClick="expand('demo4');">
+                <canvas id="myChart4" width="330px" height="280px"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="big-stat">
+        <div class="close" onClick="contract('demo4');">x</div>
+        <div class="big-stat-title">Top Recruiting Sources</div>
+        <div id="chart4">
+            <svg></svg>
+        </div>
+    </div>
+
+</div>
+
+<script>
+        /*var ctx2 = document.getElementById("myChart2");
+         var myChart2 = new Chart(ctx2, {
+         type: 'radar',
+         data: {
+         labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+         datasets: [{
+         label: '# of Votes',
+         data: [12, 19, 3, 5, 2, 3],
+         backgroundColor: [
+         'rgba(255, 99, 132, 0.6)',
+         'rgba(54, 162, 235, 0.6)',
+         'rgba(255, 206, 86, 0.6)',
+         'rgba(75, 192, 192, 0.6)',
+         'rgba(153, 102, 255, 0.6)',
+         'rgba(255, 159, 64, 0.6)'
+         ],
+         borderColor: [
+         'rgba(255,99,132,1)',
+         'rgba(54, 162, 235, 1)',
+         'rgba(255, 206, 86, 1)',
+         'rgba(75, 192, 192, 1)',
+         'rgba(153, 102, 255, 1)',
+         'rgba(255, 159, 64, 1)'
+         ],
+         borderWidth: 1
+         }]
+         },
+         options: {
+         responsive: true,
+         scales: {
+         yAxes: [{
+         ticks: {
+         beginAtZero:true
+         }
+         }]
+         }
+         }
+         });*/
+        var ctx2 = document.getElementById("myChart2");
+        var myChart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ["Series 7", "Series 66", "PEP", "Life & Health"],
+                datasets: [{
+                    label: 'Series 7',
+                    data: ["42", "0", "0", "0"],
+                    backgroundColor: [
+                        'rgba(31, 119, 180, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(31, 119, 180, 1)'
+                    ],
+                    borderWidth: 1
+                },
+                    {
+                        label: 'Series 66',
+                        data: ["0", "48", "0", "0"],
+                        backgroundColor: [
+                            'rgba(255, 127, 14, 0.6)',
+                            'rgba(255, 127, 14, 0.6)',
+                            'rgba(255, 127, 14, 0.6)',
+                            'rgba(255, 127, 14, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 127, 14, 1)',
+                            'rgba(255, 127, 14, 1)',
+                            'rgba(255, 127, 14, 1)',
+                            'rgba(255, 127, 14, 1)'
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'PEP',
+                        data: ["0", "0", "37", "0"],
+                        backgroundColor: [
+                            'rgba(44, 160, 44, 0.6)',
+                            'rgba(44, 160, 44, 0.6)',
+                            'rgba(44, 160, 44, 0.6)',
+                            'rgba(44, 160, 44, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(44, 160, 44, 1)',
+                            'rgba(44, 160, 44, 1)',
+                            'rgba(44, 160, 44, 1)',
+                            'rgba(44, 160, 44, 1)'
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Life & Health',
+                        data: ["0", "0", "0", "34"],
+                        backgroundColor: [
+                            'rgba(176, 160, 176, 0.6)',
+                            'rgba(176, 160, 176, 0.6)',
+                            'rgba(176, 160, 176, 0.6)',
+                            'rgba(176, 160, 176, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(176, 160, 176, 1)',
+                            'rgba(176, 160, 176, 1)',
+                            'rgba(176, 160, 176, 1)',
+                            'rgba(176, 160, 176, 1)'
+                        ],
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                legend: {
+                    labels: {
+                        boxWidth: 16
+                    }
+                },
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            beginAtZero: true
+                        },
+                    }]
+                }
+            }
+        });
+        var ctx4 = document.getElementById("myChart4");
+        var myChart4 = new Chart(ctx4, {
+            type: 'doughnut',
+            data: {
+                labels: ["Penn State", "Brown University", "NYU", "Colombia University"],
+                datasets: [{
+                    label: 'Top Recruiting Places',
+                    data: [2, 2, 1, 1],
+                    backgroundColor: [
+                        'rgba(31, 119, 180, 0.6)',
+                        'rgba(255, 127, 14, 0.6)',
+                        'rgba(44, 160, 44, 0.6)',
+                        'rgba(176, 160, 176, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(31, 119, 180, 1)',
+                        'rgba(255, 127, 14, 1)',
+                        'rgba(44, 160, 44, 1)',
+                        'rgba(176, 160, 176, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    labels: {
+                        boxWidth: 16
+                    }
+                },
+                responsive: true
+            }
+        });
+
+        $('.color-block').click(function () {
+            var id_raw = $(this).attr("id");
+            $('#' + $(this).attr("id")).toggleClass('removed');
+            var id = (id_raw.substring(1, id_raw.length)) - 1;
+            //myChart.getDatasetMeta(id);
+            //myChart4.getDatasetMeta(id);
+            var meta = myChart.getDatasetMeta(id);
+            meta.hidden = meta.hidden === null ? !myChart.data.datasets[id].hidden : null;
+            myChart.update()
+
+            var meta = myChart2.getDatasetMeta(id);
+            meta.hidden = meta.hidden === null ? !myChart2.data.datasets[id].hidden : null;
+            myChart2.update()
+
+            var i, ilen, meta;
+            for (i = 0, ilen = (myChart4.data.datasets || []).length; i < ilen; ++i) {
+                meta = myChart4.getDatasetMeta(i);
+                // toggle visibility of index if exists
+                if (meta.data[id]) {
+                    meta.data[id].hidden = !meta.data[id].hidden;
+                }
+            }
+            myChart4.update();
+
+        });
+
+</script>

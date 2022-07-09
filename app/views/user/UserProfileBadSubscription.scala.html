@@ -1,0 +1,130 @@
+@import com.stripe.model.Charge
+
+@()
+
+@badStatusInsight() = {
+    <br>
+    <br>
+    Potential Remedies:
+    <br>
+    <a class="white-text waves-effect top-margin-small bordered regular-padding-small waves-light"
+    href="@routes.PlanController.getInvoices()">
+        View your invoices and retry payment
+        <i class="material-icons right">chevron_right</i>
+    </a>
+    <br>
+    <a class="white-text waves-effect regular-padding-small top-margin-small bordered waves-light"
+    href="@routes.PlanController.getCards()">
+        Change your credit card information
+        <i class="material-icons right">chevron_right</i>
+    </a>
+}
+
+@defining(Http.Context.current().args.get(BaseController.KEY_ERROR)) { error: Any =>
+    <div class="col l9 m12 s12">
+
+        <div class="card-panel z-depth-2 red">
+
+            @error match {
+                case charge: Charge => {
+                    @if(!charge.getPaid) {
+                        <h4 class="white-text">There was an error paying your most recent invoice:</h4>
+                        <span class="white-text">@charge.getOutcome.getSellerMessage</span>
+                        <div class="row"></div>
+                        <span class="white-text">
+                            <br>
+                            <span class="white-text">
+                                You may change your credit card information &nbsp;
+                                <br>
+                                <br>
+                                <span>
+                                    Potential Remedies:
+                                    <br>
+                                    <a class="white-text waves-effect top-margin-small bordered regular-padding-small waves-light"
+                                    href="@routes.PlanController.getCards.url">
+                                        Update your credit card information
+                                        <i class="material-icons right">chevron_right</i>
+                                    </a>
+                                    <br>
+                                    <a class="waves-effect regular-padding-small" href="@routes.PlanController.getMostRecentInvoice.url">
+                                        Retry paying your invoice
+                                        <i class="material-icons right">chevron_right</i>
+                                    </a>
+                                </span>
+                            </span>
+                            <br>
+                        </span>
+                    } else {
+                        <h5 class="white-text center-align">Message:</h5>
+                        @if(charge.getOutcome != null && charge.getOutcome.getSellerMessage != null) {
+                            <span class="white-text">@charge.getOutcome.getSellerMessage</span>
+                            @badStatusInsight()
+                        } else {
+                            <span class="white-text">
+                                An unknown error occurred. Please check your credit card information
+                                and that your provider accepted the charge to Caplan Innovations
+                                @badStatusInsight()
+                            </span>
+                        }
+                    }
+                }
+                case status: String => {
+                    <h4 class="white-text center-align">Message:</h4>
+                    <div class="row"></div>
+
+                    @if(status.equals(clients.StripeClient.STATUS_CANCELED)) {
+                        <span class="white-text">
+                            Your subscription has been cancelled. You must have an active
+                            subscription to access this service.
+                            <br>
+                            <br>
+                            <span>
+                                Potential Remedies:
+                                <br>
+                                <a class="white-text waves-effect top-margin-small bordered regular-padding-small waves-light"
+                                href="@routes.PlanController.getSubscription()">
+                                    Re-enable your subscription
+                                    <i class="material-icons right">chevron_right</i>
+                                </a>
+                            </span>
+                        </span>
+                    }
+                    @if(status.equals(clients.StripeClient.STATUS_PAST_DUE)) {
+                        <span class="white-text">
+                            Your invoice is past due. You must pay your invoice to access this
+                            service.
+                            @badStatusInsight
+                        </span>
+                    }
+                    @if(status.equals(clients.StripeClient.STATUS_UNPAID)) {
+                        <span class="white-text">
+                            Your invoice is unpaid. You must pay your unpaid invoice to access this
+                            service.
+                            @badStatusInsight
+                        </span>
+                    }
+                }
+                case _ => {
+                    <h4 class="white-text center-align">Message:</h4>
+
+                    <span class="white-text">
+                    @if(error != null) {
+                        <span class="white-text">
+                        @error.toString
+                        </span>
+                    } else {
+                        <span class="white-text">
+                            An unknown subscription-related error occurred. Please check your
+                            credit card information and that your provider accepted the charge to
+                            Caplan Innovations.
+                            @badStatusInsight
+                        </span>
+                    }
+                    </span>
+                }
+            }
+
+        </div>
+
+    </div>
+}

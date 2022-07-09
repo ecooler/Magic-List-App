@@ -1,0 +1,68 @@
+@(isActiveSubscription: Boolean, agenda: model.profile.HomePageAgenda)
+
+@if(isActiveSubscription && agenda.getAlert.getTotalAlertsCount > 0) {
+    <div class="card">
+
+        <div class="card-content grey darken-4 top-padding-small bottom-padding-small">
+            <span class="card-title white-text no-margin">
+                Alerts - <span>@agenda.getAlert.getTotalAlertsCount</span>
+                <i class="material-icons yellow-text left">warning</i>
+            </span>
+        </div>
+
+        <div class="card-content">
+
+            @if(agenda.getAlert.getRecentUnfulfilledAppointmentsCount > 0) {
+                <p>
+                    Remember to update the <i>outcomes</i> of your meetings. You have
+                    <b>@agenda.getAlert.getRecentUnfulfilledAppointmentsCount</b> recent meetings
+                    with no <i>outcomes</i> set. Set them now to dismiss this alert.
+                </p>
+                <div class="row"></div>
+                <div class="divider"></div>
+                <div class="row"></div>
+            }
+
+            @if(agenda.getAlert.getUnarchivedAndCompleteNotificationsCount > 0) {
+                <p>
+                    Remember to press the <i>done</i>
+                    button after pushing or setting outcomes for your notifications. You have
+                    <b>@agenda.getAlert.getUnarchivedAndCompleteNotificationsCount</b>
+                    current notifications that
+                    should be marked as <i>done</i>. Press the done button for each notification,
+                    or press the <i>check</i> button (on the bottom right of the screen) to mark
+                    all of them as done and dismiss this alert.
+                    <br>
+                    <br>
+                    Note, if you would like to automatically mark notifications as <i>done</i>
+                    after pushing them, you may enable that in your settings
+                    <a href='@routes.SettingsController.getSettings#settings-notifications-automatically-press-done'>
+                        here
+                    </a>.
+                </p>
+                <div class="row"></div>
+                <div class="divider"></div>
+                <div class="row"></div>
+            }
+
+            @if(agenda.getAlert.getPastDialSheetsWithoutDialsCount > 0) {
+                <p>
+                    Remember to update the number of dials you make. You have
+                    <b>@agenda.getAlert.getPastDialSheetsWithoutDialsCount</b>
+                    activity sheets that do not
+                    have dials set. Set the correct number of dials made for all of the following
+                    activity sheets to dismiss this alert.
+                </p>
+                <div class="row"></div>
+                <div class="divider"></div>
+                <div class="row"></div>
+            }
+
+            <a href="@routes.AlertsController.getAlertsPage()" class="btn-flat indigo-text waves-effect">
+                View Alerts
+            </a>
+
+        </div>
+
+    </div>
+}

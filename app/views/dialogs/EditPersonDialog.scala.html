@@ -1,0 +1,45 @@
+@()
+<div id="edit_person_dialog" class="modal modal-fixed-footer">
+    <div class="modal-content">
+
+        <h4 id="edit_person_dialog_title">Edit Contact</h4>
+
+        <div class="row"></div>
+
+        <ul>
+            <li id="edit_person_dialog_error" class="error"></li>
+        </ul>
+
+        <p id="list-checkbox-wrapper">
+            <input type="checkbox" id="list-checkbox" checked>
+            <label for="list-checkbox">Add this contact to this list <span id="list-checkbox-list-name"></span></label>
+        </p>
+
+        <div class="input-field">
+            <input type="text" id="edit_name_field">
+            <label for="edit_name_field">Name</label>
+        </div>
+
+        <div class="input-field">
+            <input type="text" id="edit_email_field">
+            <label for="edit_email_field">Email</label>
+        </div>
+        <div class="input-field">
+            <input type="text" id="edit_phone_field">
+            <label for="edit_phone_field">Phone</label>
+        </div>
+        <div class="input-field">
+            <input type="text" id="edit_company_name_field">
+            <label for="edit_company_name_field">Company Name</label>
+        </div>
+        <div class="input-field">
+            <input type="text" id="edit_job_title_field">
+            <label for="edit_job_title_field">Job Title</label>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <a class="modal-action waves-effect btn-flat close">Cancel</a>
+        <a id="edit_person_dialog_submit" class="modal-action waves-effect btn-flat submit">Save</a>
+    </div>
+</div>

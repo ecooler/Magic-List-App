@@ -1,0 +1,206 @@
+@import model._
+@import views.html.components._
+@import utilities.DateUtility
+@import model.serialization.MagicListObject.KEY_DATE
+@(dialSheetMap: java.util.Map[Integer, java.util.List[dialsheet.DialSheet]], currentMonth: Date, activitySheetMonthsList: java.util.List[model.dialsheet.DialSheetDates])
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+
+    <body>
+
+        @BaseBodyHeader("Past Activity Sheets")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet()
+
+            <div class="row">
+
+                <div class="col s12 m10 offset-m1">
+
+                    <div class="card">
+
+                        <div class="card-content">
+
+                            <span class="card-title grey-text text-darken-4 hide-on-small-only">
+
+                                Activity Sheets for <span>@DateUtility.getMonthAndYearFromDateForUi(currentMonth)</span>
+
+                                <a href="@routes.DialSheetController.getMonthlyDialSheetDetails?@KEY_DATE=@DateUtility.getDateForSql(currentMonth.getTime)"
+                                class="btn waves-effect waves-light right-margin right hide-on-med-and-down">
+                                    <i class="material-icons left">details</i>
+                                    <span>View @DateUtility.getMonthFromDateForUi(currentMonth)'s Activity Sheet</span>
+                                </a>
+
+                            </span>
+
+                            <span class="card-title grey-text text-darken-4 hide-on-med-and-up center-align">
+                                Activity Sheets for <span>@DateUtility.getMonthFromDateForUi(currentMonth)</span>
+                            </span>
+
+                            <div class="row hide-on-large-only"></div>
+
+                            <div class="center-align hide-on-large-only top-margin">
+
+                                <a href="@routes.DialSheetController.getMonthlyDialSheetDetails?date=@DateUtility.getDateForSql(currentMonth.getTime)"
+                                class="btn waves-effect waves-light">
+                                    <i class="material-icons left">details</i>
+                                    <span>View @DateUtility.getMonthFromDateForUi(currentMonth)'s Activity Sheet</span>
+                                </a>
+
+                            </div>
+
+                            <div class="row"></div>
+
+                            <div class="row">
+
+                                <div id="activity-sheet-calendar" class="z-depth-1">
+
+                                    <div>
+
+                                        <ul id="activity-sheet-days-week">
+                                            <li>Mo</li>
+                                            <li>Tu</li>
+                                            <li>We</li>
+                                            <li>Th</li>
+                                            <li>Fr</li>
+                                            <li>Sa</li>
+                                            <li>Su</li>
+                                        </ul>
+
+                                        <ul id="activity-sheet-days-month">
+                                            @if(DateUtility.getDayOfWeek(currentMonth) == 1) {
+                                                @for(i <- 0 until 6) {
+                                                    <li><div></div></li>
+                                                }
+                                            } else {
+                                                @for(i <- 0 until DateUtility.getDayOfWeek(currentMonth) - 2) {
+                                                    <li><div></div></li>
+                                                }
+                                            }
+
+                                            @weeklySheet(i: Int) = {
+                                            @if((DateUtility.getDayOfWeek(currentMonth) + i) % 7 == 3) {
+                                                <a class="waves-effect waves-green"
+                                                href="@routes.DialSheetController.getWeeklyDialSheetDetails()?date=@DateUtility.getWeekFromDate(currentMonth, i)">
+                                                    Weekly Sheet
+                                                </a>
+                                            }
+                                            }
+
+                                            @for(i <- 1 to DateUtility.getTotalDaysInMonth(currentMonth)) {
+                                                <li>
+                                                @if(dialSheetMap.contains(i)) {
+                                                    @defining(dialSheetMap.get(i).get(0)) { sheet =>
+                                                        <div>
+                                                            <a class="waves-effect waves-green side-padding-small" href="@routes.DialSheetController.getDialSheetDetails(sheet.getId)">@i</a>
+                                                            <div class="left-padding-extra-small">
+                                                                <p>Dials: @sheet.getDialCountForUi</p>
+                                                                <p>Contacts: @sheet.getContactsCount</p>
+                                                                <p>Appts: @sheet.getAppointmentsCount</p>
+                                                                @weeklySheet(i)
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                } else {
+                                                    <div>
+                                                        <p class="side-padding-small">@i</p>
+                                                        <p>&nbsp;</p>
+                                                        <p>&nbsp;</p>
+                                                        <p>&nbsp;</p>
+                                                        @weeklySheet(i)
+                                                    </div>
+                                                }
+                                                </li>
+                                            }
+
+                                            @if(DateUtility.getDayOfWeek(currentMonth) == 1) {
+                                                @for(i <- 0 until 7 - (6 + DateUtility.getTotalDaysInMonth(currentMonth)) % 7) {
+                                                    <li><div></div></li>
+                                                }
+                                            } else {
+                                                @for(i <- 0 until 7 - (DateUtility.getDayOfWeek(currentMonth) + DateUtility.getTotalDaysInMonth(currentMonth) - 2) % 7) {
+                                                    <li><div></div></li>
+                                                }
+                                            }
+
+                                        </ul>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col s12 m10 offset-m1 l4 offset-l4">
+
+                    <div class="card">
+
+                        <div class="card-content">
+
+                            <form id="past-dial-sheet-month-form" method="GET" action="@routes.DialSheetController.getPastDialSheets" class="center-align">
+
+                                <div class="input-field inline">
+
+                                    <select id="past-dial-sheet-months" name="date">
+
+                                        @selected(date: Date) = {
+                                        @if(DateUtility.isSameMonth(date.getTime, currentMonth.getTime)) {
+                                            selected
+                                        }
+                                        }
+
+                                        @for(dialSheetDates: model.dialsheet.DialSheetDates <- activitySheetMonthsList) {
+                                            <optgroup label="@dialSheetDates.getYear">
+                                            @for(month: Date <- dialSheetDates.getMonths) {
+                                                <option @selected(month) value="@DateUtility.getDateForSql(month.getTime)">@DateUtility.getMonthFromDateForUi(month)</option>
+                                            }
+                                            </optgroup>
+                                        }
+
+                                    </select>
+
+                                    <label for="past-dial-sheet-months">Month</label>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <script>
+
+                $(document).ready(function () {
+                    $('select').material_select();
+                });
+
+                $('#past-dial-sheet-months').change(function () {
+                    $('#past-dial-sheet-month-form').submit();
+                });
+
+        </script>
+
+    </body>
+
+</html>

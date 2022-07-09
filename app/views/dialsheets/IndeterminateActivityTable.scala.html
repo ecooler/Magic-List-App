@@ -1,0 +1,22 @@
+@import model.dialsheet.HomePageDialSheet
+@(dialSheet: HomePageDialSheet)
+<table class="bordered">
+    <thead>
+        <tr>
+            @for(contactType: model.dialsheet.DialSheetContactType <- dialSheet.getContactTypeList) {
+                @if(contactType.isIndeterminate) {
+                    <th>@contactType.getStateDescription</th>
+                }
+            }
+        </tr>
+    </thead>
+    <tbody class="indeterminate-contact-status">
+        <tr>
+        @for(contactType: model.dialsheet.DialSheetContactType <- dialSheet.getContactTypeList) {
+            @if(contactType.isIndeterminate) {
+                <td>@contactType.getStateCount</td>
+            }
+        }
+        </tr>
+    </tbody>
+</table>

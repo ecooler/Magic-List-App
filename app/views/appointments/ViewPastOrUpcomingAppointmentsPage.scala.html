@@ -1,0 +1,144 @@
+@import model.prospect.Appointment
+@import components._
+@(appointmentList: model.PagedList[Appointment], isAscending: Boolean, sortBy: Appointment.Sorter, isUpcoming: Boolean)
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+    <main>
+
+        @dialsheets.AllPagesDialSheet(showSpaceAfter = false)
+
+    <div class="row indigo bottom_shadow left-padding right-padding">
+        <ul class="tabs tabs-transparent">
+        @if(isUpcoming) {
+            <li class="tab">
+                <a class="active">Upcoming Appointments</a>
+            </li>
+            <li class="tab">
+                <a target="_self" href="@routes.AppointmentsController.getPastUserAppointments.url">
+                    Past Appointments
+                </a>
+            </li>
+        } else {
+            <li class="tab">
+                <a target="_self" href="@routes.AppointmentsController.getUpcomingUserAppointments.url">
+                    Upcoming Appointments
+                </a>
+            </li>
+            <li class="tab">
+                <a class="active">Past Appointments</a>
+            </li>
+        }
+        </ul>
+    </div>
+
+    <div class="container row">
+
+        <div class="row"></div>
+
+        <div class="row z-depth-2">
+
+            <div class="col s12 white-background">
+
+                <div class="row"></div>
+
+                <div>
+
+                    <h6 class="table-title inline">
+                    @appointmentList.getHtmlRangeForUi
+                    </h6>
+
+                    <div class="inline right right-margin">
+
+                        @if(isUpcoming) {
+                            <form action="@routes.AppointmentsController.getUpcomingUserAppointments.url">
+                            } else {
+                            <form action="@routes.AppointmentsController.getPastUserAppointments.url">
+                            }
+
+                        @selected(currentSortBy: Appointment.Sorter, selectedSortBy: Appointment.Sorter) = {
+                        @if(currentSortBy == selectedSortBy) {
+                            selected
+                        }
+                        }
+
+                    <div class="input-field inline">
+                        <select name="sort_by" id="sort-by-select" onchange="$('form').submit()">
+                        @for(sorter <- Appointment.Sorter.values) {
+                            <option value="@sorter.getRawText" @selected(sorter, sortBy)>@sorter.toUiString</option>
+                        }
+                        </select>
+                        <label for="sort-by-select">Sort By</label>
+                    </div>
+
+                    <div class="left-margin input-field inline">
+                        <select name="ascending" id="ascending-select" onchange="$('form').submit()">
+                        @if(isAscending) {
+                            <option selected value="true">Ascending</option>
+                            <option value="false">Descending</option>
+                        } else {
+                            <option value="true">Ascending</option>
+                            <option selected value="false">Descending</option>
+                        }
+                        </select>
+                        <label for="ascending-select">Order</label>
+                    </div>
+
+                        @if(isUpcoming) {
+                        </form>
+                        } else {
+                        </form>
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="col s12">
+                    <ul class="collection allow-overflow">
+                        @if(appointmentList.isEmpty) {
+                            <li class="collection-item">
+                                <h5 class="no-results-found">
+                                    You have no appointments to show. Get started and schedule some appointments!
+                                </h5>
+                            </li>
+                        }
+                        @for(appointment <- appointmentList) {
+                            @appointments.AppointmentItem(appointment, isUpcoming)
+                        }
+                    </ul>
+                </div>
+
+            </div>
+
+            @components.TablePagination(appointmentList.getCurrentPage, appointmentList.getMaxPage)
+
+        </div>
+
+    </div>
+
+    </main>
+
+        @BaseFooter()
+
+        @AllDialogs()
+
+    <script>
+                $('select').material_select();
+
+                @defining(Http.Context.current().args.get(controllers.BaseController.KEY_ERROR)) { error: Any =>
+                @if(error != null) {
+                showToast('@error');
+                }
+                }
+
+        </script>
+
+    </body>
+
+</html>

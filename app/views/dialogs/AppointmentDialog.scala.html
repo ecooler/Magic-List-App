@@ -1,0 +1,72 @@
+@()
+<div id="appointment_create_edit_dialog" class="modal modal-fixed-footer">
+
+    <div class="modal-content">
+
+        <h4 id="appointment_dialog_title">Create Appointment</h4>
+        <span class="error"></span>
+
+        <p>
+            <input name="appointment_type" type="radio" id="appointment_dialog_conference_call" checked />
+            <label for="appointment_dialog_conference_call">Conference Call</label>
+        </p>
+        <p>
+            <input name="appointment_type" type="radio" id="appointment_dialog_in_person" />
+            <label for="appointment_dialog_in_person">In person</label>
+        </p>
+
+        <label for="appointment_dialog_date_picker">Date</label>
+        <input id="appointment_dialog_date_picker" type="date" class="datepicker">
+
+        <label for="appointment_dialog_time_picker">Time</label>
+        <input id="appointment_dialog_time_picker" type="text">
+
+        <div class="input-field">
+            <select id="appointment_dialog_appointment_type"></select>
+            <label for="appointment_dialog_appointment_type">Appointment Type</label>
+        </div>
+
+        <div class="input-field">
+            <textarea class="materialize-textarea" rows= "3" id="appointment_dialog_message_text"></textarea>
+            <label for="appointment_dialog_message_text">
+                Appointment Notes
+            </label>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <a class="modal-action btn-flat waves-effect close">Cancel</a>
+        <a id="appointment_dialog_submit" class="modal-action btn-flat waves-effect submit">Create</a>
+    </div>
+</div>
+
+<script>
+        $('#appointment_dialog_date_picker').pickadate({
+            selectMonths: true,
+            selectYears: 5,
+            autoclose: true,
+            close: 'CLOSE',
+            clear: '',
+            onSet: function (e) {
+                if (e["select"]) {
+                    setTimeout(function () {
+                        $('#appointment_dialog_date_picker').pickadate('picker').close()
+                    }, 200);
+                }
+            },
+            onStart: function () {
+                $('.picker').appendTo('body');
+            }
+        });
+
+        $('#appointment_dialog_time_picker').pickatime({
+            default: '12:00',
+            autoclose: false,
+            twelvehour: true,
+            donetext: "Submit",
+            container: 'body',
+            afterShow: function () {
+                $('.clockpicker').appendTo('body');
+            }
+        });
+</script>

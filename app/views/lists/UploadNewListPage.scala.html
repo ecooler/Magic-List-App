@@ -1,0 +1,131 @@
+@import model.lists.SavedList
+@import views.html.components._
+@import views.html.dialogs._
+@import play.mvc.Http.Context
+@(errorText: String)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Upload a New List")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet()
+
+            <div class="container row">
+
+                <div class="z-depth-2 centered top-margin white-background regular-padding">
+
+                    <div class="col s12">
+
+                        <a id="help" class="right btn-flat waves-effect top-margin right-margin left-margin">
+                            Help
+                        </a>
+
+                        <h4 class="inline regular-padding">Select an Excel File to Preview and Upload</h4>
+
+                    </div>
+
+                    <span id="error-text" class="left-margin red-text">@errorText</span>
+
+                    <form method="POST" action="@routes.ListsController.previewNewList.url" id="file-form"
+                    class="left-margin right-margin centered-content" enctype="multipart/form-data">
+
+                        @helper.CSRF.formField
+
+                        <div class="col l6 m9 s12">
+
+                            <div class="file-field input-field">
+
+                                <div class="btn">
+                                    <span>Excel File</span>
+                                    <input name="file" type="file" accept=".xl,.xlsx,.xlsm,.xlsb,.xlam,.xltx,.xltx,.xltm,.xls,.xla,.xlt,.xlm,.xlw">
+                                </div>
+
+                                <div class="file-path-wrapper">
+                                    <input id="file-wrapper" class="file-path validate" type="text">
+                                    <label for="file-wrapper"></label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col l6 m8 s12 left-align">
+
+                            <h5>Example Excel Files</h5>
+
+                            <a href="@routes.MainController.getSubscriptionAsset("other/List-Excel-1.xlsx")" download>
+                                Example File One
+                            </a>
+
+                        </div>
+
+                        <div class="row"></div>
+
+                        <button type="submit" class="btn waves-light waves-effect indigo centered bottom-margin">
+                            Preview
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <div class="row"></div>
+
+            </div>
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+    </body>
+
+    <script>
+
+            $(document).ready(function () {
+                var $node = $('#preview_content');
+                $node.removeClass("hidden");
+                $node.hide();
+            });
+
+            $('form').submit(function () {
+                var text = $('#file-wrapper').val();
+                if (!text || text.trim().length === 0) {
+                    $('#error-text').html("The file field is required");
+                    return false;
+                } else {
+                    $('#error-text').html("");
+                    $('#progress_dialog').modal('open');
+                    return true;
+                }
+            });
+
+            $('#help').click(function () {
+                var text = "The file must be a valid <i>excel</i> file and contain the following cells on the first row: ";
+                text += "<i>Name</i>, <i>Email</i>, <i>Phone</i>, <i>Company Name,</i> <i>Job Title</i> and " +
+                        "<i>Notes</i>. The order of these cells on the first row does not matter.<br><br>" +
+                        "The only required fields are name and one of the following: email or phone (you do <b>not</b> " +
+                        "need both). If a row in the excel file does not contain adequate information, it will be " +
+                        "skipped. If the selected excel file is not formatted properly or is invalid, the upload will fail. " +
+                        "Only the first sheet will be parsed and subsequent sheets will be ignored.<br><br>" +
+                        "The largest supported file size is 1MB. Keep in mind, you can break up a large " +
+                        "excel file into smaller files if it is too large.";
+                $('#read_only_dialog_content').html(text);
+                $('#read_only_dialog_title').html("Custom List Upload Help");
+                showReadOnlyDialog();
+            });
+
+    </script>
+
+    <script>
+
+    </script>
+
+</html>

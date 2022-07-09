@@ -1,0 +1,15 @@
+@(title: String = "Edit Notes", hintText: String = "Notes")
+<div id="edit_notes_dialog" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h4 id="edit_notes_dialog_title">@title</h4>
+        <div class="row"></div>
+        <div class="input-field">
+            <textarea class="materialize-textarea" rows= "4" id="edit_notes_dialog_text" data-counter="1000"></textarea>
+            <label id="edit_notes_dialog_hint" for="edit_notes_dialog_text">@hintText</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-action modal-close waves-effect btn-flat close">Cancel</a>
+        <a id="edit_notes_submit" class="modal-action waves-effect btn-flat submit">Save</a>
+    </div>
+</div>

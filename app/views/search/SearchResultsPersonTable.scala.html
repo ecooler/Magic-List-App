@@ -1,0 +1,167 @@
+@import model.prospect.Prospect
+@import model.prospect.ProspectState
+@import model.lists.ProspectSearch
+@import org.apache.commons.lang.StringEscapeUtils
+
+@(personList: model.PagedList[Prospect], sortByCriteria: ProspectSearch.Criteria, isAscending: Boolean, listId: String,
+        listName: String = null)
+<div class="scroll-overflow-x">
+
+    @if(!personList.isEmpty) {
+        <h6 class="table-title inline" id="total_search_results" total="@personList.getTotalNumberOfItemsForUI">
+        @personList.getHtmlRangeForUi
+        </h6>
+
+        <button class="btn-flat dropdown-button indigo-text top-margin right-margin right"
+        data-activates="create_options_menu" data-beloworigin="true" data-align="right">
+            Create...
+        </button>
+
+        <ul class="dropdown-content" id="create_options_menu">
+            <li><a onclick="setupAndShowCreateListDialog()">New List</a></li>
+            @if(listId == null) {
+                <li><a onclick="showCreatePersonDialog()">New Contact</a></li>
+            } else {
+                <li><a onclick="showCreatePersonDialog('@listId', '@StringEscapeUtils.escapeJavaScript(listName)')">New Contact</a></li>
+            }
+        </ul>
+    }
+
+@chevron(sortBy: ProspectSearch.Criteria) = {
+@if(sortBy == sortByCriteria) {
+    @if(isAscending) {
+        <i class="left material-icons">arrow_drop_up</i>
+    } else {
+        <i class="left material-icons">arrow_drop_down</i>
+    }
+}
+}
+
+<table class="bordered">
+    <thead>
+        <tr>
+            <th id="th-@ProspectSearch.Criteria.PERSON_NAME.getRawText" class="search_results-name">
+                <a class="table-header btn-flat waves-effect"
+                onclick="onSortByClick('@ProspectSearch.Criteria.PERSON_NAME.getRawText')">
+                    Name
+                    @chevron(ProspectSearch.Criteria.PERSON_NAME)
+                </a>
+            </th>
+            <th id="th-@ProspectSearch.Criteria.PHONE.getRawText" class="search_results-phone">
+                <a class="table-header btn-flat waves-effect"
+                onclick="onSortByClick('@ProspectSearch.Criteria.PHONE.getRawText')">
+                    Phone
+                    @chevron(ProspectSearch.Criteria.PHONE)
+                </a>
+            </th>
+            <th id="th-@ProspectSearch.Criteria.JOB_TITLE.getRawText" class="search_results-job_title">
+                <a class="table-header btn-flat waves-effect"
+                onclick="onSortByClick('@ProspectSearch.Criteria.JOB_TITLE.getRawText')">
+                    Job Title
+                    @chevron(ProspectSearch.Criteria.JOB_TITLE)
+                </a>
+            </th>
+            <th id="th-@ProspectSearch.Criteria.COMPANY_NAME.getRawText" class="search_results-company_name">
+                <a class="table-header btn-flat waves-effect"
+                onclick="onSortByClick('@ProspectSearch.Criteria.COMPANY_NAME.getRawText')">
+                    Company
+                    @chevron(ProspectSearch.Criteria.COMPANY_NAME)
+                </a>
+            </th>
+            <th id="th-@ProspectSearch.Criteria.EMAIL.getRawText" class="search_results-email">
+                <a class="table-header btn-flat waves-effect"
+                onclick="onSortByClick('@ProspectSearch.Criteria.EMAIL.getRawText')">
+                    Email
+                    @chevron(ProspectSearch.Criteria.EMAIL)
+                </a>
+            </th>
+            <th id="th-" class="search_results-contact_status">
+                Contact Status
+            </th>
+            <th id="th-" class="search_results-notes">
+                Options
+            </th>
+        </tr>
+    </thead>
+
+    @if(!personList.isEmpty) {
+        <tbody>
+        @for(person: Prospect <- personList) {
+            <tr id="person-row-@person.getId" class="person-row @person.getState.getStateClass"
+            data-state-class="@person.getState.getStateClass">
+
+                <td class="search_results-name">
+                    <a class="person_name_@person.getId"
+                    href="@routes.PersonController.getPersonById(person.getId)">@person.getName</a>
+                </td>
+
+                <td class="person_phone_@person.getId search_results-phone">@person.getPhoneNumber</td>
+
+                <td class="person_job_title_@person.getId search_results-job_title">@person.getJobTitle</td>
+
+                <td class="person_company_name_@person.getId search_results-company_name">@person.getCompanyName</td>
+
+                <td class="person_email_@person.getId search_results-email">@person.getEmail</td>
+
+                <td id="person_state_@person.getId" class="search_results-contact_status">
+                @components.ContactStatus(person.getId, person.getName, person.getState, true, false, ProspectState.ClickType.PERSON)
+                </td>
+
+                <td id="action_@person.getId" class="search_results-options">
+                    <button class="dropdown-button btn-flat" data-activates="drop_@person.getId"
+                    data-alignment="right" data-constrainwidth="false">
+                        <i class="material-icons">more_vert</i>
+                    </button>
+
+                    <ul class="dropdown-content" id="drop_@person.getId">
+                        <li>
+                            <span id="notes_text_@person.getId" class="hide">@person.getNotes</span>
+                            <a onclick="showEditPersonNotesDialog('@person.getId')">
+                                <i class="material-icons">speaker_notes</i>
+                                View Notes
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="showTransferUserProspectsDialog('@person.getId')">
+                                <i class="material-icons">share</i>
+                                Share with Team
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="showEditPersonDialog('@person.getId')">
+                                <i class="material-icons">mode_edit</i>
+                                Edit Contact
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="showDeletePersonDialog('@person.getId', onDeleteContactComplete)">
+                                <i class="material-icons">delete</i>
+                                Delete Contact
+                            </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        }
+        </tbody>
+    } else {
+        <tbody>
+            <tr>
+                <td class="no-results-found" colspan="7">
+                    No Results Found
+                </td>
+            </tr>
+        </tbody>
+    }
+</table>
+
+<script>
+        $('th>a>i').parent().animate({width: "+=36"}, 400);
+</script>
+
+</div>
+
+@if(!personList.isEmpty) {
+    @components.TablePagination(personList.getCurrentPage, personList.getMaxPage, 11)
+}
+

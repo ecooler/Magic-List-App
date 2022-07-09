@@ -1,0 +1,153 @@
+@import components._
+@import utilities.OAuthUtility
+@(outlookClientId: String, flashText: String, accountList: java.util.List[model.oauth.OAuthAccount])
+<!DOCTYPE HTML>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Linked Accounts")
+
+        <main>
+
+            <div class="container row">
+
+                <div class="row"></div>
+
+                <div class="col s12">
+
+                    <div class="card z-depth-2">
+
+                        <div class="card-content">
+
+                            <h4 class="card-title inline">Manage your Third Party Accounts</h4>
+
+                            <a class="btn-flat right waves-effect waves-light indigo-text dropdown-button"
+                            data-activates="oauth_providers_dropdown" data-beloworigin="true">
+                                Add Account
+                            </a>
+
+                            <ul id="oauth_providers_dropdown" class="dropdown-content">
+                                <li>
+                                    <a href="@OAuthUtility.getOutlookSignInUrl(outlookClientId)">Outlook</a>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                        <div class="card-content">
+
+                            <div class="row">
+
+                                @for(account <- accountList) {
+
+                                    <div class="col l4 m6 s10 oauth-account scale-transition scale-out"
+                                    id="account-@account.getAccountId">
+
+                                        <div class="card z-depth-2">
+
+                                            <div class="card-image top-padding-small">
+                                                <img class="outlook-logo-small" src="@routes.Assets.versioned("images/outlook.png")">
+                                            </div>
+
+                                            <div class="card-content side-padding-small top-padding-small bottom-padding-small">
+                                                <span class="card-title oauth-card-title truncate center-align">
+                                                @account.getEmail
+                                                </span>
+                                            </div>
+
+                                            <div class="card-action right-align">
+                                                <a class="btn-flat btn-icon waves-effect waves-light tooltipped"
+                                                data-tooltip="Delete" data-delay="50"
+                                                onclick="showDeleteOAuthAccountDialog('@account.getEmail', '@account.getAccountId')">
+                                                    <i class="black-text material-icons">delete</i>
+                                                </a>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                            <div class="hide-on-load-only no-accounts row">
+
+                                <div class="col s10 offset-s1">
+
+                                    <div class="center-align">
+
+                                        <i class="material-icons indigo-text promo-caption">person_add</i>
+
+                                        <p class="promo-caption grey-text">
+                                            You have no third party accounts yet
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    @if(accountList.isEmpty) {
+                        <div class="fixed-action-btn horizontal">
+                            <a class="btn-floating btn-large indigo right waves-effect waves-light pulse" id="action_button"
+                            onclick="$('.tap-target').tapTarget('open');">
+                                <i class="large material-icons">help_outline</i>
+                            </a>
+                        </div>
+
+                        <div class="tap-target" data-activates="action_button">
+                            <div class="tap-target-content white-text">
+                                <h5>Link your First Account</h5>
+                                <p>To get started, press the "add account" button above</p>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <!--suppress JSJQueryEfficiency -->
+        <script>
+
+            $(document).ready(function() {
+               $('.scale-transition.scale-out').each(function(index) {
+                   const $element = $(this);
+                   setTimeout(function() {
+                       $element.addClass("scale-in");
+                   }, (index + 1) * 175);
+               });
+            });
+
+            @if(flashText != null) {
+            $(document).ready(function() {
+                showToast("@flashText");
+            });
+            }
+
+            @if(accountList.isEmpty) {
+                $('.no-accounts').show(300);
+                $('.tap-target').tapTarget('open');
+            } else {
+                $('.no-accounts').hide();
+            }
+
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,77 @@
+@import components._
+
+@import play.mvc.Http.Context
+@import model.user.BugReport
+@()
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Found a Bug")
+
+    <main>
+
+        <div class="container row">
+
+            <div class="row"></div>
+
+            <div class="row col l8 m12 s12 offset-l2 card white black-text z-depth-2">
+
+                <div class="col s12">
+
+                    <h5 class="bottom-margin top-margin-large">
+                                Tell us as best as you can, what happened when you encountered this bug?
+                    </h5>
+
+                    @defining(Context.current().flash().get(BaseController.KEY_ERROR)) { error =>
+                        @if(error != null) {
+                            <div class="row"></div>
+                            <h6 class="red-text">@error</h6>
+                        }
+                    }
+
+                    <div class="row"></div>
+
+                    <form enctype="application/x-www-form-urlencoded" method="POST" class="top-margin"
+                    action="@routes.MiscellaneousController.createBugReport.url">
+
+                        @helper.CSRF.formField
+
+                        <div class="input-field">
+
+                            <textarea class="materialize-textarea" type="text" id="bug_text"
+                            name="@BugReport.KEY_TEXT" required></textarea>
+                            <label for="bug_text">Details of what happened...</label>
+
+                        </div>
+
+                        <div class="row"></div>
+                        <div class="row"></div>
+
+                        <div class="centered-content bottom-margin">
+
+                            <button class="btn waves-effect waves-light centered" type="submit">
+                                <i class="material-icons right white-text">send</i>
+                                Submit
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+        @BaseFooter()
+
+    </body>
+
+</html>

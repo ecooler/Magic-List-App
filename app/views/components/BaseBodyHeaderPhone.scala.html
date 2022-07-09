@@ -1,0 +1,64 @@
+@import model.account.Account
+
+@(pageTitle: String = null)
+
+<ul id="phone_messages_menu" class="dropdown-content">
+
+</ul>
+
+<ul id="phone_menu" class="dropdown-content">
+    <li>
+        <a href="@routes.NotificationsController.getNotificationsPage().url">
+            Notifications
+            @defining(session.get(NotificationsController.KEY_NUMBER_OF_NOTIFICATIONS)) { notificationCount =>
+                @if(notificationCount != null && Integer.parseInt(notificationCount) > 0) {
+                    <span class="badge red new white-text">@notificationCount</span>
+                }
+            }
+        </a>
+    </li>
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="@routes.SettingsController.getSettings.url">My Account</a>
+    </li>
+    <li>
+        <a href="@routes.OAuthController.getAccounts.url">My Linked Accounts</a>
+    </li>
+    <li>
+        <a href="@routes.UserController.logoutFromWebApp.url">Logout</a>
+    </li>
+</ul>
+
+@if(pageTitle != null && pageTitle.length <= 20) {
+    <h4 class="brand-logo hide-on-large-only hide-on-small-only left left-margin-large truncate">
+    @if(BaseController.APP_NAME.equals(pageTitle)) {
+        <a href="@routes.MainController.index">@pageTitle</a>
+    } else {
+        @pageTitle
+    }
+    </h4>
+}
+
+@defining(Account.getAccountFromSession) { account: Account =>
+    @if(Account.getAccountFromSession.getToken != null) {
+        <ul class="right main hide-on-med-and-up">
+
+            <li class="navigation-item manager_request_menu_item">
+                <a id="phone_messages_request_button" class="dropdown-button btn-flat side-padding-small"
+                data-activates="phone_messages_menu" data-constrainwidth="false" data-beloworigin="true"
+                data-gutter="-20">
+                    <i class="material-icons white-text">email</i>
+                </a>
+            </li>
+
+            <li class="navigation-item">
+                <a data-activates="phone_menu" data-beloworigin="true" data-constrainwidth="false"
+                class="dropdown-button btn-flat side-padding-small right-margin-large">
+                    <i class="material-icons white-text">more_vert</i>
+                </a>
+            </li>
+        </ul>
+    }
+}

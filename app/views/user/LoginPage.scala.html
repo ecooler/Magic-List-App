@@ -1,0 +1,114 @@
+@import components._
+@import model.account.Account
+@import model.account
+@(error: String, isEmailVerified: Boolean)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+        <main>
+
+            <div class="container row">
+
+                <div class="row"></div>
+
+                <div class="col l6 offset-l3 m8 offset-m2 s10 offset-s1 card z-depth-4">
+
+                    <div class="card-content row">
+
+                        <span class="card-title">Login</span>
+
+                        <div class="row"></div>
+
+                        <form onsubmit="return login();" action="@routes.UserController.submitLogin().url" method="POST">
+
+                            @helper.CSRF.formField
+
+                            <div class="col s12">
+                                @if(error != null) {
+                                    <span class="red-text">@error</span>
+                                }
+                                @if(isEmailVerified) {
+                                    <span class="green-text">Your email is now verified</span>
+                                }
+                            </div>
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input name="@Account.EMAIL" class="validate" type="email" id="email"
+                                    minlength="4" maxlength="255">
+                                    <label for="email">Email</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input name="@account.Account.PASSWORD" type="password" id="password" minlength="7" maxlength="255">
+                                    <label for="password">Password</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12 centered-content">
+
+                                <button type="submit" id="submitButton" class="btn indigo waves-effect waves-light">
+                                    Login
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                        <div class="row"></div>
+                        <div class="row"></div>
+
+                        <div class="col s12 help-small top-margin">
+                            <h6 class="help-small-title">
+                                <a href="@routes.UserController.createAccount().url">
+                                    Don't have an account yet? Create one</a>
+                            </h6>
+                        </div>
+
+                        <div class="row"></div>
+
+                        <div class="col s12 help-small">
+                            <h6 class="help-small-title">
+                                <a href="@routes.UserController.forgotPassword().url">
+                                    Forgot your password? Reset it</a>
+                            </h6>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @BaseFooter()
+
+        @components.AllDialogs()
+
+        <script>
+                function login() {
+                    var email = $('#email').val();
+                    var password = $('#password').val();
+
+                    if (!email) {
+                        return false;
+                    }
+
+                    if (!password) {
+                        return false;
+                    }
+                }
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,272 @@
+@()
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+
+        @components.BaseHead()
+
+
+    <link href="https://fonts.googleapis.com/css?family=Saira" rel="stylesheet">
+
+    </head>
+    <body>
+
+        @components.BaseBodyHeader("")
+
+        <main>
+
+            <div id="header-top-bar" class="z-depth-2">
+
+                <div class="col l6 m8 s12 above-effects">
+                    <h3 id="app-name-title-large" class="white-text valign-wrapper hide-on-med-and-down">
+                        <img src="@routes.Assets.versioned("images/android-icon-192x192.png")" alt="Magic List Logo">
+                        Magic List
+                    </h3>
+                    <h3 id="app-name-title-med" class="white-text valign-wrapper hide-on-large-only">
+                        <img src="@routes.Assets.versioned("images/android-icon-192x192.png")" alt="Magic List Logo">
+                        Magic List
+                    </h3>
+                </div>
+
+                <div class="row"></div>
+
+                <div class="col l6 m8 s12 offset-l6 offset-m4">
+                    <h4 id="slogan-title-large" class="white-text slogan-title above-effects center-align hide-on-med-and-down">
+                        Your <span class="cold-text">cold</span> calling game just got <span class="warmer-text">
+                        warmer</span>
+                    </h4>
+                    <h4 id="slogan-title-med" class="white-text slogan-title above-effects center-align hide-on-large-only">
+                        Your <span class="cold-text">cold</span> calling game just got <span class="warmer-text">
+                        warmer</span>
+                    </h4>
+
+                    <canvas id="flame-canvas"></canvas>
+                </div>
+
+
+                <div id="scroll-down-fab-container">
+                    <a id="scroll-down-fab" class="btn-floating waves-effect waves-light red white-text btn-large">
+                        <i class="material-icons large">keyboard_arrow_down</i>
+                    </a>
+                </div>
+
+            </div>
+
+            <div id="snow" style="display: none"></div>
+
+            <div class="row"></div>
+            <div class="row"></div>
+
+            <div id="post-header" class="container z-depth-2 white-background regular-padding">
+
+                @misc.HomepageItem("Manage Prospects with Ease", "Create lists, set contact statuses on your " +
+                        "prospects, and filter them by tons of criteria. Your prospects are stored like they are in " +
+                        "their own personalized database. With Magic List, you\'ll find it has never been easier to " +
+                        "keep track of your prospects.", "images/manage-prospects.png", true)
+
+                <div class="divider"></div>
+
+                @misc.HomepageItem("Dynamic Callback Notifications", "Remembering to call people back and the context of " +
+                        "your last conversation is hard. As a result, we made it easier and quicker than ever to create " +
+                        "notifications to call people back. Set notes to recall your last conversation " +
+                        "and rapidly push new notifications forward to create new reminders. Using Magic List, you " +
+                        "may efortlessly create an audit trail of your conversations with prospects.",
+                    "images/dynamic-notifications.png", false)
+
+                <div class="divider"></div>
+
+                @misc.HomepageItem("Integration with Outlook", "Your calendar is your lifeline for maintaining " +
+                        "organization and inviting prospects to appointments. So, we built a fast template engine " +
+                        "that allows you to send calendar invites with the click of a button. Need to send an invite " +
+                        "to your joint work partner too? That\'s not a problem! Create as many templates as you need " +
+                        "and send as many invites as you want from the same appointment. With Magic List, sending " +
+                        "calendar invites has never been so quick and easy.", "images/outlook.png", true)
+
+                <div class="divider"></div>
+
+                @misc.HomepageItem("Work as a Team", "We know you work with a lot of awesome people. That\'s why we " +
+                        "are building features that will make working together even easier and more fun. With " +
+                        "Magic List, you may share prospects with team members, engage in cold calling battles with " +
+                        "each other, and view a team leaderboard based on your aggregate performance.",
+                    "images/group-work.png", false)
+
+                <div class="divider"></div>
+
+                @misc.HomepageItem("View Analytics", "Every click in Magic List is powerful. We log a ton of metrics " +
+                        "on how you use our application so we can provide useful insight back to you. In the near " +
+                        "future, you can expect to see personalized graphs on your metrics and performance.",
+                    "images/analytics.png", true)
+
+                <div class="divider"></div>
+
+                @misc.HomepageItem("Amazing Ideas, Coming Soon", "We are in the process of developing new systems " +
+                        "and ideas that have never been done before. <i>Holleran</i>, our artificial intelligence, " +
+                        "will provide insight to you on who to call based on the time of day and past performance. " +
+                        "Our auto dialer will also enable you to call people at blazing speeds. Losing momentum will " +
+                        "be a problem of the past!",
+                    "images/new-ideas.png", false)
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @components.BaseFooter()
+
+        <script>
+
+                $("#scroll-down-fab").click(function () {
+                    $('html, body').animate({
+                        scrollTop: $("#post-header").offset().top - 8
+                    }, 600);
+                });
+
+        </script>
+        @* Fire Effect *@
+        <script>
+
+                var c = document.getElementById('flame-canvas'),
+                        ctx = c.getContext('2d'),
+                        cw = c.width = 65,
+                        ch = c.height = 325,
+                        parts = [],
+                        partCount = 200,
+                        partsFull = false,
+                        hueRange = 50,
+                        globalTick = 0,
+                        rand = function (min, max) {
+                            return Math.floor((Math.random() * (max - min + 1) ) + min);
+                        };
+
+                var Part = function () {
+                    this.reset();
+                };
+
+                Part.prototype.reset = function () {
+                    this.startRadius = rand(5, 30);
+                    this.radius = this.startRadius;
+                    this.x = cw / 2 + (rand(0, 6) - 3);
+                    this.y = 250;
+                    this.vx = 0;
+                    this.vy = 0;
+                    this.hue = rand(globalTick - hueRange, globalTick + hueRange);
+                    this.saturation = rand(50, 100);
+                    this.lightness = rand(20, 70);
+                    this.startAlpha = rand(1, 10) / 100;
+                    this.alpha = this.startAlpha;
+                    this.decayRate = .1;
+                    this.startLife = 7;
+                    this.life = this.startLife;
+                    this.lineWidth = rand(1, 3);
+                };
+
+                Part.prototype.update = function () {
+                    this.vx += (rand(0, 200) - 100) / 1500;
+                    this.vy -= this.life / 50;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.alpha = this.startAlpha * (this.life / this.startLife);
+                    this.radius = this.startRadius * (this.life / this.startLife);
+                    this.life -= this.decayRate;
+                    if (
+                            this.x > cw + this.radius ||
+                            this.x < -this.radius ||
+                            this.y > ch + this.radius ||
+                            this.y < -this.radius ||
+                            this.life <= this.decayRate
+                    ) {
+                        this.reset();
+                    }
+                };
+
+                Part.prototype.render = function () {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                    ctx.fillStyle = ctx.strokeStyle = 'hsla(' + this.hue + ', ' + this.saturation + '%, ' + this.lightness + '%, ' + this.alpha + ')';
+                    ctx.lineWidth = this.lineWidth;
+                    ctx.fill();
+                    ctx.stroke();
+                };
+
+                var createParts = function () {
+                    if (!partsFull) {
+                        if (parts.length > partCount) {
+                            partsFull = true;
+                        } else {
+                            parts.push(new Part());
+                        }
+                    }
+                };
+
+                var updateParts = function () {
+                    var i = parts.length;
+                    while (i--) {
+                        parts[i].update();
+                    }
+                };
+
+                var renderParts = function () {
+                    var i = parts.length;
+                    while (i--) {
+                        parts[i].render();
+                    }
+                };
+
+                var clear = function () {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.fillStyle = 'hsla(0, 0%, 0%, .3)';
+                    ctx.fillRect(0, 0, cw, ch);
+                    ctx.globalCompositeOperation = 'lighter';
+                };
+
+                var loop = function () {
+                    window.requestAnimFrame(loop, c);
+                    clear();
+                    createParts();
+                    updateParts();
+                    renderParts();
+                    globalTick++;
+                };
+
+                window.requestAnimFrame = function () {
+                    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (a) {
+                        window.setTimeout(a, 1E3 / 60)
+                    }
+                }();
+
+                loop();
+
+                $(document).ready(function () {
+                    onResize();
+                });
+
+                function onResize() {
+                    const $coldNode = $('.cold-text:visible');
+                    const $snowNode = $('#snow');
+                    $snowNode.width($coldNode.width());
+                    $snowNode.height($coldNode.height() + 100);
+                    $snowNode.css("top", $coldNode.offset().top - 100);
+                    $snowNode.css("left", $coldNode.offset().left);
+                    $snowNode.show();
+
+                    const $warmerNode = $('.warmer-text:visible');
+                    const $fireCanvas = $('#flame-canvas');
+
+                    $fireCanvas.width(150);
+                    $fireCanvas.height(150);
+                    $fireCanvas.css("top", $warmerNode.offset().top - 76);
+
+                    const leftOffset = ($fireCanvas.width() - $warmerNode.width()) / 2;
+                    $fireCanvas.css("left", $warmerNode.offset().left - leftOffset + 3);
+                }
+
+                $(window).resize(function () {
+                    onResize();
+                });
+
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,94 @@
+@import components._
+
+@import model.account.Account
+@()
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        @BaseHead()
+
+    <script src="@routes.Assets.versioned("ckeditor/ckeditor.js")"></script>
+
+    </head>
+    <body>
+
+        @BaseBodyHeader("Admin Console")
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="container row">
+
+                <div class="col s9">
+
+                    <div class="card z-depth-3 card-wide centered">
+
+                        <div class="card-content black-text">
+
+                            <span class="card-title">
+                                Welcome Admin
+                            </span>
+
+                            <div class="row"></div>
+
+                            <div class="row centered-content">
+
+                                <a class="btn menu-button waves-effect waves-light" href="@routes.AdminController.getSuggestionsPage.url">
+                                    <i class="material-icons left">live_help</i>
+                                    Suggestions
+                                </a>
+
+                                <a class="btn menu-button waves-effect waves-light" href="@routes.AdminController.getBugReportsPage.url">
+                                    <i class="material-icons left">bug_report</i>
+                                    Bug Reports
+                                </a>
+
+                                <a class="btn menu-button waves-effect waves-light" href="@routes.AdminController.getQuotesPage.url">
+                                    <i class="material-icons left">format_quote</i>
+                                    Submitted Quotes
+                                </a>
+
+                                @if(Account.getAccountFromSession.isSuperAdmin) {
+                                    <a class="btn menu-button waves-effect waves-light" href="@routes.AdminController.getCreateMessagePage.url">
+                                        <i class="material-icons left">message</i>
+                                        Create Message
+                                    </a>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col s3">
+
+                    <div class="card-panel z-depth-3 indigo">
+
+                        <span class="white-text">
+                            <i>
+                                Remember that guy that gave up? Neither does anybody else.
+                            </i>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @BaseFooter()
+
+        @AllDialogs()
+
+    </body>
+
+</html>

@@ -1,0 +1,414 @@
+@import components._
+@import dialogs._
+@import java.util
+
+@import model.account.Account
+@import akka.japi.Pair
+@import model.account.AccountSettings
+@(account: Account, personNotificationExpandList: util.List[Pair[AccountSettings, Boolean]],
+        autoPushNotifications: Boolean, notificationDate: String, appointmentDate: String)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader(pageTitle = "Settings")
+
+        <main>
+
+            <div class="card z-depth-3 card-wide centered top-margin">
+
+                <div class="card-content">
+
+                    <span class="card-title grey-text text-darken-4 left-align">Main Settings</span>
+
+                </div>
+
+                <div class="row centered-content">
+
+                    <a class="btn menu-button waves-effect waves-light" href="@routes.UserController.changePassword.url">
+                        <i class="material-icons left">lock_outline</i>
+                        Change Password
+                    </a>
+
+                    <a class="btn menu-button waves-effect waves-light" href="@routes.PlanController.getInvoices.url">
+                        <i class="material-icons left">assignment</i>
+                        View Invoices
+                    </a>
+
+                    <a class="btn menu-button waves-effect waves-light" href="@routes.PlanController.getSubscription.url">
+                        <i class="material-icons left">book</i>
+                        Change Subscription
+                    </a>
+
+                    <a class="btn menu-button waves-effect waves-light" href="@routes.PlanController.getCards.url">
+                        <i class="material-icons left">credit_card</i>
+                        View Payment Options
+                    </a>
+
+                    <div class="row"></div>
+
+                    <h5 class="inline left left-margin">Personal Configurations</h5>
+
+                    <div class="row"></div>
+
+                    <div class="left-align left-margin right-margin">
+
+                        @selected(isChecked: Boolean) = {
+                        @if(isChecked) {
+                            checked
+                        }
+                        }
+
+                        @dateUnitSelected(currentUnit: String, selectedUnit: String) = {
+                        @if(currentUnit.equals(selectedUnit)) {
+                            selected
+                        }
+                        }
+
+                        @dateQuantity(currentQuantity: Integer, selectedQuantity: Integer) = {
+                        @if(currentQuantity == selectedQuantity) {
+                            selected
+                        }
+                        }
+                        @* MANAGEMENT SETTINGS *@
+                        <h6>Management Settings</h6>
+
+                        <br>
+
+                        <div class="switch">
+                            <label>
+                                <input id="is_manager_checkbox" type="checkbox" @selected(account.isManager)
+                                onchange="onManagerCheckChanged();">
+                                <span class="lever"></span>
+                                I am a manager
+                            </label>
+                        </div>
+
+                        <div class="row"></div>
+
+                        <div class="divider"></div>
+
+                        <div class="row"></div>
+                        @* MARK - NOTIFICATION SETTINGS *@
+                        <h6>Notifications Settings</h6>
+
+                        <br>
+
+                        @* Note, the following settings ID is dependent in the notification alerts help dialog *@
+                        <div class="valign-wrapper switch-wrapper-with-button" id="settings-notifications-automatically-press-done">
+                            <div class="switch">
+                                <label>
+                                    <input id="notification-auto-done" type="checkbox" class="settings-input settings-input-unique"
+                                        @selected(autoPushNotifications) value="@autoPushNotifications"
+                                    name="@AccountSettings.NOTIFICATION_AUTO_DONE_AFTER_PUSH.toDatabaseText">
+                                    <span class="lever"></span>
+                                    Automatically press the "done" button after <i>Pushing</i> a notification
+                                </label>
+                            </div>
+
+                            <a class="btn-flat waves-effect side-padding-small left-margin" onclick="onPushNotificationHelpClick()">
+                                <i class="material-icons indigo-text">help</i>
+                            </a>
+                        </div>
+
+                        <div class="row"></div>
+
+                        <div class="settings-input-unique" data-type="notification" name="@AccountSettings.NOTIFICATION_DATE.toDatabaseText">
+                            <span class="small-text">Default notifications to &nbsp;</span>
+
+                            <div class="input-field inline" style="width: 50px;">
+                                <select id="notification-setting-quantity" class="settings-input">
+                                @for(i <- 0 to 7) {
+                                    <option @dateQuantity(i, AccountSettings.parseQuantityFromIntervalSetting(notificationDate)) value="@i">@i</option>
+                                }
+                                </select>
+                                <label for="notification-setting-quantity">Quantity</label>
+                            </div>
+
+                            <div class="input-field inline" style="width: 100px;">
+                                <select id="notification-setting-unit" class="settings-input">
+                                    <option @dateUnitSelected("days", AccountSettings.parseDateTypeFromIntervalSetting(notificationDate))
+                                    value="days">Days</option>
+
+                                    <option @dateUnitSelected("weeks", AccountSettings.parseDateTypeFromIntervalSetting(notificationDate))
+                                    value="weeks">Weeks</option>
+
+                                    <option @dateUnitSelected("months", AccountSettings.parseDateTypeFromIntervalSetting(notificationDate))
+                                    value="months">Months</option>
+                                </select>
+                                <label for="notification-setting-unit">Unit</label>
+                            </div>
+
+                            <span class="small-text">&nbsp; after the current date</span>
+                        </div>
+
+                        <div>
+                            <span class="small-text">Default notification times to &nbsp;</span>
+
+                            <div class="input-field inline">
+                                <input id="notification-setting-time" class="timepicker settings-input"
+                                value="@AccountSettings.parseTimeFromIntervalSetting(notificationDate)">
+                                <label for="notification-setting-time" class="active">Time</label>
+                            </div>
+                        </div>
+
+                        <div class="row"></div>
+
+                        <div class="divider"></div>
+
+                        <div class="row"></div>
+
+                        <h6>Appointment Settings</h6>
+
+                        <br>
+
+                        <div class="settings-input-unique" data-type="appointment" name="@AccountSettings.APPOINTMENT_DATE.toDatabaseText">
+                            <span class="small-text">Default appointments to &nbsp;</span>
+
+                            <div class="input-field inline" style="width: 50px;">
+                                <select id="appointment-setting-quantity" class="settings-input">
+                                @for(i <- 0 to 7) {
+                                    <option @dateQuantity(i, AccountSettings.parseQuantityFromIntervalSetting(appointmentDate)) value="@i">@i</option>
+                                }
+                                </select>
+                                <label for="appointment-setting-quantity">Quantity</label>
+                            </div>
+
+                            <div class="input-field inline" style="width: 100px;">
+                                <select id="appointment-setting-unit" class="settings-input">
+                                    <option @dateUnitSelected("days", AccountSettings.parseDateTypeFromIntervalSetting(appointmentDate))
+                                    value="days">Days</option>
+                                    <option @dateUnitSelected("weeks", AccountSettings.parseDateTypeFromIntervalSetting(appointmentDate))
+                                    value="weeks">Weeks</option>
+                                    <option @dateUnitSelected("months", AccountSettings.parseDateTypeFromIntervalSetting(appointmentDate))
+                                    value="months">Months</option>
+                                </select>
+                                <label for="appointment-setting-unit">Unit</label>
+                            </div>
+
+                            <span class="small-text">&nbsp; after the current date</span>
+                        </div>
+
+                        <div>
+                            <span class="small-text">Default appointment times to &nbsp;</span>
+
+                            <div class="input-field inline">
+                                <input id="appointment-setting-time" class="timepicker settings-input"
+                                value="@AccountSettings.parseTimeFromIntervalSetting(appointmentDate)">
+                                <label for="appointment-setting-time" class="active">Time</label>
+                            </div>
+                        </div>
+
+                        <div class="row"></div>
+
+                        <div class="divider"></div>
+
+                        <div class="row"></div>
+                        @* MARK - PERSON DETAILS SETTINGS *@
+                        <h6>
+                            Person Details Page Settings
+                        </h6>
+
+                        <br>
+
+                        <div class="col s11">
+
+                            @for(setting: Pair[AccountSettings, Boolean] <- personNotificationExpandList) {
+                                @if(setting.first == AccountSettings.PERSON_EXPAND_CURRENT_NOTIFICATIONS) {
+                                    <div class="switch">
+                                        <label>
+                                            <input type="checkbox" class="settings-input settings-input-unique" @selected(setting.second)
+                                            name="@setting.first.toDatabaseText" value="@setting.second">
+                                            <span class="lever"></span>
+                                            Show (expand) the <i>current</i> notification card initially
+                                        </label>
+                                    </div>
+                                }
+                                @if(setting.first == AccountSettings.PERSON_EXPAND_PAST_NOTIFICATIONS) {
+                                    <div class="switch">
+                                        <label>
+                                            <input type="checkbox" class="settings-input settings-input-unique" @selected(setting.second)
+                                            name="@setting.first.toDatabaseText" value="@setting.second">
+                                            <span class="lever"></span>
+                                            Show (expand) the <i>past</i> notification card initially
+                                        </label>
+                                    </div>
+                                }
+                                @if(setting.first == AccountSettings.PERSON_EXPAND_UPCOMING_NOTIFICATIONS) {
+                                    <div class="switch">
+                                        <label>
+                                            <input type="checkbox" class="settings-input settings-input-unique" @selected(setting.second)
+                                            name="@setting.first.toDatabaseText" value="@setting.second">
+                                            <span class="lever"></span>
+                                            Show (expand) the <i>upcoming</i> notification card initially
+                                        </label>
+                                    </div>
+                                }
+                                <div class="row"></div>
+                            }
+
+                        </div>
+
+                        <div class="col s1">
+                            <a class="btn-flat waves-effect right" onclick="showExpandSettingsHelpDialog()">
+                                <i class="material-icons indigo-text">help</i>
+                            </a>
+                        </div>
+
+                        <div class="row"></div>
+
+                        <div class="divider"></div>
+
+                        <div class="row"></div>
+
+                    </div>
+
+                </div>
+
+                <div class="row"></div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        <div id="settings-status-wrapper" class="green z-depth-3" style="display: none;">
+
+            <h6 id="settings-status-text" class="white-text regular-padding">
+            </h6>
+
+            <a id="settings-status-close" class="right btn-flat waves-effect waves-light"
+            onclick="$('#settings-status-wrapper').slideUp(250)">
+                <i class="material-icons white-text">cancel</i>
+            </a>
+        </div>
+
+        @BaseFooter()
+
+        @AllDialogs()
+
+    </body>
+
+    <script>
+
+            function onPushNotificationHelpClick() {
+                $('#read_only_dialog_title').html("About Pushing Notifications");
+                $('#read_only_dialog_content').html("Turning this setting <i>on</i> will automatically " +
+                        "mark a notification as \'done\' after pushing it. This setting has no effect on archived " +
+                        "or \'finished\' notifications." +
+                        "<br>" +
+                        "<br>" +
+                        "For more help with notifications, click the help button on this " +
+                        "<a href='@routes.NotificationsController.getNotificationsPage.url'>page</a>");
+                showReadOnlyDialog();
+            }
+
+            function showExpandSettingsHelpDialog() {
+                $('#read_only_dialog_title').html("About Initially Showing Notifications on Person Details Page");
+                $('#read_only_dialog_content').html("You may have noticed that on the person details page, you may " +
+                        "expand or collapse the tables containing the user\'s current/past/upcoming notifications. " +
+                        "<br><br>" +
+                        "To make glossing over their profile page even quicker, you may default which of those tables " +
+                        "are initially shown (or expanded) when their profile loads.");
+                showReadOnlyDialog();
+            }
+
+            $(document).ready(function () {
+                Materialize.updateTextFields();
+                $('.timepicker').pickatime();
+                $('select').material_select();
+
+                @* TODO fix needing to do this... *@
+                if(!$('#notification-setting-unit').val()) {
+                    window.location.reload();
+                }
+
+                $('.positive-number-input').change(function () {
+                    const value = parseInt($(this).val());
+                    console.log("Val: ", value);
+                    if (value < 0) {
+                        $('#' + $(this).attr("id") + "-label").attr("data-error", "Must be greater that or equal to 0");
+                        $(this).addClass("invalid");
+                        $(this).removeClass("valid");
+                    } else {
+                        $(this).removeClass("invalid");
+                        $(this).addClass("valid");
+                    }
+                });
+
+                $('input[type=checkbox]').change(function () {
+                    $(this).val($(this).is(":checked"));
+                });
+
+                $('.settings-input').change(function () {
+                    const json = {};
+                    json.key = [];
+                    json.value = [];
+
+                    $('.settings-input-unique').each(function () {
+                        const name = $(this).attr('name');
+                        json.key.push(name);
+
+                        if (name === 'notification_date' || name === 'appointment_date') {
+                            json.value.push(buildDateSetting($(this).attr("data-type")));
+                        } else {
+                            json.value.push($(this).val());
+                        }
+
+                    });
+
+                    doPost("/user/settings/change", json, success, error);
+
+                    function success() {
+                        const $nodeWrapper = $('#settings-status-wrapper');
+                        $nodeWrapper.removeClass("red");
+                        $nodeWrapper.addClass("green");
+                        $('#settings-status-text').html("Your settings have been successfully saved");
+
+                        $nodeWrapper.slideDown(250);
+
+                        setTimeout(function () {
+                            $nodeWrapper.slideUp(250);
+                        }, 1500);
+                    }
+
+                    function error(xhr) {
+                        const $nodeWrapper = $('#settings-status-wrapper');
+
+                        if (xhr.status === 400) {
+                            $nodeWrapper.removeClass("green");
+                            $nodeWrapper.addClass("red");
+                            $('#settings-status-text').html("There was an error sending your settings to the server. Please submit a bug report so this issue may be resolved");
+                        } else {
+                            $nodeWrapper.removeClass("green");
+                            $nodeWrapper.addClass("red");
+                            $('#settings-status-text').html("A server error occurred while saving your settings. Please try again or submit a bug report");
+                        }
+
+                        $nodeWrapper.slideDown(250);
+
+                        setTimeout(function () {
+                            $nodeWrapper.slideUp(250)
+                        }, 5000);
+                    }
+
+                });
+
+                function buildDateSetting(id) {
+                    const quantity = $('#' + id + '-setting-quantity').val();
+                    const unit = $('#' + id + '-setting-unit').val();
+                    const time = $('#' + id + '-setting-time').val();
+
+                    return quantity + " " + unit + ";" + time;
+                }
+
+            });
+
+
+    </script>
+
+</html>

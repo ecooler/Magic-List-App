@@ -1,0 +1,209 @@
+@import components._
+@import model.account.Account
+@(stripePublicKey: String)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+        <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+        <script type="text/javascript">Stripe.setPublishableKey("@stripePublicKey")</script>
+    </head>
+
+    <body>
+
+        @BaseBodyHeader()
+
+    <main>
+
+        <div class="container row">
+
+            <div class="row"></div>
+
+            <div class="col l6 m8 s12 offset-l3 offset-m2">
+
+                <div class="card z-depth-3">
+
+                    <div class="card-content row">
+
+                        <span class="card-title">Add New Card</span>
+
+                        <div class="col s12">
+                            <ul>
+                                <li class="error" id="nameError"></li>
+                                <li class="error" id="emailError"></li>
+                                <li class="error" id="passwordError"></li>
+                                <li class="error" id="creditCardError"></li>
+                                <li class="error" id="cvcError"></li>
+                                <li class="error" id="dateError"></li>
+                                <li class="error" id="stripeError"></li>
+                            </ul>
+                        </div>
+
+                        <form action="#" onsubmit="validateAndSubmitAccount();
+                        return false;">
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input type="number" pattern="[0-9]*" id="creditCard">
+                                    <label for="creditCard">Credit Card</label>
+                                </div>
+                            </div>
+
+                            <div class="col s4">
+                                <div class="input-field">
+                                    <input type="number" pattern="[0-9]*" id="cvc">
+                                    <label for="cvc">CVC</label>
+                                </div>
+                            </div>
+
+                            <div class="col s4">
+                                <div class="input-field">
+                                    <input type="number" pattern="[0-1][0-9]" id="expMonth">
+                                    <label for="expMonth">MM</label>
+                                </div>
+                            </div>
+
+                            <div class="col s4">
+                                <div class="input-field">
+                                    <input type="number" pattern="[0-9]*" id="expYear">
+                                    <label for="expYear">YY</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12 right-content">
+
+                                <button onclick="window.history.back();" id="cancelButton" type="button"
+                                class="btn indigo waves-effect waves-light cancel-button">
+                                    Cancel
+                                </button>
+
+                                <button id="submitButton" type="submit"
+                                class="btn indigo waves-effect waves-light">
+                                    Submit
+                                </button>
+
+                                <div class="centered-content">
+
+                                @ProgressSpinner()
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+        @BaseFooter()
+
+    <script>
+
+            $(document).ready(function () {
+                $('.progress-bar').hide();
+            });
+
+            function validateAndSubmitAccount() {
+                var creditCard = $("#creditCard").val();
+                var cvc = $("#cvc").val();
+                var expMonth = $("#expMonth").val();
+                var expYear = $("#expYear").val();
+
+                var isValid = validate(creditCard, cvc, expMonth, expYear);
+
+                if (isValid) {
+                    $('.progress-bar').show();
+                    $('#submitButton').css('display', "none");
+                    $('#cancelButton').css('display', "none");
+                    onSubmitForm(creditCard, cvc, expMonth, expYear);
+                }
+            }
+
+            function validate(creditCardNumber, cvc, expMonth, expYear) {
+                var isValid = true;
+
+                var $cardError = $('#creditCardError');
+                var $dateError = $('#dateError');
+                var $cvcError = $('#cvcError');
+
+                if (!Stripe.card.validateCardNumber(creditCardNumber)) {
+                    $cardError.html("Your credit card is invalid");
+                    $cardError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $cardError.css("display", "none")
+                }
+
+                if (!Stripe.card.validateExpiry(expMonth, expYear)) {
+                    $dateError.html("Invalid month/year");
+                    $dateError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $dateError.css("display", "none");
+                }
+
+                if (!Stripe.card.validateCVC(cvc)) {
+                    $cvcError.html("Invalid CVC entered");
+                    $cvcError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $cvcError.css("display", "none");
+                }
+
+                return isValid;
+            }
+
+            function onSubmitForm(enteredNumber, enteredCvc, enteredExpMonth, enteredExpYear) {
+                Stripe.card.createToken({
+                    number: enteredNumber,
+                    cvc: enteredCvc,
+                    exp_month: enteredExpMonth,
+                    exp_year: enteredExpYear
+                }, stripeResponseHandler);
+            }
+
+            function stripeResponseHandler(status, response) {
+                if (response.error) {
+                    var $error = $('#stripeError');
+                    $error.html(response.error.message);
+                    $error.css("display", "block");
+                    $('#submitButton').css("display", "inline");
+                    $('#cancelButton').css("display", "inline");
+                    $('.progress-bar').css("display", "none");
+                } else {
+                    const stripeToken = response.id;
+
+                    var json = {};
+                    json.@Account.ACCOUNT_STRIPE_TOKEN = stripeToken;
+
+                    doPost("@routes.PlanApiController.addCreditCard().url",
+                            json,
+                            function () {
+                                window.location.href = "@routes.PlanController.getCards().url";
+                            },
+                            function (data) {
+                                console.log(JSON.stringify(data));
+                                var $nameError = $('#nameError');
+                                $nameError.html("There was an error processing your request. Please try again or submit a bug report");
+                                $nameError.css("display", "block");
+
+                                $('#submitButton').css("display", "inline");
+                                $('#cancelButton').css("display", "inline");
+                                $('.progress-bar').css("display", "none");
+                            }
+                    );
+                }
+            }
+        </script>
+    </body>
+</html>

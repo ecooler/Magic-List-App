@@ -1,0 +1,299 @@
+@import model.calendar.BaseCalendarTemplate
+@import model.outlook.CalendarTemplate
+@import model.outlook.CalendarAppointment
+@import model.outlook.EventImportance
+@import model.outlook.EventSensitivity
+@import model.outlook.EventPersonStatus
+
+@(outlookAccountId: String, calendarItem: CalendarTemplate, shouldHideName: Boolean = true)
+<input type="hidden" hidden value="@outlookAccountId" name="@CalendarAppointment.KEY_OUTLOOK_USER_ID">
+
+<div class="row side-padding-small">
+
+    <div class="col l6 m9 s12">
+
+        @if(calendarItem != null && shouldHideName) {
+            <h6>@calendarItem.getTemplateName</h6>
+            <div class="input-field">
+                <input id="template_name" type="text" required name="@BaseCalendarTemplate.KEY_TEMPLATE_NAME" hidden>
+                <label id="label_template_name" for="template_name"></label>
+            </div>
+        } else {
+            <div class="input-field">
+                <input id="template_name" type="text" required name="@BaseCalendarTemplate.KEY_TEMPLATE_NAME">
+                <label id="label_template_name" for="template_name">Template Name</label>
+            </div>
+        }
+
+        @if(calendarItem != null) {
+            <script>
+                    $('#template_name').val('@calendarItem.getTemplateName');
+            </script>
+        }
+
+    </div>
+
+</div>
+
+<div class="row side-padding-small">
+
+    <div class="col s12">
+
+        <div id="attendees_chip" class="chips chips-placeholder tooltipped"
+        data-position="bottom" data-delay="50"
+        data-tooltip="Press 'enter' after typing an email to submit it"></div>
+
+    </div>
+
+</div>
+
+<div class="row side-padding-small">
+
+    <div class="col s12">
+
+        <div class="input-field">
+
+            <input type="text" name="@CalendarAppointment.KEY_SUBJECT" id="subject"
+            value="Meeting with @CalendarTemplate.VARIABLE_PROSPECT_NAME at @CalendarTemplate.VARIABLE_APPOINTMENT_DATE">
+            <label for="subject">Subject</label>
+
+            @if(calendarItem != null) {
+                <script>
+                        $('#subject').val('@calendarItem.getSubject');
+                </script>
+            }
+
+        </div>
+
+    </div>
+
+    <div class="row"></div>
+
+    <div class="col s12 m4 l3 top-margin">
+
+        <h6 class="no-margin">Importance</h6>
+        <div class="row"></div>
+        @for(importance <- EventImportance.getAll) {
+            <p>
+                @if(importance == EventImportance.NORMAL || (calendarItem != null && calendarItem.getImportance == importance)) {
+                    <input name="@CalendarAppointment.KEY_IMPORTANCE" type="radio"
+                    id="@importance.getRawText" checked value="@importance.getRawText" />
+                } else {
+                    <input name="@CalendarAppointment.KEY_IMPORTANCE" type="radio"
+                    id="@importance.getRawText" value="@importance.getRawText" />
+                }
+
+            <label for="@importance.getRawText">@importance.toString</label>
+            </p>
+        }
+
+    </div>
+
+    <div class="col s12 m4 l3 top-margin">
+
+        <h6 class="no-margin">Event Privacy</h6>
+        <div class="row"></div>
+
+        @if(calendarItem == null) {
+            <p>
+                <input name="@CalendarAppointment.KEY_SENSITIVITY" type="radio" checked
+                id="@EventSensitivity.getAll.get(0).getRawText"
+                value="@EventSensitivity.getAll.get(0).getRawText"/>
+                <label for="@EventSensitivity.getAll.get(0).getRawText">@EventSensitivity.getAll.get(0).toString</label>
+            </p>
+            @for(i <- 1 until EventSensitivity.getAll.size) {
+                <p>
+                    <input name="@CalendarAppointment.KEY_SENSITIVITY" type="radio"
+                    id="@EventSensitivity.getAll.get(i).getRawText"
+                    value="@EventSensitivity.getAll.get(i).getRawText"/>
+
+                    <label for="@EventSensitivity.getAll.get(i).getRawText"
+                    >@EventSensitivity.getAll.get(i).toString
+                    </label>
+                </p>
+            }
+        } else {
+            @for(sensitivity <- EventSensitivity.getAll) {
+                @if(sensitivity == calendarItem.getSensitivity) {
+                    <p>
+                        <input name="@CalendarAppointment.KEY_SENSITIVITY" type="radio" checked
+                        id="@sensitivity.getRawText"
+                        value="@sensitivity.getRawText"/>
+                        <label for="@sensitivity.getRawText">@sensitivity.toString</label>
+                    </p>
+                } else {
+                    <p>
+                        <input name="@CalendarAppointment.KEY_SENSITIVITY" type="radio"
+                        id="@sensitivity.getRawText" value="@sensitivity.getRawText"/>
+                        <label for="@sensitivity.getRawText">@sensitivity.toString</label>
+                    </p>
+                }
+            }
+        }
+
+    </div>
+
+    <div class="col s12 m4 l3 top-margin">
+
+        <div class="input-field">
+
+        @if(calendarItem == null) {
+            <select id="event_duration" name="@CalendarAppointment.KEY_DURATION_MINUTES">
+                <option value="10">10 minutes</option>
+                <option value="15" selected>15 minutes</option>
+                <option value="30">30 minutes</option>
+                <option value="45">45 minutes</option>
+                <option value="60">1 Hour</option>
+                <option value="90">1.5 Hours</option>
+                <option value="120">2 Hours</option>
+            </select>
+            <label for="event_duration">Event Duration</label>
+        } else {
+            <select id="event_duration" name="@CalendarAppointment.KEY_DURATION_MINUTES">
+                <option id="duration_10" value="10">10 minutes</option>
+                <option id="duration_15" value="15">15 minutes</option>
+                <option id="duration_30" value="30">30 minutes</option>
+                <option id="duration_45" value="45">45 minutes</option>
+                <option id="duration_60" value="60">1 Hour</option>
+                <option id="duration_90" value="90">1.5 Hours</option>
+                <option id="duration_120" value="120">2 Hours</option>
+            </select>
+            <label for="event_duration">Event Duration</label>
+
+            <script>
+                    $('#duration_@calendarItem.getDurationInMinutes').attr("selected", true);
+            </script>
+        }
+
+        </div>
+
+    </div>
+
+    <div class="col s12 m4 l3 top-margin">
+
+        <div class="input-field">
+
+        @if(calendarItem == null) {
+            <select id="remind_me" name="@CalendarAppointment.KEY_REMINDER_MINUTES_BEFORE_START">
+                <option value="-999">Don't Remind Me</option>
+                <option value="5">5 minutes before</option>
+                <option value="10">10 minutes before</option>
+                <option value="15">15 minutes before</option>
+                <option value="30" selected>30 minutes before</option>
+                <option value="45">45 minutes before</option>
+                <option value="60">1 hour before</option>
+                <option value="120">2 hours before</option>
+            </select>
+
+            <label for="remind_me">Remind me before the event</label>
+        } else {
+            <select id="remind_me" name="@CalendarAppointment.KEY_REMINDER_MINUTES_BEFORE_START">
+                <option id="reminder_none" value="-999">Don't Remind Me</option>
+                <option id="reminder_5" value="5">5 minutes before</option>
+                <option id="reminder_10" value="10">10 minutes before</option>
+                <option id="reminder_15" value="15">15 minutes before</option>
+                <option id="reminder_30" value="30">30 minutes before</option>
+                <option id="reminder_45" value="45">45 minutes before</option>
+                <option id="reminder_60" value="60">1 hour before</option>
+                <option id="reminder_120" value="120">2 hours before</option>
+            </select>
+
+            <label for="remind_me">Remind me before the event</label>
+
+            @if(calendarItem.isReminderOn) {
+                <script>
+                        $('#reminder_@calendarItem.getReminderMinutesBeforeStart').prop("selected", true);
+                </script>
+            } else {
+                <script>
+                        $('#reminder_none').prop("selected", true);
+                </script>
+            }
+        }
+
+        </div>
+
+    </div>
+
+    <div class="row"></div>
+
+    <div class="col s12 m12 l7 top-margin">
+
+        <span class="inline">Show me as&nbsp;</span>
+
+        <div class="input-field inline">
+
+            <select id="my_status" name="@CalendarAppointment.KEY_SHOW_AS_STATUS">
+            @for(status <- EventPersonStatus.getAll) {
+                @if(calendarItem != null && calendarItem.getShowAsStatus == status) {
+                    <option selected value="@status.getRawText">@status.toString</option>
+                } else {
+                    <option value="@status.getRawText">@status.toString</option>
+                }
+            }
+            </select>
+
+            <label for="my_status">My Status</label>
+
+        </div>
+
+        <span class="inline">&nbsp;during the event</span>
+
+    </div>
+
+    <div class="col s12 m6 l5 top-margin">
+
+        <p class="inline">
+
+            @checked() = {
+            @if(calendarItem == null || (calendarItem != null && calendarItem.isResponseRequested)) {
+                checked
+            }
+            }
+
+            <input id="is_response_required" type="checkbox" class="validate" value="true" @checked()
+            name="@CalendarAppointment.KEY_IS_RESPONSE_REQUIRED"
+            onchange="var $node = $('#is_response_required');
+            $node.val(!!$node.is(':checked'))">
+
+            <label for="is_response_required">Request Responses from Attendees?</label>
+
+        </p>
+
+    </div>
+
+    <div class="col s12 m6 l6 top-margin">
+
+        <div class="input-field">
+
+            <i class="material-icons prefix">location_on</i>
+            <input id="event_location" type="text" class="validate" name="@CalendarAppointment.KEY_LOCATION">
+            <label for="event_location">Location Name</label>
+
+            @if(calendarItem != null) {
+                <script>
+                        $('#event_location').val("@calendarItem.getEventLocation");
+                </script>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row"></div>
+
+<div id="categories_chip" class="chips chips-placeholder tooltipped" data-position="bottom" data-delay="50"
+data-tooltip="Press 'enter' after typing a category to submit it"></div>
+
+<div class="row"></div>
+
+<div class="row"></div>
+
+<h5>Email Body</h5>
+
+<div class="row"></div>
+
+<textarea hidden id="template_body" name="@CalendarAppointment.KEY_BODY"></textarea>
+<label for="template_body" hidden></label>

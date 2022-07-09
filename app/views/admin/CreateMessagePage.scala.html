@@ -1,0 +1,80 @@
+@(error: String = null)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @components.BaseHead()
+    </head>
+    <body>
+
+        @components.BaseBodyHeader()
+
+        <main>
+
+            <div class="container row">
+
+                <div class="card z-depth-3 col s12 centered top-margin">
+
+                    <div class="card-title black-text">
+                        <h4>Create a Message</h4>
+                    </div>
+
+                    <div class="row"></div>
+
+                    @if(error != null) {
+                        <div class="col s12 m8 offset-m2 l6 offset-l3">
+
+                            <div class="card small red">
+
+                                <div class="card-content">
+
+                                    <span class="card-title white-text">Error:</span>
+
+                                    <p class="white-text">@error</p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                    <form action="" method="POST">
+
+                        <div class="input-field">
+
+                            @helper.CSRF.formField
+
+                            <textarea id="message" name="@controllers.AdminController.KEY_MESSAGE" class="materialize-textarea"></textarea>
+
+                            <label for="message">Message</label>
+
+                        </div>
+
+                        <button type="submit" class="btn waves-effect waves-light">
+                            Create
+                        </button>
+
+                    </form>
+
+                    <div class="row"></div>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @components.AllDialogs()
+
+        @components.BaseFooter()
+
+        <script>
+                var th = document.querySelector('#date-reported');
+                th.style.width = (th.offsetWidth + 32) + "px";
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,505 @@
+@import java.util
+
+@import views.html.components._
+@import play.mvc.Http.Context
+@import model.stripe.Plan
+@import controllers.BaseController.KEY_ERROR
+@import model.account.Account
+@(plans: util.List[Plan], stripePublicKey: String)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript">
+            Stripe.setPublishableKey('@stripePublicKey');
+    </script>
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    </head>
+
+    <body>
+
+        @BaseBodyHeader()
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="row">
+
+                <div class="col s8 offset-s2 m8 offset-m2 l6 offset-l3 card">
+
+                    <div class="card-content row">
+
+                        <span class="card-title grey-text text-darken-4">Create Account</span>
+
+                        <div class="col s12">
+                            <ul>
+                                <li class="error" id="nameError"></li>
+                                <li class="error" id="emailError"></li>
+                                <li class="error" id="passwordError"></li>
+                                <li class="error" id="creditCardError"></li>
+                                <li class="error" id="cvcError"></li>
+                                <li class="error" id="dateError"></li>
+                                <li class="error" id="stripeError"></li>
+                                @defining(Context.current().flash().get(KEY_ERROR)) { error =>
+                                    @if(error != null) {
+                                        <li class="red-text">@error</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+
+                        <h5>Sign up now to receive a free 7 day trial!</h5>
+
+                        <form method="POST" enctype="application/x-www-form-urlencoded" id="create-account-form"
+                        onsubmit="return validateFormAndSubmitEmailForValidation()"
+                        action="@routes.UserController.createAccount().url">
+
+                            @helper.CSRF.formField
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input class="validate" required type="text" id="name" name="@Account.ACCOUNT_NAME">
+                                    <label for="name">Full Name</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input class="validate" required type="text" id="email" name="@Account.EMAIL">
+                                    <label for="email">Email</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input class="validate" required type="password" id="password" name="@Account.PASSWORD">
+                                    <label for="password">Password</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input class="validate" required type="password" id="confirm_password">
+                                    <label for="confirm_password">Confirm Password</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <select id="select_company" name="@Account.ACCOUNT_COMPANY_NAME">
+                                        <option value="AXA Advisors">AXA Advisors</option>
+                                    </select>
+                                    <label for="select_company">Your Affiliation</label>
+                                </div>
+                            </div>
+
+                            <div class="col s12">
+                                <p>
+                                    <input type="checkbox" id="is_manager" name="@Account.IS_MANAGER" value="false"
+                                    onchange="const $isManager = $('#is_manager');
+                                    $isManager.val($isManager.is(':checked'))">
+                                    <label for="is_manager">I am a Manager</label>
+                                </p>
+                            </div>
+
+                            <div class="col s12">
+                                <div class="input-field">
+                                    <input class="validate" required type="text" id="creditCard">
+                                    <label for="creditCard">Credit Card</label>
+                                </div>
+                            </div>
+
+                            <div class="col s4 m4 l4">
+                                <div class="input-field">
+                                    <input class="validate" required type="text" id="cvc">
+                                    <label for="cvc">CVC</label>
+                                </div>
+                            </div>
+
+                            <div class="col s4 m4 l4">
+                                <div class="input-field">
+                                    <input class="validate" required type="text" id="expMonth">
+                                    <label for="expMonth">MM</label>
+                                </div>
+                            </div>
+
+                            <div class="col s4 m4 l4">
+                                <div class="input-field">
+                                    <input class="validate" required type="text" id="expYear">
+                                    <label for="expYear">YY</label>
+                                </div>
+                            </div>
+
+                            <div class="col s8 offset-s2 m6 l6">
+                                <div class="g-recaptcha" data-sitekey="6LdKCSgUAAAAAFHPt0Mn_74bR4PWOeL0yjw0fk1f"></div>
+                            </div>
+
+                            <div class="row"></div>
+
+                            <h4>Payment Options</h4>
+
+                            @checked(i: Int) = {
+                            @if(i == 0) {
+                                checked
+                            }
+                            }
+
+                            @for(i <- 0 until plans.size) {
+                                <div class = "col s12">
+                                    <input type="radio" id="option-@i" name="@Account.STRIPE_PLAN_ID" @checked(i)
+                                    value="@plans.get(i).getStripePlanId" price="@plans.get(i).getPriceAmount"
+                                    class="subscription">
+                                    <label for="option-@i" id="label-option-@i">@plans.get(i).toString</label>
+                                </div>
+                            }
+
+                            <input type="hidden" name="@Account.ACCOUNT_STRIPE_TOKEN" id="stripe_token">
+
+                            <input type="hidden" name="@Account.COUPON_ID" id="coupon_id">
+
+                            <div class="row"></div>
+
+                        </form>
+
+                        <div class="row">
+
+                            <form method="GET" onsubmit="redeemCoupon();
+                            return false;">
+
+                                <div class="col s12 valign-wrapper">
+
+                                    <div class="input-field inline">
+                                        <input id="coupon_field" redeemed="false" type="text" name="@Account.COUPON_ID">
+                                        <label for="coupon_field">Coupon</label>
+                                    </div>
+
+                                    <button class="btn-flat left-margin" type="submit">
+                                        Redeem
+                                    </button>
+
+                                    <div id="coupon-progress" class=" left-margin preloader-wrapper small">
+                                        <div class="spinner-layer spinner-red-only">
+                                            <div class="circle-clipper left">
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="gap-patch">
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="circle-clipper right">
+                                                <div class="circle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                        <div class="row"></div>
+
+                        <span>
+                            By creating an account, I agree to the
+                            <a href="@routes.MainController.getTermsOfUse().url">Terms of Service</a> and
+                            <a href="@routes.MainController.getPrivacyStatement().url">Privacy Policy</a> that
+                            are put forth by <i>Caplan Innovations</i>.
+                        </span>
+
+                        <div class="row"></div>
+
+                        <div class="col s12 centered-content submit_container">
+
+                            <button id="submitButton" onclick="$('#create-account-form').submit();"
+                            class="btn waves-effect waves-light centered" type="button">
+                                Submit
+                            </button>
+
+                            @ProgressSpinner()
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @BaseFooter()
+
+        @components.AllDialogs()
+
+    </body>
+
+    <script type="text/javascript">
+
+            $('select').material_select();
+
+            $('.progress-bar').hide();
+
+            function redeemCoupon() {
+                var $stripeErrorNode = $('#stripeError');
+                var $couponNode = $('#coupon_field');
+
+                if ($couponNode.attr('redeemed') === "true") {
+                    $stripeErrorNode.html("You have already redeemed a coupon");
+                    $stripeErrorNode.css("display", "block");
+                    $("html, body").animate({scrollTop: 0}, "slow");
+                    return;
+                } else {
+                    $stripeErrorNode.css("display", "none");
+                }
+
+                var couponId = $couponNode.val();
+                if (!couponId || couponId.trim().length === 0) {
+                    $stripeErrorNode.html("The coupon field is invalid");
+                    $stripeErrorNode.css("display", "block");
+                    $("html, body").animate({scrollTop: 0}, "slow");
+                    return;
+                } else {
+                    $stripeErrorNode.css("display", "none");
+                }
+
+                var $progress = $('#coupon-progress');
+                $progress.addClass('active');
+
+                doGet("/coupons/" + couponId, null, function (response) {
+                            $progress.removeClass('active');
+
+                            if (!response.is_valid) {
+                                $stripeErrorNode.html("This coupon is no longer valid");
+                                $stripeErrorNode.css("display", "block");
+                                $("html, body").animate({scrollTop: 0}, "slow");
+                                return;
+                            }
+
+                            $('.subscription').each(function (index, element) {
+                                var price = element.getAttribute('price');
+                                price = price - (response.amount_off / 100.0);
+                                price = price.toFixed(2);
+                                var label = $('#label-option-' + index);
+                                label.html(label.html().strike() + " <b>$" + price + " per month</b>");
+
+                                if (response.@PlanController.MAX_REDEMPTIONS - response.@PlanController.TIMES_REDEEMED === 0) {
+                                    $stripeErrorNode.html("This coupon is no longer valid");
+                                    $stripeErrorNode.css("display", "block");
+                                    return;
+                                }
+
+                                var numberOfMonths = response.@PlanController.DURATION_IN_MONTHS;
+                                if (numberOfMonths) {
+                                    label.html(label.html() + " (valid for " + numberOfMonths + " months)");
+                                }
+                            });
+
+                            $('#coupon_id').val($('#coupon_field').val());
+                            $couponNode.attr('redeemed', true);
+                        },
+                        function (xhr) {
+                            var json = JSON.parse(xhr.responseText);
+                            $progress.removeClass('active');
+                            $stripeErrorNode.html(json.reason);
+                            $stripeErrorNode.css("display", "block");
+                            $("html, body").animate({scrollTop: 0}, "slow");
+                        }
+                );
+            }
+
+            function validateFormAndSubmitEmailForValidation() {
+                const token = $('#stripe_token').val();
+                if (isFormValid() && token && token.trim().length > 1) {
+                    // The form has all relevant data, submit it
+                    return true;
+                } else {
+                    if (isFormValid()) {
+                        $('#submitButton').css("display", "none");
+                        $('.progress-bar').css("display", "inline-block");
+
+                        const email = $('#email').val();
+
+                        doGet("@routes.UserController.getEmailAlreadyInUse.url",
+                                {email: email},
+                                function () {
+                                    onEmailNotInUse(email);
+                                },
+                                function (xhr) {
+                                    console.error(xhr);
+                                    const json = JSON.parse(xhr.responseText);
+                                    var $emailError = $('#emailError');
+                                    $emailError.html(json.reason);
+                                    $emailError.css("display", "block");
+
+                                    $('#submitButton').css("display", "block");
+                                    $('.progress-bar').css("display", "none");
+                                    $("html, body").animate({scrollTop: 0}, "slow");
+                                });
+                    } else {
+                        // Scroll to the top of the page and display the errors
+                        $("html, body").animate({scrollTop: 0}, "slow");
+                    }
+                    return false;
+                }
+            }
+
+            function onEmailNotInUse(email) {
+                doPost("@routes.UserController.isEmailValid.url",
+                        {
+                            email: email,
+                            token: '@helper.CSRF.getToken'
+                        },
+                        function (data) {
+                            if (data.success) {
+                                // It succeeded; submit the card info and continue
+                                var creditCard = $('#creditCard').val();
+                                var cvc = $('#cvc').val();
+                                var expMonth = $('#expMonth').val();
+                                var expYear = $('#expYear').val();
+
+                                submitCreditCardInfo(creditCard, cvc, expMonth, expYear);
+                            } else {
+                                const error = "Your email is invalid. Check its spelling before retrying";
+                                var $emailError = $('#emailError');
+                                $emailError.html(error);
+                                $emailError.css("display", "block");
+
+                                $('#submitButton').css("display", "block");
+                                $('.progress-bar').css("display", "none");
+                                $("html, body").animate({scrollTop: 0}, "slow");
+                            }
+                        },
+                        function () {
+                            // It succeeded; submit the card info and continue
+                            var creditCard = $('#creditCard').val();
+                            var cvc = $('#cvc').val();
+                            var expMonth = $('#expMonth').val();
+                            var expYear = $('#expYear').val();
+
+                            submitCreditCardInfo(creditCard, cvc, expMonth, expYear);
+                        });
+            }
+
+            function isFormValid() {
+                var name = $('#name').val();
+                var email = $('#email').val();
+                var password = $('#password').val();
+                var confirmPassword = $('#confirm_password').val();
+                var creditCard = $('#creditCard').val();
+                var cvc = $('#cvc').val();
+                var expMonth = $('#expMonth').val();
+                var expYear = $('#expYear').val();
+
+                return validate(name, email, password, confirmPassword, creditCard, cvc, expMonth, expYear);
+            }
+
+            /**
+             * return - true if the validation is successful, false otherwise
+             */
+            function validate(name, email, password, confirmPassword, creditCardNumber, cvc, expMonth, expYear) {
+                var $nameError = $('#nameError');
+                var $emailError = $('#emailError');
+                var $passwordError = $('#passwordError');
+                var $creditCardError = $('#creditCardError');
+                var $dateError = $('#dateError');
+                var $cvcError = $('#cvcError');
+
+                var isValid = true;
+
+                if (!name) {
+                    $nameError.html("Your name is invalid");
+                    $nameError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $nameError.css("display", "none")
+                }
+
+                if (!email || !isEmailValid(email)) {
+                    $emailError.html("Your email is invalid");
+                    $emailError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $emailError.css("display", "none");
+                }
+
+                if (!password || password.length < 8) {
+                    $passwordError.html("Your password must be at least 8 characters long");
+                    $passwordError.css("display", "block");
+                    isValid = false;
+                }
+                else if (password !== confirmPassword) {
+                    $passwordError.html("Your two passwords do not match");
+                    $passwordError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $passwordError.css("display", "none");
+                }
+
+                if (!Stripe.card.validateCardNumber(creditCardNumber)) {
+                    $creditCardError.html("Your credit card is invalid");
+                    $creditCardError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $creditCardError.css("display", "none");
+                }
+
+                if (!Stripe.card.validateExpiry(expMonth, expYear)) {
+                    $dateError.html("Invalid month/year");
+                    $dateError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $dateError.css("display", "none");
+                }
+
+                if (!Stripe.card.validateCVC(cvc)) {
+                    $cvcError.html("Invalid CVC");
+                    $cvcError.css("display", "block");
+                    isValid = false;
+                }
+                else {
+                    $cvcError.css("display", "none");
+                }
+
+                return isValid;
+            }
+
+            function submitCreditCardInfo(enteredNumber, enteredCvc, enteredExpMonth, enteredExpYear) {
+                Stripe.card.createToken({
+                            number: enteredNumber,
+                            cvc: enteredCvc,
+                            exp_month: enteredExpMonth,
+                            exp_year: enteredExpYear
+                        },
+                        function (status, response) {
+                            if (response.error) {
+                                var $stripeError = $('#stripeError');
+                                $stripeError.html(response.error.message);
+                                $stripeError.css("display", "block");
+
+                                $('#submitButton').css("display", "block");
+                                $('.progress-bar').css("display", "none");
+                            } else {
+                                $('#stripeError').css("display", "none");
+
+                                const token = response.id;
+                                $('#stripe_token').val(token);
+
+                                $('#coupon_id').val($('#coupon_field').val());
+
+                                $('#create-account-form').submit();
+                            }
+                        }
+                );
+            }
+    </script>
+
+</html>

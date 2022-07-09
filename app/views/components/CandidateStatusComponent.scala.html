@@ -1,0 +1,13 @@
+@(candidate: model.manager.Candidate)
+<a class="btn-flat dropdown-button no-padding no-text-transform"
+data-constrainwidth="false"
+data-activates="candidate-menu-@candidate.getCandidateId">
+@candidate.getState.getStatusDescription
+</a>
+<ul class="dropdown-content" id="candidate-menu-@candidate.getCandidateId">
+@for(state <- utilities.ProfileUtility.getAllCandidateStates) {
+    <li class="opacity-hover">
+        <a class="@state.getStatusType">@state.getStatusDescription</a>
+    </li>
+}
+</ul>

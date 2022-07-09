@@ -1,0 +1,357 @@
+@import model.lists.ProspectSearch.SearchPredicate.KEY_LIST_ID
+@import views.html.components._
+@import model.account.Account
+@import model.lists.SavedList
+@import model.lists.SavedList.Sorter
+
+@(savedLists: model.PagedList[SavedList], sorter: Sorter, isAscending: Boolean)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("My Lists")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet()
+
+            <div class="container row">
+
+                <div class="row">
+
+                    <div class="col s12">
+
+                        <div class="card" style="padding: 0;">
+
+                            <div class="card-content">
+
+                                <h6 class="table-title inline">
+                                @savedLists.getHtmlRangeForUi
+                                </h6>
+
+                                <a class="dropdown-button btn-flat right black-text top-margin right-margin scale-transition"
+                                data-activates="list-dropdown" data-constrainwidth="false" data-beloworigin="true"
+                                data-alignment="right" id="options-button">
+                                    Options
+                                </a>
+
+                                <a id="merge-help-button" onclick="showMergeHelpDialog();"
+                                class="btn right top-margin right-margin waves-effect waves-light scale-transition scale-out">
+                                    Merge Help
+                                    <i class="left material-icons white-text">help_outline</i>
+                                </a>
+
+                                <ul class="dropdown-content" id="list-dropdown">
+                                    <li>
+                                        <a onclick="startMergeLists();">Merge Lists</a>
+                                    </li>
+                                    <li>
+                                        <a href="@routes.SearchesController.getSearchDetails.url">View All Contacts</a>
+                                    </li>
+                                </ul>
+
+                                @arrow(sorterToCompare: Sorter) = {
+                                @if(sorterToCompare == sorter) {
+                                    @if(isAscending) {
+                                        <i class="material-icons left">arrow_drop_up</i>
+                                    } else {
+                                        <i class="material-icons left">arrow_drop_down</i>
+                                    }
+                                }
+                                }
+
+                                <div class="card-content">
+
+
+                                    <table class="highlight bordered">
+                                        <thead>
+                                            <tr class="search-result-header">
+                                                <th>
+                                                    <a class="black-text waves-effect side-padding"
+                                                    onclick="onSortByClick('@Sorter.SEARCH_NAME.toString')">
+                                                        List Name
+                                                        @arrow(Sorter.SEARCH_NAME)
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a class="black-text waves-effect side-padding"
+                                                    onclick="onSortByClick('@Sorter.DATE_CREATED.toString')">
+                                                        Date Added
+                                                        @arrow(Sorter.DATE_CREATED)
+                                                    </a>
+                                                </th>
+                                                <th class="notes">
+                                                    Notes
+                                                </th>
+                                                <th class="options-menu">
+                                                    Options
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        @if(savedLists.isEmpty) {
+                                            <tr>
+                                                <td colspan="4" class=" no-results-found">
+                                                    You have no uploaded lists
+                                                </td>
+                                            </tr>
+                                        } else {
+                                            @for(savedList: SavedList <- savedLists) {
+                                                <tr class="search-result" id="row_@savedList.getListId" data-id="@savedList.getListId">
+                                                    <td>
+                                                        <a class="list-name" id="list_name_anchor_@savedList.getListId"
+                                                        href="@routes.SearchesController.getSearchDetails.url?@KEY_LIST_ID=@savedList.getListId"
+                                                        >@savedList.getListName</a>
+                                                    </td>
+                                                    <td>
+                                                    @savedList.getDateCreated
+                                                    </td>
+
+                                                    <td class="notes" onclick="showListCommentDialog('@savedList.getListId')">
+                                                        <span id="comment_text_@savedList.getListId">@savedList.getComment</span>
+                                                    </td>
+
+                                                    <td class="options-menu">
+
+                                                        <a class="dropdown-button btn-flat waves-effect waves-light side-padding-small"
+                                                        data-beloworigin="true" data-activates="options_@savedList.getListId"
+                                                        data-alignment="right" data-constrainwidth="false">
+                                                            <i class="material-icons black-text">more_vert</i>
+                                                        </a>
+
+                                                        <ul id="options_@savedList.getListId" class="dropdown-content">
+                                                            <li onclick="showTransferUserListDialog('@savedList.getListId')">
+                                                                <a>
+                                                                    <i class="material-icons left">share</i>
+                                                                    Share List with Team
+                                                                </a>
+                                                            </li>
+                                                            <li onclick="showEditListCommentDialog('@savedList.getListId')">
+                                                                <span class="hide" id="comment_text_@savedList.getListId">@savedList.getComment</span>
+                                                                <a>
+                                                                    <i class="material-icons left">mode_edit</i>
+                                                                    Edit List Notes
+                                                                </a>
+                                                            </li>
+                                                            <li onclick="showEditListNameDialog('@savedList.getListId')">
+                                                                <a>
+                                                                    <i class="material-icons left">mode_edit</i>
+                                                                    Edit List Name
+                                                                </a>
+                                                            </li>
+                                                            @if(savedList.getOwnerId.equals(Account.getAccountFromSession.getUserId)) {
+                                                                <li onclick="showDeleteListDialog('@savedList.getListId')">
+                                                                    <a>
+                                                                        <i class="material-icons left">delete</i>
+                                                                        Delete List
+                                                                    </a>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col s12">
+
+                    @components.TablePagination(savedLists.getCurrentPage, savedLists.getMaxPage)
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="list-merge-preview" class="card green darken-1 scale-transition scale-out">
+                <div class="card-content white-text">
+                    <span class="card-title">Selected Lists</span>
+                    <ul id="list-merge-preview-collection">
+
+                    </ul>
+                </div>
+            </div>
+
+            <div class="toolbar-fixed indigo" id="merge-button" style="display: none">
+                <ul>
+                    <li class="indigo waves-effect waves-light toolbar-fixed-button"
+                    onclick="onEndMerge();">
+                        <a>
+                            <i class="medium material-icons white-text">cancel</i>
+                        </a>
+                    </li>
+                    <li class="indigo waves-effect waves-light toolbar-fixed-button"
+                    onclick="onFinishMergeClick();">
+                        <a>
+                            <i class="medium material-icons white-text">check</i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </main>
+
+        <form>
+            <input id='form-ascending' type="text" name="@BaseController.KEY_ASCENDING" hidden value="@isAscending">
+            <label for="form-ascending"></label>
+
+            <input id='form-sort-by' type="text" name="@BaseController.KEY_SORT_BY" hidden value="@sorter.toString">
+            <label for="form-sort-by"></label>
+        </form>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <script>
+
+                const isAscending = '@isAscending';
+                const currentSortBy = '@sorter.toString';
+
+                function showMergeHelpDialog() {
+                    $('#read_only_dialog_title').html("List Merging Help");
+                    $('#read_only_dialog_content').html("To merge lists together (without any duplicate contacts), " +
+                            "begin by selecting 2 or more lists. " +
+                            "<br>" +
+                            "<br>" +
+                            "Then, press the \'check\' button below. Doing so will open a dialog that will allow you " +
+                            "to enter this new list\'s name. " +
+                            "<br>" +
+                            "<br>" +
+                            "To cancel the merge at any time, press the cancel button below.");
+                    $('#read_only_dialog').modal("open");
+                }
+
+                function onSortByClick(type) {
+                    if (type === currentSortBy) {
+                        $('#form-ascending').val(!isAscending);
+                        $('form').submit();
+                    } else {
+                        $('#form-sort-by').val(type);
+                        $('#form-ascending').val(true);
+                        $('form').submit();
+                    }
+                }
+
+                function startMergeLists() {
+                    $('.search-result').each(function () {
+                        const $td = $('<td class="merge-cell">' +
+                                '<p style="margin: 0; height: 25px;">' +
+                                '<input type="checkbox" id="ck_' + $(this).attr("data-id") + '" class="merge-checkbox"' +
+                                'data-id="' + $(this).attr("data-id") + '" />' +
+                                '<label for="ck_' + $(this).attr("data-id") + '"></label>' +
+                                '</p>' +
+                                '</td>');
+                        $(this).prepend($($td));
+                    });
+
+                    $('.merge-checkbox').change(function () {
+                        const id = $(this).attr("data-id");
+                        if ($(this).is(":checked")) {
+                            const listName = $('#list_name_anchor_' + id).html();
+                            const $listItem = $('<li class="truncate" id="selected-list-' + id + '">' + listName + '</li>');
+
+                            const $list = $('#list-merge-preview-collection');
+                            $list.append($listItem);
+                            $list.animate({scrollTop: $list[0].scrollHeight}, 1000);
+                        } else {
+                            $('#selected-list-' + id).remove();
+                        }
+                    });
+
+                    $('.search-result-header').prepend("<th>Selected Lists</th>");
+                    $('.options-menu').toggle(300);
+                    $('.toolbar-fixed').slideToggle(300);
+                    $('#options-button').toggleClass('scale-out');
+                    $('#list-merge-preview').toggleClass("scale-in");
+                    setTimeout(function () {
+                        $('#options-button').toggle();
+                        $('#merge-help-button').toggleClass('scale-in');
+                    }, 200);
+                }
+
+                function onFinishMergeClick() {
+                    const listIds = [];
+                    const $mergeCells = $('.merge-cell');
+                    $mergeCells.each(function () {
+                        const $checkbox = $(this).find('input');
+                        if ($checkbox.is(":checked")) {
+                            listIds.push($checkbox.attr("data-id"));
+                        }
+                    });
+
+                    if (listIds.length <= 1) {
+                        showToast("You must select at least 2 lists before merging");
+                        return;
+                    }
+
+                    $('#edit_single_line_label').html("List Name");
+                    $('#edit_single_line_field').val("");
+                    $('#edit_single_line_submit').html("Save");
+                    $('#edit_single_line_title').html("Enter a List Name");
+
+                    showSingleLineDialog(function () {
+                        const json = {};
+                        const listName = $('#edit_single_line_field').val();
+                        if (!listName || !listName.trim().length) {
+                            showToast("You must specify a new list name to merge the lists");
+                            return;
+                        }
+
+                        json["list_name"] = listName;
+                        json["list_ids"] = listIds;
+                        doPost("/api/list/merge", json, success, error);
+                    });
+
+                    function success(data) {
+                        onEndMerge();
+
+                        showToast("Lists successfully merged");
+                        console.log("Merge Successful: ", data);
+
+                        window.location.reload();
+
+                        $('.modal').modal("close");
+                    }
+
+                    function error(xhr) {
+                        showToast("There was an error merging your lists");
+                        console.log("Error Merging: ", xhr.responseText);
+                    }
+                }
+
+                function onEndMerge() {
+                    $('.merge-cell').remove();
+                    $('.search-result-header').find('th').first().remove();
+                    $('.options-menu').toggle(300);
+                    $('.toolbar-fixed').slideToggle(300);
+                    $('#merge-help-button').toggleClass('scale-in');
+                    $('#list-merge-preview').toggleClass("scale-in");
+                    $('#list-merge-preview-collection').children().remove();
+                    setTimeout(function () {
+                        const $button = $('#options-button');
+                        $button.toggle();
+                        $button.toggleClass('scale-out');
+                    }, 200);
+                }
+
+
+        </script>
+
+    </body>
+
+</html>

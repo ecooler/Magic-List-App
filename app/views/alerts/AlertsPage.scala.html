@@ -1,0 +1,386 @@
+@import model.prospect.Appointment
+@import views.html.components._
+@import model.prospect.Notification
+@import model.dialsheet.DialSheet
+@import model.PagedList
+
+@(unfulfilledAppointments: PagedList[Appointment], unarchivedNotifications: PagedList[Notification],
+        unfulfilledDialSheets: PagedList[DialSheet])
+<head>
+    @components.BaseHead()
+</head>
+
+<body>
+
+    @BaseBodyHeader()
+
+    <main>
+
+        @selected(currentSortBy: Appointment.Sorter, selectedSortBy: Appointment.Sorter) = {
+        @if(currentSortBy == selectedSortBy) {
+            selected
+        }
+        }
+
+        <div class="container row">
+
+            <div class="row"></div>
+
+            <div id="alerts-page-appointments-container" class="col s12 scrollspy">
+
+                <nav class="black side-padding"
+                data-target="alerts-page-appointments-container">
+                    <div class="nav-wrapper">
+                        Appointment Alerts
+                        <i class="material-icons yellow-text left">warning</i>
+
+                        <ul class="right">
+                            <li>
+                                <a id="alerts-page-appointment-help-button" class="waves-effect waves-light"
+                                onclick="showAppointmentAlertsHelpDialog()">
+                                    <i class="material-icons">help</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="card">
+
+                    <div class="card-content">
+
+                        <h6 id="alerts-page-appointment-range" class="table-title inline">
+                            Showing <span id="page_pagination_min-appointments">0</span> -
+                            <span id="page_pagination_max-appointments">0</span>
+                            of
+                            <span id="page_pagination_total-appointments">@unfulfilledAppointments.getTotalNumberOfItems</span>
+                        </h6>
+
+                        <div class="inline right right-margin">
+
+                            <form id="appointments-form">
+
+                                <div class="input-field inline">
+                                    <select name="sort_by" id="sort-by-appointment" onchange="$('#appointments-form').submit()">
+                                    @for((sorter, index) <- Appointment.Sorter.values.zipWithIndex) {
+                                        @if(index == 0) {
+                                            <option value="@sorter.getRawText" selected>@sorter.toUiString</option>
+                                        } else {
+                                            <option value="@sorter.getRawText">@sorter.toUiString</option>
+                                        }
+                                    }
+                                    </select>
+                                    <label for="sort-by-appointment">Sort By</label>
+                                </div>
+
+                                <div class="left-margin input-field inline">
+                                    <select name="ascending" id="ascending-appointment" onchange="$('#appointments-form').submit()">
+                                        <option value="true">Ascending</option>
+                                        <option selected value="false">Descending</option>
+                                    </select>
+                                    <label for="ascending-appointment">Order</label>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                        <div class="row"></div>
+
+                        <ul id="alerts-page-appointments-list" class="collection allow-overflow">
+                            <li id="appointments-no-results" class="collection-item" style="display: none;">
+                                <h5 class="no-results-found">
+                                    <span class="center-align display-block">
+                                        <i class="material-icons large green-text">wb_sunny</i>
+                                    </span>
+                                    <br>
+                                    <br>
+                                    Congrats, you have no appointment alerts!
+                                </h5>
+                            </li>
+
+                            <li id="appointments-progress-bar" class="collection-item center-align" style="display: none;">
+                            @components.ProgressSpinner()
+                            </li>
+
+                            <li id="load-more-appointments" class="center-align white-background regular-padding">
+                                <a id="load-more-appointments-anchor" class="btn-flat waves-effect">
+                                    Load More
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="alerts-page-notifications-container" data-has-action="true" class="col s12 scrollspy">
+
+                <nav class="black side-padding" data-target="alerts-page-notifications-container">
+                    <div class="nav-wrapper">
+                        Notification Alerts
+                        <i class="material-icons yellow-text left">warning</i>
+
+                        <ul class="right">
+                            <li>
+                                <a class="waves-effect waves-light" id="alerts-page-notification-help-button"
+                                onclick="showNotificationAlertsHelpDialog()">
+                                    <i class="material-icons">help</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="card">
+
+                    <div class="card-content">
+
+                        @*<h6 id="alerts-page-notification-range" class="table-title inline">@unarchivedNotifications.getHtmlRangeForUi(Notification.Type.CURRENT.getRawText)</h6>*@
+
+                        <h6 id="alerts-page-notification-range" class="table-title inline">
+                            Showing <span id="page_pagination_min-notification-@Notification.Type.CURRENT.getRawText">
+                            0</span> -
+                            <span id="page_pagination_max-notification-@Notification.Type.CURRENT.getRawText">0</span>
+                            of
+                            <span id="page_pagination_total-notification-@Notification.Type.CURRENT.getRawText">@unarchivedNotifications.getTotalNumberOfItems</span>
+                        </h6>
+
+                        <div class="inline right right-margin">
+
+                            <form id="notifications-form">
+
+                                <div class="input-field inline">
+                                    <select name="sort_by" id="sort-by-notification-@Notification.Type.CURRENT.getRawText" onchange="$('#notifications-form').submit()">
+                                    @for((sorter, index) <- Notification.Sorter.values.zipWithIndex) {
+                                        @if(index == 0) {
+                                            <option value="@sorter.getRawText" selected>@sorter.toUiString</option>
+                                        } else {
+                                            <option value="@sorter.getRawText">@sorter.toUiString</option>
+                                        }
+                                    }
+                                    </select>
+                                    <label for="sort-by-notification-@Notification.Type.CURRENT.getRawText">Sort By</label>
+                                </div>
+
+                                <div class="left-margin input-field inline">
+                                    <select name="ascending" id="ascending-notification-@Notification.Type.CURRENT.getRawText" onchange="$('#notifications-form').submit()">
+                                        <option value="true">Ascending</option>
+                                        <option selected value="false">Descending</option>
+                                    </select>
+                                    <label for="ascending-notification-@Notification.Type.CURRENT.getRawText">Order</label>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                        <div class="row"></div>
+
+                        @* ID is taken from notifications page/notifications.js file *@
+                        <ul id="notifications-@Notification.Type.CURRENT.getRawText" class="collection allow-overflow">
+                            <li class="collection-item" id="notification-@Notification.Type.CURRENT.getRawText-no-results" style="display: none;">
+                                <h5 class="no-results-found">
+                                    <span class="center-align display-block">
+                                        <i class="material-icons large green-text">wb_sunny</i>
+                                    </span>
+                                    <br>
+                                    <br>
+                                    Congrats, you have no notification alerts!
+                                </h5>
+                            </li>
+
+                            <li id="progress-@Notification.Type.CURRENT.getRawText" class="collection-item center-align" style="display: none;">
+                            @components.ProgressSpinner()
+                            </li>
+
+                            <li id="load-more-@Notification.Type.CURRENT.getRawText" class="center-align white-background regular-padding">
+                                <a id="load-more-notifications-anchor" class="btn-flat waves-effect">
+                                    Load More
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="alerts-page-activity-sheets-container" class="col s12 scrollspy">
+
+                <nav class="black side-padding" data-target="alerts-page-activity-sheets-container">
+                    <div class="nav-wrapper">
+                        Activity Sheet Alerts
+                        <i class="material-icons yellow-text left">warning</i>
+
+                        <ul class="right">
+                            <li>
+                                <a class="waves-effect waves-light" id="alerts-page-activity-sheet-help-button"
+                                onclick="showActivitySheetAlertsHelpDialog()">
+                                    <i class="material-icons">help</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="card">
+
+                    <div class="card-content">
+
+                        <h6 id="alerts-page-activity-sheet-range" class="table-title inline">
+                            Showing <span id="page_pagination_min-activity-sheets">0</span> -
+                            <span id="page_pagination_max-activity-sheets">0</span>
+                            of
+                            <span id="page_pagination_total-activity-sheets">@unfulfilledDialSheets.getTotalNumberOfItems</span>
+                        </h6>
+
+                        <ul id="alerts-page-activity-sheet-list" class="collection allow-overflow">
+
+                            <li id="activity-sheets-no-results" class="collection-item" style="display: none;">
+
+                                <h5 class="no-results-found">
+                                    <span class="center-align display-block">
+                                        <i class="material-icons large green-text">wb_sunny</i>
+                                    </span>
+                                    <br>
+                                    <br>
+                                    Congrats, you have no activity sheet alerts!
+                                </h5>
+
+                            </li>
+
+                            <li id="progress-activity-sheets" class="collection-item center-align" style="display: none;">
+                            @components.ProgressSpinner()
+                            </li>
+
+                            <li id="load-more-activity-sheets" class="center-align white-background regular-padding">
+                                <a id="load-more-activity-sheets-anchor" class="btn-flat waves-effect">
+                                    Load More
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row"></div>
+
+        <div id="alerts-page-next-previous-container">
+
+            <a id="alerts-page-previous-button" class="btn-floating btn-large waves-effect waves-light indigo scale-transition scale-out">
+                <i class="material-icons white-text">keyboard_arrow_up</i>
+            </a>
+
+            <div class="row"></div>
+
+            <a id="alerts-page-next-button" class="btn-floating btn-large waves-effect waves-light indigo scale-transition scale-out">
+                <i class="material-icons white-text">keyboard_arrow_down</i>
+            </a>
+
+            <a id="alerts-page-action-button" class="btn-floating btn-large waves-effect waves-light indigo scale-transition scale-out">
+                <i class="material-icons white-text">done</i>
+            </a>
+
+        </div>
+
+    </main>
+
+    @BaseFooter()
+
+    @AllDialogs()
+
+    <script>
+            $(document).ready(function () {
+                $('.scrollspy').scrollSpy({
+                    scrollOffset: 100
+                });
+
+                onScrollFunction();
+            });
+
+            alerts.onDocumentReady();
+
+            $('select').material_select();
+
+            var $currentSection = $('#alerts-page-appointments-container');
+
+            $(window).scroll(function () {
+                onScrollFunction()
+            });
+
+            function onNotificationStateClick(entityId, entityName, stateType, stateDescription, stateClass) {
+                const notificationDate = $('#' + entityId + '-date').attr("data-date");
+                showEditTimeDialogForNotification(notificationDate, entityId, entityName, stateType, stateDescription,
+                        stateClass);
+            }
+
+            contactStatus.onClickFunctions.notifications.push(onNotificationStateClick);
+
+            function onScrollFunction() {
+                const scrollTop = $(window).scrollTop();
+                const $scrollSpy = $('.scrollspy');
+                $scrollSpy.each(function (index) {
+                    const offsetTop = $(this).offset().top;
+                    const height = $(this).height();
+
+                    const $previousButton = $('#alerts-page-previous-button');
+                    const $nextButton = $('#alerts-page-next-button');
+                    const $actionButton = $('#alerts-page-action-button');
+
+                    if (scrollTop >= offsetTop - 100 && scrollTop <= offsetTop + height - 100) {
+                        $currentSection = $(this);
+
+                        if (index === 0) {
+                            $currentSection = $(this);
+                            $previousButton.removeClass("scale-in");
+                            $nextButton.addClass("scale-in");
+
+                            $nextButton.attr("href", "#" + $scrollSpy.eq(index + 1).attr("id"));
+                            $actionButton.removeClass("scale-in");
+                            return false;
+                        } else if (index === $scrollSpy.length - 1) {
+                            // We are at the last position
+                            $currentSection = $(this);
+                            $previousButton.addClass("scale-in");
+                            $nextButton.removeClass("scale-in");
+
+                            $previousButton.attr("href", "#" + $scrollSpy.eq(index - 1).attr("id"));
+                            $actionButton.removeClass("scale-in");
+                            return false;
+                        }
+                        else {
+                            // We are in the middle
+                            $currentSection = $(this);
+                            $previousButton.addClass("scale-in");
+                            $nextButton.addClass("scale-in");
+
+                            if ($currentSection.attr("id") === 'alerts-page-notifications-container' &&
+                                    $('.notification-current').length) {
+                                $actionButton.addClass("scale-in");
+                                $actionButton.off("click");
+                                $actionButton.click(function () {
+                                    alerts.onNotificationActionButtonClick();
+                                });
+                            }
+
+                            $nextButton.attr("href", "#" + $scrollSpy.eq(index + 1).attr("id"));
+                            $previousButton.attr("href", "#" + $scrollSpy.eq(index - 1).attr("id"));
+                            return false;
+                        }
+                    }
+                });
+            }
+
+    </script>
+
+</body>

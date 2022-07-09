@@ -1,0 +1,50 @@
+@import model.prospect.Notification
+
+@import model.prospect.Prospect
+@(prospect: Prospect, notificationList: java.util.List[Notification], notificationType: Notification.Type)
+<div class="col s12 m10 offset-m1 l6 person-grid">
+
+    <div class="card">
+
+        <div class="card-content scroll-overflow-x" id="notifications_supporting_text">
+
+            <span class="card-title side-padding-small">
+                <a id="@notificationType.getRawText-notifications-title" class="waves-effect grey-text text-darken-4">
+                    Your @notificationType.getTextForUi Notifications for @prospect.getName
+                    <i id="@notificationType.getRawText-notifications-expansion-icon" class="material-icons right">
+                        expand_more
+                    </i>
+                </a>
+            </span>
+
+            <div id="@notificationType.getRawText-notification-wrapper" style="display: none;">
+                <table id="notification-table-@notificationType.getRawText" class="highlight bordered allow-overflow">
+                    <thead>
+                        <tr>
+                            <th class="notification_date left-content">
+                                <i class="material-icons left">arrow_drop_up</i>
+                                Date
+                            </th>
+                            <th class="center-align">Call Outcome</th>
+                            <th class="center-align notification_message">Notes</th>
+                            <th class="center-align notification_options">Options</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="notifications-@notificationType.getRawText" class="allow-overflow">
+                        <tr id="notification-@notificationType.getRawText-no-results">
+                            <td colspan="4" class="no-results-found no-overflow">@prospect.getName
+                                has no @notificationType.getLowercaseText notifications
+                            </td>
+                        </tr>
+                        @for(notification <- notificationList) {
+                            @person.NotificationTableItem(notification, notificationType)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>

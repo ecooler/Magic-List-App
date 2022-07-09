@@ -1,0 +1,153 @@
+@import components._
+@import model.account.Account
+@(hasCoWorkers: Boolean = false)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @checkDisabled(hasCoWorkers: Boolean) = {
+        @if(!hasCoWorkers) {
+            disabled
+        }
+        }
+
+        @BaseBodyHeader("Management Home")
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="container row">
+
+                <div class="col s12">
+
+                    <div class="card z-depth-3">
+
+                        <div class="card-content">
+
+                            <div>
+                                <h5 class="card-title activator grey-text text-darken-4">
+                                    Welcome @Account.getAccountFromSession.getName
+                                    <i class="right material-icons grey-text text-darken-2">settings</i>
+                                </h5>
+                            </div>
+
+                            <div class="row"></div>
+
+                            <div class="col s8 offset-s2 m4 l4 center-align">
+
+                                <a class="btn-flat no-height-restriction waves-effect center-align green-text regular-padding disabled">
+
+                                    <i class="material-icons promo-caption-small">track_changes</i>
+                                    <br>
+                                    <span class="promo-caption-small">Track Candidates</span>
+
+                                </a>
+
+                            </div>
+
+                            <div class="col s8 offset-s2 m4 l4 center-align">
+
+                                <a class="btn-flat no-height-restriction waves-effect center-align green-text
+                                regular-padding @checkDisabled(hasCoWorkers)"
+                                href="@routes.ManagerComparisonController.getEmployeeComparisonPage.url">
+
+                                    <i class="material-icons promo-caption-small">insert_chart</i>
+                                    <br>
+                                    <span class="promo-caption-small">Compare & Analyze Team Performance</span>
+
+                                </a>
+
+                            </div>
+
+                            <div class="col s8 offset-s2 m4 l4 center-align">
+
+                                <a class="btn-flat no-height-restriction waves-effect center-align green-text
+                                regular-padding @checkDisabled(hasCoWorkers)"
+                                href="@routes.ManagerDialSheetController.getDialSheetHistoryPage()">
+
+                                    <i class="material-icons promo-caption-small">perm_phone_msg</i>
+                                    <br>
+                                    <span class="promo-caption-small">View Team Activity Sheets and Statistics</span>
+
+                                </a>
+
+                            </div>
+
+                            <div class="row"></div>
+
+                        </div>
+
+                        <div class="card-reveal">
+                            <span class="card-title grey-text text-darken-4">
+                                Manager Settings
+                                <i class="right material-icons">close</i>
+                            </span>
+                            <div class="row"></div>
+                            <div class="collection">
+                                <a class="collection-item avatar waves-effect waves-green"
+                                href="@routes.ManagerMiscController.getEditEmployeesPage.url">
+                                    <i class="material-icons green white-text circle">supervisor_account</i>
+                                    <span class="title">Manage Team</span>
+                                    <p class="indigo-text text-lighten-2">
+                                        Add or remove team members
+                                    </p>
+                                    <p class="indigo-text text-lighten-2">
+                                        Transfer or recover a team member's contacts and lists
+                                    </p>
+                                </a>
+                                <a class="collection-item avatar waves-effect waves-green"
+                                href="@routes.ManagerMiscController.getManagerFaqPage.url">
+                                    <i class="material-icons green white-text circle">help_outline</i>
+                                    <span class="title">Management Portal FAQ</span>
+                                    <p class="indigo-text text-lighten-2">
+                                        Learn more about the benefits of having your team on Magic List
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            @if(!hasCoWorkers) {
+                <div class="fixed-action-btn">
+                    <a id="help_button" class="btn-floating btn-large indigo pulse"
+                    onclick="$('.tap-target').tapTarget('open');">
+                        <i class="large material-icons">help_outline</i>
+                    </a>
+                </div>
+                <div class="tap-target" data-activates="help_button">
+                    <div class="tap-target-content white-text">
+                        <h5>Help</h5>
+                        <p>
+                            To get started, press the settings icon next to the welcome message. From there, you may add
+                            and remove team members as well as learn about the capabilities Magic List offers to managers!
+                        </p>
+                    </div>
+                </div>
+
+                <script>
+                        $(document).ready(function () {
+                            setTimeout(function () {
+                                $('.tap-target').tapTarget("open");
+                            }, 1000);
+                        })
+                </script>
+            }
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+    </body>
+
+</html>

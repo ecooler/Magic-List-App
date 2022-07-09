@@ -1,0 +1,85 @@
+@import model.user.Suggestion
+
+@(suggestionList: java.util.List[Suggestion])
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @components.BaseHead()
+    </head>
+    <body>
+
+        @components.BaseBodyHeader()
+
+        <main>
+
+            <div class="container row">
+
+                <div class="card z-depth-3 col s12 centered top-margin">
+
+                    <div class="card-title black-text">
+                        <h4>Suggestions</h4>
+                    </div>
+
+                    <table class="highlight responsive-table bordered">
+                        <thead>
+                            <tr>
+                                <th id="date-reported">
+                                    <i class="material-icons left">arrow_drop_down</i>
+                                    Date Submitted
+                                </th>
+                                <th>
+                                    Submitted By
+                                </th>
+                                <th>
+                                    Suggestion
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @if(suggestionList.isEmpty) {
+                            <tr>
+                                <td colspan="3">
+                                    <h5 class="grey-text">There are no suggestions to show</h5>
+                                </td>
+                            </tr>
+                        } else {
+                            @for(suggestion <- suggestionList) {
+                                <tr>
+                                    <td>
+                                    @utilities.DateUtility.getDateWithTimeForUi(suggestion.getDate)
+                                    </td>
+                                    <td>
+                                        <a href="@routes.AdminController.getUserPage(suggestion.getSuggester.getUserId)">
+                                            <span>@suggestion.getSuggester.getName</span>
+                                        </a>
+                                    </td>
+                                    <td>@suggestion.getText</td>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+
+                    </table>
+
+                    <div class="row"></div>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @components.AllDialogs()
+
+        @components.BaseFooter()
+
+        <script>
+                var th = document.querySelector('#date-reported');
+                th.style.width = (th.offsetWidth + 32) + "px";
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,54 @@
+@()
+<div id="date_with_time_dialog" class="modal modal-fixed-footer">
+
+    <div class="modal-content">
+
+        <h4 id="date_with_time_dialog_title"></h4>
+
+        <p id="date_with_time_dialog_content"></p>
+
+        <label for="date_with_time_dialog_date_picker">Date</label>
+        <input id="date_with_time_dialog_date_picker" type="date" class="datepicker">
+
+        <label for="date_with_time_dialog_time_picker">Time</label>
+        <input id="date_with_time_dialog_time_picker" type="text">
+
+    </div>
+
+    <div class="modal-footer">
+        <a class="modal-action btn-flat waves-effect close">Cancel</a>
+        <a id="date_with_time_dialog_submit" class="modal-action btn-flat waves-effect submit">Save</a>
+    </div>
+
+</div>
+
+<script>
+        $('#date_with_time_dialog_date_picker').pickadate({
+            selectMonths: true,
+            selectYears: 5,
+            autoclose: true,
+            close: 'CLOSE',
+            clear: '',
+            onSet: function (e) {
+                if (e["select"]) {
+                    setTimeout(function () {
+                        $('#date_with_time_dialog_date_picker').pickadate('picker').close()
+                    }, 200);
+                }
+            },
+            onStart: function () {
+                $('.picker').appendTo('body');
+            }
+        });
+
+        $('#date_with_time_dialog_time_picker').pickatime({
+            default: '12:00',
+            autoclose: false,
+            twelvehour: true,
+            donetext: "Submit",
+            container: 'body',
+            afterShow: function () {
+                $('.clockpicker').appendTo('body');
+            }
+        });
+</script>

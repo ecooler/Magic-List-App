@@ -1,0 +1,45 @@
+@import components._
+
+@(text: String)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+        <main>
+
+            <div class="container">
+
+                <div class="row"></div>
+
+                <div class="centered card card-wide z-depth-3">
+                    <div class="card-image">
+                        <img src="@routes.Assets.versioned("images/red-material.png")">
+                        <span class="card-title">An Error Occurred</span>
+                    </div>
+                    <div class="card-content">
+                        <p>@text</p>
+                    </div>
+
+                    <div class="card-action right-align">
+                        <a class="waves-effect indigo-text waves-red" href="@routes.MainController.index().url">
+                            Home
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="row"></div>
+
+            </div>
+
+        </main>
+
+        @BaseFooter()
+
+    </body>
+</html>

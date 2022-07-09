@@ -1,0 +1,95 @@
+@import components._
+@import model.prospect.Notification
+@import model.PagedList
+@import akka.japi.Pair
+@import java.util
+
+@(notificationPairList: util.List[Pair[Notification.Type, PagedList[Notification]]])
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Notifications")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet(showSpaceAfter = false)
+
+            <div class="row indigo bottom_shadow left-padding right-padding">
+                <ul class="tabs tabs-transparent">
+                    <li class="tab">
+                        <a href="#past-content">
+                            Past
+                        </a>
+                    </li>
+                    <li class="tab">
+                        <a href="#current-content" class="active">
+                            Current
+                        </a>
+                    </li>
+                    <li class="tab">
+                        <a href="#upcoming-content">
+                            Upcoming
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            @for(notificationPair: Pair[Notification.Type, PagedList[Notification]] <- notificationPairList) {
+                @notifications.NotificationContent(notificationPair.first, notificationPair.second)
+            }
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <script>
+                $('select').material_select();
+
+                notificationCallbacks.onDocumentReady();
+
+                notificationCallbacks.onPushNotification = function (notification) {
+                    var type;
+                    if(moment(notification.notification_date).isSame(moment(), 'day')) {
+                        type = 'current';
+                    } else {
+                        type = 'upcoming';
+                    }
+
+                    addNotificationToListUi(notification, type);
+                    updatePaginationRange(true, type, true);
+                    notificationCountWatcher.onChange(type);
+                };
+
+                function onNotificationStateClick(entityId, entityName, stateType, stateDescription, stateClass) {
+                    const notificationDate = $('#' + entityId + '-date').attr("data-date");
+                    showEditTimeDialogForNotification(notificationDate, entityId, entityName, stateType, stateDescription,
+                            stateClass);
+                }
+
+                contactStatus.onClickFunctions.notifications.push(onNotificationStateClick);
+
+        </script>
+
+        <script>
+            const noResultsObjects = {};
+            @for(notificationPair: Pair[Notification.Type, PagedList[Notification]] <- notificationPairList) {
+                @defining(notificationPair.first.getRawText) { notificationType: String =>
+                    noResultsObjects['@notificationType'] = $('#notification-@notificationType-no-results');
+
+                    @if(notificationPair.second.isEmpty) {
+                        noResultsObjects['@notificationType'].show();
+                    }
+                }
+            }
+
+        </script>
+
+    </body>
+
+</html>

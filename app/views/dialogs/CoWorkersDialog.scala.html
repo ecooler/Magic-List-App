@@ -1,0 +1,22 @@
+@()
+<div id="coworkers_dialog" class="modal modal-fixed-footer">
+    <div class="modal-content">
+
+        <h4 id="coworkers_dialog_title"></h4>
+
+        <div id="coworkers_dialog_progress_container" class="center-align hide-on-load-only">
+            @components.ProgressSpinner()
+        </div>
+
+        <div id="coworkers_dialog_list" class="collection hide-on-load-only">
+
+        </div>
+        <p id="coworkers_dialog_confirmation_text" class="hide-on-load-only">
+
+        </p>
+    </div>
+    <div id="coworkers_dialog_footer" class="modal-footer hide-on-load-only">
+        <a class="modal-action btn-flat waves-effect close">Cancel</a>
+        <a id="coworkers_dialog_submit" class="modal-action btn-flat waves-effect submit">Confirm</a>
+    </div>
+</div>

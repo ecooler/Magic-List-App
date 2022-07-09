@@ -1,0 +1,16 @@
+@import model.dialsheet.HomePageDialSheet
+@(dialSheet: HomePageDialSheet)
+<table class="bordered">
+    <thead>
+        <tr>
+            <th>New Appointments Scheduled</th>
+            <th>Other Appointments Scheduled</th>
+        </tr>
+    </thead>
+    <tbody class="appointment-contact-status">
+        <tr>
+            <td>@dialSheet.getNewAppointmentsCount</td>
+            <td>@dialSheet.getOtherAppointmentsCount</td>
+        </tr>
+    </tbody>
+</table>

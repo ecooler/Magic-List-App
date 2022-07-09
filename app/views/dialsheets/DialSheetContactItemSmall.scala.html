@@ -1,0 +1,11 @@
+@(state: model.prospect.ProspectState, count: Int = -1)
+<div class="@state.getStateClass bordered all_pages_dial_sheet_content centered-content ">
+    <h5 class="black-text">@state.getStateDescription</h5>
+    <div class="bordered white">
+        @if(count != -1) {
+            <h5 class="black-text" id="dial_sheet_count_@state.getStateType">@count</h5>
+        } else {
+            <h5 class="black-text" id="dial_sheet_count_@state.getStateType"></h5>
+        }
+    </div>
+</div>

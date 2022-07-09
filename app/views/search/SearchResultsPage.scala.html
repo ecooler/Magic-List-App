@@ -1,0 +1,231 @@
+@import model.prospect.Prospect
+@import model.lists.ProspectSearch
+@import model.lists.ProspectSearch.SearchPredicate
+@import components._
+@import model.lists.SavedList
+@(personList: model.PagedList[Prospect], searchParams: ProspectSearch, listName: String)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+
+        @BaseHead()
+
+        <style>
+            .dropdown-button {
+                text-transform: none !important;
+            }
+    </style>
+    </head>
+    <body>
+
+        @BaseBodyHeader(listName)
+
+    <main>
+
+        @dialsheets.AllPagesDialSheet()
+
+    <div class="row">
+
+        <div class="col l2 m4 offset-m4 s12">
+
+            <div class="card">
+
+                <div class="card-content regular-padding-small top-padding-large">
+
+                    <span class="card-title grey-text text-darken-4 center-align">Filter</span>
+
+                    <form id="search_form" class="horizontal-margin" action="@routes.SearchesController.getSearchDetails.url" method="GET">
+
+                        <input type="hidden" value="@searchParams.getSortByCriteria.getRawText"
+                        id="sort_by_input" name="@BaseController.KEY_SORT_BY" hidden>
+
+                        <input type="hidden" value="@searchParams.isAscending" name="@BaseController.KEY_ASCENDING"
+                        id="ascending_input" hidden>
+
+                        <input type="hidden" value="false" name="@SearchPredicate.KEY_SHOULD_MATCH_ANY" hidden>
+
+                        <input type="hidden" value="@searchParams.getListId" name="@SearchPredicate.KEY_LIST_ID" hidden>
+
+                        <div class="col s12">
+                            <div class="input-field inline top-margin">
+                                <input id="person_name" type="text" name="@SearchPredicate.KEY_NAME" class="validate"
+                                value="@searchParams.getNamePredicate.getValue">
+                                <label for="person_name">Contact Name</label>
+                            </div>
+                        </div>
+
+                        <div class="col s12">
+                            <div class="center-align">
+                                <div class="input-field inline top-margin" style="width: 75px;">
+                                    <input id="area_code" type="text" name="@SearchPredicate.KEY_PHONE" class="validate centered-content"
+                                    value="@searchParams.getPhonePredicate.getValue">
+                                    <label for="area_code">Area Code</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s12">
+                            <div class="input-field inline top-margin">
+                                <input id="job_title" type="text" name="@SearchPredicate.KEY_JOB_TITLE" class="validate"
+                                value="@searchParams.getJobTitlePredicate.getValue">
+                                <label for="job_title">Job Title</label>
+                            </div>
+                        </div>
+
+                        <div class="col s12">
+                            <div class="input-field inline top-margin">
+                                <input id="company_name" type="text" name="@SearchPredicate.KEY_COMPANY_NAME" class="validate"
+                                value="@searchParams.getCompanyNamePredicate.getValue">
+                                <label for="company_name">Company Name</label>
+                            </div>
+                        </div>
+
+                        <div class="row"></div>
+
+                        @selected(isChecked: Boolean) = {
+                        @if(isChecked) {
+                            selected
+                        }
+                        }
+
+                        <div class="input-field col s12 status-filter-select">
+                            <select name="@ProspectSearch.SearchPredicate.KEY_SELECTED_STATES" multiple id="contact-status-select">
+                            @for(status: ProspectSearch.StatusFilter <- searchParams.getContactStatusFilters) {
+                                @if(!status.getChildren.isEmpty) {
+                                    @for(childStatus: ProspectSearch.StatusFilter <- status.getChildren) {
+                                        <option @selected(childStatus.isChecked) value="@childStatus.getState.getStateType">@childStatus.getState.getStateDescription</option>
+                                    }
+                                } else {
+                                    <option @selected(status.isChecked) value="@status.getState.getStateType">@status.getState.getStateDescription</option>
+                                }
+                            }
+                            </select>
+                            <label for="contact-status-select">
+                                        Contact Statuses
+                            </label>
+                        </div>
+
+                        <div class="bottom-margin"></div>
+
+                        <div class="center-align">
+
+                            <button class="btn waves-effect waves-light white-text bottom-margin top-margin" type="submit">
+                                        Filter
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="hide-on-large-only row"></div>
+
+        <div class="col l10 m12 s12">
+
+            <div class="card">
+
+                <div class="card-content regular-padding">
+
+                @search.SearchResultsPersonTable(personList, searchParams.getSortByCriteria, searchParams.isAscending,
+                    searchParams.getListId, listName)
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    </main>
+
+        @components.AllDialogs()
+
+        @BaseFooter()
+
+    <script>
+                $(document).ready(function () {
+                    $('select').material_select();
+                    Materialize.updateTextFields();
+                });
+
+                function onSortByClick(sortByRawString) {
+                    var currentValue = document.querySelector("#sort_by_input").value;
+                    if (currentValue === sortByRawString) {
+                        $('#ascending_input').val(!@searchParams.isAscending);
+                    } else {
+                        $('#ascending_input').val(true);
+                    }
+
+                    $('#sort_by_input').val(sortByRawString);
+
+                    $('#search_form').submit();
+                }
+        </script>
+
+    <script>
+
+                function setupAndShowCreateListDialog() {
+                    var criteria = {};
+                    criteria["@SearchPredicate.KEY_NAME"] = "@searchParams.getNamePredicate.getValue";
+                    criteria["@SearchPredicate.KEY_PHONE"] = "@searchParams.getPhonePredicate.getValue";
+                    criteria["@SearchPredicate.KEY_JOB_TITLE"] = "@searchParams.getJobTitlePredicate.getValue";
+                    criteria["@SearchPredicate.KEY_COMPANY_NAME"] = "@searchParams.getCompanyNamePredicate.getValue";
+                    criteria["@SearchPredicate.KEY_EMAIL"] = "@searchParams.getEmailPredicate.getValue";
+                    criteria.selected_states = [];
+
+                    @for(state: model.prospect.ProspectState <- searchParams.getCheckedStates) {
+                    criteria.selected_states.push('@state.getStateType');
+                    }
+
+                    criteria["@SavedList.KEY_LIST_ID"] = "@searchParams.getListId";
+
+                    showCreateListDialog(criteria);
+                }
+
+        </script>
+
+
+    <script>
+
+                function onDeleteContactComplete(personId) {
+                    $('#person_row_' + personId).remove();
+
+                    updatePaginationRange(false, undefined, true);
+                }
+
+        </script>
+
+    <script>
+                var th = document.querySelector('#th-@searchParams.getSortByCriteria.getRawText');
+                th.style.width = (th.offsetWidth + 48) + "px";
+        </script>
+
+    <script>
+
+            $(document).ready(function () {
+                $('.person-row').click(function () {
+                    const $activeNode = $('.person-row.active');
+                    if ($activeNode.attr("id") === $(this).attr("id")) {
+                        return;
+                    }
+
+                    $activeNode.removeClass("active");
+                    $(this).addClass("active");
+                    changeDialCount(true);
+                    localStorage.setItem("highlight-row", $(this).attr("id"));
+                });
+
+                $('#' + localStorage.getItem("highlight-row")).addClass("active");
+            });
+
+        </script>
+
+    </body>
+
+</html>

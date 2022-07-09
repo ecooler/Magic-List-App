@@ -1,0 +1,46 @@
+@()
+<div id="create_edit_employee_candidate_dialog" class="modal bottom-sheet">
+    <div class="modal-content">
+        <h4 id="create_edit_employee_candidate_title"></h4>
+        <div class="row"></div>
+        <div class="row">
+            <div class="col l4 m4 s12 input-field">
+                <input id="candidate_name_text" type="text">
+                <label for="candidate_name_text">Name</label>
+            </div>
+            <div class="col l4 m4 s12 input-field">
+                <input id="candidate_email_text" type="email">
+                <label for="candidate_email_text">Email</label>
+            </div>
+            <div class="col l4 m4 s12 input-field">
+                <input id="candidate_phone_text" type="text">
+                <label for="candidate_phone_text">Phone</label>
+            </div>
+            <div class="col l6 m8 s12 input-field">
+                <input id="candidate_most_recent_work_text" type="text">
+                <label for="candidate_most_recent_work_text">Current School/Employment</label>
+            </div>
+            <div class="col l6 m8 s12 input-field">
+                <input id="candidate_most_recent_work_text" type="text">
+                <label for="candidate_most_recent_work_text">Resume Source</label>
+            </div>
+            <div class="col l12 m12 s12 input-field file-field">
+                <div class="btn">
+                    <span>File</span>
+                    <input type="file" multiple>
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path" type="text" placeholder="Upload one or more files">
+                </div>
+            </div>
+            <div class="col s12 input-field">
+                <textarea id="candidate_notes_text" class="materialize-textarea"></textarea>
+                <label for="candidate_notes_text">Additional Notes</label>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a id="create_edit_employee_submit" class="modal-action waves-effect btn-flat submit"></a>
+        <a class="modal-action waves-effect btn-flat modal-close">Cancel</a>
+    </div>
+</div>

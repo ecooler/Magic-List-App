@@ -1,0 +1,167 @@
+@import components._
+@import dialsheets._
+
+@import model.dialsheet.DialSheetPaginationSummary
+@import model.dialsheet.DialSheetDetails
+@import model.dialsheet.DialSheetType
+
+@import utilities.DateUtility
+@(dialSheet: DialSheetDetails, previousDialSheet: DialSheetPaginationSummary, nextDialSheet: DialSheetPaginationSummary,
+        isManagerView: Boolean = false, employee: model.manager.Employee, dialSheetType: DialSheetType)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        @BaseHead()
+
+    </head>
+
+    <body>
+
+        @if(!isManagerView) {
+            @BaseBodyHeader("Activity Sheet Details")
+        } else {
+            @BaseBodyHeader("Activity Sheet Details - " + employee.getName)
+        }
+
+        <main>
+
+            <div class="indigo top-padding-small bottom-padding-small bottom_shadow">
+
+                @dialSheetPaginationHref(sheetId: String) = {
+                @if(isManagerView) {
+                    @routes.ManagerDialSheetController.getDialSheetDetailsPage(employee.getEmployeeId, sheetId)
+                } else {
+                    @routes.DialSheetController.getDialSheetDetails(sheetId)
+                }
+                }
+
+                <div class="left-align" style="width: 49%;
+                    margin-left: 1%;
+                    display: inline-block;">
+                @if(previousDialSheet != null) {
+                    <ul>
+                        <li>
+                            <a class="waves-effect waves-light white-text regular-padding-small"
+                            href="@dialSheetPaginationHref(previousDialSheet.getSheetId)">
+                                Previous - @DateUtility.getShortDateForUi(previousDialSheet.getDate)
+                                <i class="left material-icons white-text">chevron_left</i>
+                            </a>
+                        </li>
+                    </ul>
+                }
+                </div>
+
+                <div class="right-align" style="width: 49%;
+                    display: inline-block;">
+
+                @if(nextDialSheet != null) {
+                    <ul>
+                        <li>
+                            <a class="waves-effect waves-light white-text regular-padding-small"
+                            href="@dialSheetPaginationHref(nextDialSheet.getSheetId)">
+                                Next - @DateUtility.getShortDateForUi(nextDialSheet.getDate)
+                                <i class="right white-text material-icons">chevron_right</i>
+                            </a>
+                        </li>
+                    </ul>
+                }
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+            <div class="row">
+
+                <div class="col s10 offset-s1">
+
+                    <div class="card">
+
+                        <div class="card-content">
+
+                            @dailyDialSheet() = {
+                                <span class="card-title grey-text text-darken-4">@DateUtility.getLongDateForUi(dialSheet.getDate)</span>
+                            }
+
+                            @weeklyDialSheet() = {
+                                <span class="card-title grey-text text-darken-4">Week of @DateUtility.getLongDateForUi(dialSheet.getDate)</span>
+                            }
+
+                            @monthlyDialSheet() = {
+                                <span class="card-title grey-text text-darken-4">Month of @DateUtility.getMonthFromDateForUi(dialSheet.getDate) @DateUtility.getYearFromDateForUi(dialSheet.getDate)</span>
+                            }
+
+                            @quarterDialSheet() = {
+                                <span class="card-title grey-text text-darken-4">Quarter @DateUtility.getQuarterFromDateForUi(dialSheet.getDate)of @DateUtility.getYearFromDateForUi(dialSheet.getDate)</span>
+                            }
+
+                            @yearDialSheet() = {
+                                <span class="card-title grey-text text-darken-4">Year of @DateUtility.getYearFromDateForUi(dialSheet.getDate)</span>
+                            }
+
+                            @centuryDialSheet() = {
+                                <span class="card-title grey-text text-darken-4">All Time Activity Sheet</span>
+                            }
+
+                            @{
+                                dialSheetType match {
+                                    case DialSheetType.DAY => dailyDialSheet()
+                                    case DialSheetType.WEEK => weeklyDialSheet()
+                                    case DialSheetType.MONTH => monthlyDialSheet()
+                                    case DialSheetType.QUARTER => quarterDialSheet()
+                                    case DialSheetType.YEAR => yearDialSheet()
+                                    case DialSheetType.CENTURY => centuryDialSheet()
+                                }
+                            }
+
+                            <div class="row"></div>
+
+                            @DialSheet(dialSheet, dialSheetType, isManagerView)
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <script>
+                $(document).ready(function () {
+                    $('.person_state_handle_state_click').on('click', function () {
+                        var $node = $(this);
+                        var personId = $node.attr("person-id");
+                        var newState = $node.attr("data");
+                        var oldState = $('#person_state_selector_' + personId).attr('state');
+
+                        if (oldState === newState) {
+                            return;
+                        }
+
+                        $('#confirmation_dialog').modal();
+
+                        var url = "person/state/edit/" + personId;
+                        var json = {state: newState};
+
+                        console.log(personId + " " + newState + " " + oldState);
+                        doPost(url, json,
+                                function () {
+
+                                },
+                                function () {
+
+                                }, true);
+                    });
+                });
+        </script>
+
+    </body>
+
+</html>

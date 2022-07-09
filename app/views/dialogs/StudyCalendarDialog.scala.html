@@ -1,0 +1,44 @@
+@()
+<div id="create_edit_study_calendar_dialog" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h4 id="create_edit_study_calendar_title">Create a Study Calendar for the Series 7 Exam</h4>
+        <div class="row"></div>
+
+        <div class="input-field">
+            <input id="create_edit_study_calendar_date" type="date" class="datepicker" value="2017-05-01">
+            <label for="create_edit_study_calendar_date">Study Start Date</label>
+        </div>
+
+        <div class="row"></div>
+
+        <h6>Study Duration</h6>
+        <p>
+            <input id="create_edit_study_calendar_duration_1" type="radio" checked>
+            <label for="create_edit_study_calendar_duration_1" id="create_edit_study_calendar_duration_1_label">
+                4 Weeks
+            </label>
+        </p>
+        <p>
+            <input id="create_edit_study_calendar_duration_2" type="radio">
+            <label for="create_edit_study_calendar_duration_2" id="create_edit_study_calendar_duration_2_label">
+                6 Weeks
+            </label>
+        </p>
+        <p>
+            <input id="create_edit_study_calendar_duration_3" type="radio">
+            <label for="create_edit_study_calendar_duration_3" id="create_edit_study_calendar_duration_3_label">
+                8 Weeks
+            </label>
+        </p>
+        <p>
+            <input id="create_edit_study_calendar_duration_4" type="radio">
+            <label for="create_edit_study_calendar_duration_4" id="create_edit_study_calendar_duration_4_label">
+                12 Weeks
+            </label>
+        </p>
+    </div>
+    <div class="modal-footer">
+        <a id="create_edit_study_calendar_submit" class="modal-action waves-effect btn-flat submit">Create</a>
+        <a class="modal-action waves-effect btn-flat modal-close">Cancel</a>
+    </div>
+</div>

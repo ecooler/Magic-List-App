@@ -1,0 +1,154 @@
+@import components._
+
+@()
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Coming Soon")
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="container row white z-depth-2">
+
+                <div class="row"></div>
+
+                <div class="row col s12 black-text">
+
+                    <ul id="coming_soon_list">
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <img class="coming-soon-img" src="@routes.Assets.versioned("images/outlook.png")">
+
+                                <h3 class="horizontal-margin">
+                                    <strong>Outlook Integration</strong>
+                                </h3>
+
+                                <p class="horizontal-margin flow-text">
+                                    Create reusable templates that allow you to send appointments more quickly.
+                                    Access your calendar invites that were created for prospects directly from
+                                    <i>@controllers.BaseController.APP_NAME</i>.
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon orange-text material-icons">insert_chart</i>
+
+                                <h3 class="horizontal-margin"><strong>
+                                    Statistics and Growth Measurement</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    View detailed statistics on your performance, based on past activity sheets, and
+                                    prospects in your database. Statistics will also be visualized to show
+                                    quick-to-analyze graphs and charts.
+                                </p>
+
+                            </div>
+
+                            <div class="divider col s12"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon green-text material-icons">supervisor_account</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>Manager Portal</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    Keep track of your employees, carefully watch their progress over time, and
+                                    compare their performance to other employees you manage. Their statistics will
+                                    be visualized as well, so you can perform quick analyses via charts and graphs!
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon material-icons" style="color: #fdd835;">notifications_active</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>Revamped Notifications</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    Quickly dismiss old notifications, unarchive old ones, and manage them like a
+                                    personalized TODO list.
+                                </p>
+
+                            </div>
+
+                            <div class="divider"></div>
+
+                        </li>
+
+                        <li class="big_promotion_item">
+
+                            <div class="section center-align">
+
+                                <i class="coming-soon light-blue-text material-icons">extension</i>
+
+                                <h3 class="horizontal-margin">
+                                    <strong>New Tools</strong>
+                                </h3>
+
+                                <p class="flow-text horizontal-margin">
+                                    Quickly remove duplicate prospects with the new merging tool. Past activity sheets,
+                                    personalized statistics, and most components from the manager portal will be
+                                    exportable to an excel file so you can use your own personal data as you please.
+                                </p>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @BaseFooter()
+
+        <script>
+
+                $(document).ready(function () {
+                    Materialize.showStaggeredList('#coming_soon_list')
+                });
+
+        </script>
+
+    </body>
+
+</html>

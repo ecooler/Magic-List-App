@@ -1,0 +1,113 @@
+@import components._
+@import model.dialsheet.EmployeeDialSheet
+
+@(employeeDialSheets: java.util.List[EmployeeDialSheet], date: Long, doesHaveEmployees: Boolean = false)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Management Activity Sheets")
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="container row">
+
+                <div class="row"></div>
+
+                <div class="row col s12">
+
+                    <div class="col s12">
+
+                        <div class="card-panel indigo regular-padding-small">
+                            <h4 class="white-text center-align">@utilities.DateUtility.getLongDateForUi(date)</h4>
+                        </div>
+
+                    </div>
+
+                    @if(!doesHaveEmployees || employeeDialSheets == null || employeeDialSheets.isEmpty) {
+                        <div class="col l10 offset-l1 m12 s12">
+                            <div class="card-panel hoverable center-align">
+                                <p class="flow-text">You have no team activity sheets to show</p>
+                                <p class="flow-text">
+                                    <a class="waves-effect indigo-text"
+                                    href="@routes.ManagerMiscController.getEditEmployeesPage.url">
+                                        Get started by adding team members
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    }
+
+                    @for(dialSheet: EmployeeDialSheet <- employeeDialSheets) {
+
+                        <div class="col l6 s12">
+
+                            <div class="card z-depth-2 scale-transition scale-out">
+
+                                <div class="card-content">
+
+                                    <div class="collection with-header">
+                                        <a class="collection-item indigo-text waves-effect card-title-clickable"
+                                        href="@routes.ManagerDialSheetController.getDialSheetDetailsPage(dialSheet.getEmployee.getEmployeeId, dialSheet.getId).url">
+                                            @dialSheet.getEmployee.getName
+                                        <i class="material-icons right small">chevron_right</i>
+                                        </a>
+
+                                        <div class="collection-item avatar no-min-height">
+                                            <i class="material-icons circle indigo">perm_phone_msg</i>
+                                            <span class="title">Total Dials</span>
+                                            <p>@dialSheet.getDialCountForUi</p>
+                                        </div>
+
+                                        <div class="collection-item avatar no-min-height">
+                                            <i class="material-icons circle indigo">contacts</i>
+                                            <span class="title">Total Contacts:</span>
+                                            <p>@dialSheet.getContactsCount</p>
+                                        </div>
+
+                                        <div class="collection-item avatar no-min-height">
+                                            <i class="material-icons circle indigo">contact_mail</i>
+                                            <span class="title">Total Appointments:</span>
+                                            <p>@dialSheet.getAppointmentsCount</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @BaseFooter()
+
+        <script>
+
+                $(document).ready(function () {
+                    $('.scale-transition.scale-out').each(function (index) {
+                        var $element = $(this);
+                        setTimeout(function () {
+                            $element.addClass("scale-in");
+                        }, (index + 1) * 175)
+                    })
+                });
+
+        </script>
+
+    </body>
+
+</html>

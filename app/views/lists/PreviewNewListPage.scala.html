@@ -1,0 +1,291 @@
+@import model.prospect.Prospect
+@import views.html.components._
+@(filename: String, personList: java.util.List[Prospect], invalidEmailMap: java.util.Map[Integer, Boolean])
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+
+    <style>
+            .select-dropdown {
+                margin-bottom: 0 !important;
+            }
+    </style>
+    </head>
+
+    <body>
+
+        @components.BaseBodyHeader("Preview your List")
+
+        <main>
+
+            @AllDialogs()
+
+            <script>$('#progress_dialog').modal("open");</script>
+
+            <div class="row">
+
+                <div class="s12 col">
+
+                    <div class="z-depth-2 top-margin white-background regular-padding">
+
+                        <div id="top-space-holder">
+
+                            <button id="help" class="right btn-flat flat waves-light waves-effect top-margin right-margin">
+                                Help
+                            </button>
+
+                            <h4 class="inline">List Preview</h4>
+
+                            <div>
+                                <div class="input-field inline">
+                                    <input required id="list_name" type="text" class="validate" value="@filename"
+                                    name="@controllers.ListsController.KEY_LIST_NAME">
+                                    <label for="list_name">List Name</label>
+                                </div>
+                                <span class="error"></span>
+                            </div>
+
+                            <table>
+                                <thead>
+                                    <tr class="header-row">
+                                        <td>Row #</td>
+                                        <td>Name</td>
+                                        <td>Phone</td>
+                                        <td>Job Title</td>
+                                        <td>Company Name</td>
+                                        <td>Email</td>
+                                        <td style="width: 175px;">Contact Status</td>
+                                        <td>Notes</td>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+
+                        @isInvalid(index: Int, map: java.util.Map[Integer, Boolean]) = {
+                        @if(map.get(index)) {
+                            invalid
+                        }
+                        }
+
+                        @isHidden(index: Int) = {
+                            @if(index >= 1000) {
+                                hide
+                            }
+                        }
+
+                        <div id="scroll-area" class="clusterize-scroll">
+                            <table class="striped responsive regular-padding">
+                                <tbody id="preview-table-body" class="clusterize-content">
+                                @for((prospect: model.prospect.Prospect, index: Int) <- personList.zipWithIndex) {
+                                    <tr id="@prospect.getId" class="prospect @isHidden(index) @prospect.getState.getStateType">
+                                        <td>
+                                            <h6 class="center-align">@{
+                                                index + 1
+                                            }</h6>
+                                        </td>
+                                        <td>
+                                            <div class="input-field">
+                                                <input required id="@prospect.getId-name" type="text" value="@prospect.getName">
+                                                <label id="@prospect.getId-name-label" for="@prospect.getId-name">Name</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-field">
+                                                <input id="@prospect.getId-phone" type="text" value="@prospect.getPhoneNumber">
+                                                <label id="@prospect.getId-phone-label" for="@prospect.getId-phone">Phone</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-field">
+                                                <input id="@prospect.getId-job-title" type="text" value="@prospect.getJobTitle">
+                                                <label id="@prospect.getId-job-title-label" for="@prospect.getId-job-title">Job Title</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-field">
+                                                <input id="@prospect.getId-company" type="text" value="@prospect.getCompanyName">
+                                                <label id="@prospect.getId-company-label" for="@prospect.getId-company">Company</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-field">
+                                                <input id="@prospect.getId-email" type="email" value="@prospect.getEmail" class="validate @isInvalid(index, invalidEmailMap)">
+                                                <label id="@prospect.getId-email-label" for="@prospect.getId-email"
+                                                data-error="This email was invalid" >Email</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                        @components.ContactStatus(prospect.getId, prospect.getName, prospect.getState,
+                                            shouldSendStateClicksToServer = false, false, model.prospect.ProspectState.ClickType.PERSON)
+                                        </td>
+                                        <td>
+                                            <span id="notes_text_@prospect.getId" class="hide">@prospect.getNotes</span>
+                                            <button class="btn-flat btn-icon waves-effect waves-light tooltipped"
+                                            data-tooltip="Contact Notes" data-delay="50"
+                                            onclick="showEditPersonPreviewNotesDialog('@prospect.getId')">
+                                                <i class="material-icons">speaker_notes</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                        <div id="submission-footer" class="centered-content bottom-margin top-margin">
+
+                            <button id="cancel-list" class="btn indigo centered waves-effect waves-light right-margin"
+                            onclick="window.history.back();">
+                                Cancel
+                            </button>
+
+                            <button id="submit-list" class="btn indigo centered waves-effect waves-light">
+                                Submit List
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        @BaseFooter()
+
+        <script>
+
+                contactStatus.onClickFunctions.person.push(function (personId, personName, stateType, stateDescription, stateClass) {
+                    contactStatus.onStateClick(personId, stateType, stateDescription, stateClass);
+                });
+
+                const $scrollArea = $('#scroll-area');
+
+                function adjustHeaders() {
+                    $('.prospect').first().find("td").each(function (index) {
+                        console.log("Index: " + index, $(this).outerWidth());
+                        const $header = $('.header-row').find("td").eq(index);
+                        $header.outerWidth($(this).outerWidth() - 8);
+                    });
+                }
+
+                $(window).resize(function () {
+                    adjustHeaders();
+                });
+
+                $(document).ready(function () {
+                    Materialize.updateTextFields();
+                    $('.modal').modal("close");
+                    setTimeout(function () {
+                        $(window).resize();
+                    }, 300);
+
+                    @if(invalidEmailMap.values().contains(true)) {
+                    $('#read_only_dialog_title').html("Invalid Emails Entered");
+                    $('#read_only_dialog_content').html("Some of the emails entered from the excel file were invalid. " +
+                            "Please double check the following: there is no leading or trailing spaces, there are no " +
+                            "special characters included in the email (IE \",\" or \"\$\"), ellipses (IE \"...\"), and no " +
+                            "spaces breaking up the email into separate parts (IE \"john smith@@example.com\"). " +
+                            "<br>" +
+                            "<br>" +
+                            "The rows with invalid email have been highlighted red to be easier to see. If you do not " +
+                            "want to fix the emails, you can just upload the contact with an empty email address.");
+                    showReadOnlyDialog();
+                    }
+                });
+
+                $('#help').click(function () {
+                    var text = "This page allows you to preview and make edits to your contacts before uploading them. " +
+                            "Once your edits are complete, press the submit button below. Pressing the submit button " +
+                            "will upload your contacts to the lists page.<br><br>";
+                    text += "If you decide that you want to discard the list and upload a new one, you can press the " +
+                            "cancel button below.";
+                    $('#read_only_dialog_content').html(text);
+                    $('#read_only_dialog_title').html("List Preview Help");
+                    showReadOnlyDialog();
+                });
+
+                $('#submit-list').click(function () {
+                    var listName = $('#list_name').val();
+                    var $error = $('.error');
+
+                    if (!listName || listName.trim().length === 0) {
+                        $error.html("This field is required");
+                        $error.css("display", "inline");
+                        showToast("You must enter a valid list name");
+                        $("html, body").animate({
+                            scrollTop: 0
+                        }, 400);
+                        return;
+                    } else {
+                        $error.css("display", "none");
+                    }
+
+                    const json = {};
+                    json.list_name = listName;
+                    const personList = [];
+
+                    var shouldSubmit = true;
+                    $('#preview-table-body').children().each(function (index, element) {
+                        var personId = $(element).attr("id");
+                        var person = {};
+
+                        var name = $('#' + personId + "-name").val();
+                        if (!name || name.trim().length === 0) {
+                            showToast("You must enter a person name at row " + (index + 1));
+                            $(element).animate({scrollTop: 0}, 400);
+                            shouldSubmit = false;
+                            return true;
+                        }
+
+                        var notes = $('#notes_text_' + personId).html();
+                        if (!notes || notes.trim().length === 0) {
+                            notes = null;
+                        }
+
+                        person.person_name = name;
+                        person.phone_number = $('#' + personId + "-phone").val();
+                        person.job_title = $('#' + personId + "-job-title").val();
+                        person.company_name = $('#' + personId + "-company").val();
+                        person.email = $('#' + personId + "-email").val();
+
+                        if (person.email && !person.email.match(/^([a-zA-Z0-9_\-\.]+)@@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/)) {
+                            showToast("The email entered at row " + (index + 1) + " is invalid.");
+                            shouldSubmit = false;
+                            return true;
+                        }
+
+                        const stateType = $('#contact-status-button-' + personId).attr('data-state');
+                        person.state = contactStatus.getContactStatusFromStateType(stateType);
+                        person.notes = notes;
+
+                        personList.push(person);
+                    });
+
+                    if (!shouldSubmit) {
+                        return;
+                    }
+
+                    json.person_list = personList;
+
+                    $('#progress_dialog').modal('open');
+
+                    doPost("/lists/insert/web", json, function () {
+                                $('.modal').modal('close');
+                                window.location.href = "/lists";
+                            }, function () {
+                                $('.modal').modal('close');
+                                showToast("Could not upload your list");
+                            }
+                    );
+                });
+
+        </script>
+
+    </body>
+
+</html>

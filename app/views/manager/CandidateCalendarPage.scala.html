@@ -1,0 +1,302 @@
+@import components._
+@()
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader("Calendar for John Smith")
+
+    <main>
+
+        <div class="row"></div>
+
+        <div class="container row">
+
+            <div class="col s12">
+
+                <div class="card z-depth-3">
+
+                    <div class="card-content">
+
+                        <div id="calendar"></div>
+
+                        <div class="row"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+        @AllDialogs()
+
+    <div id="calendar_event_dialog" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <h4>Reading Assignment - May 1, 2017</h4>
+            <p>
+                <input type="checkbox" checked id="calendar_event_checkbox_1">
+                <label class="green-text" for="calendar_event_checkbox_1">
+                    Chapter 1: Overview of Financial Markets and Regulation
+                </label>
+            </p>
+            <p>
+                <input type="checkbox" id="calendar_event_checkbox_2">
+                <label for="calendar_event_checkbox_2" class="red-text">
+                    Chapter 2: Registered Representatives and Financial Firms
+                </label>
+            </p>
+            <br>
+            <div class="row"></div>
+            <div class="input-field">
+                <textarea id="calendar_event_notes" class="materialize-textarea active">Today's study session went well! I only finished chapter 1 though.</textarea>
+                <label for="calendar_event_notes">Notes for Today</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-action modal-close waves-effect btn-flat">OK</a>
+        </div>
+    </div>
+
+        @BaseFooter()
+
+    <script>
+
+
+
+                $(document).ready(function () {
+                    var $calendar = $('#calendar');
+                    $calendar.fullCalendar({
+                        header: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'month,agendaWeek,agendaDay,listWeek'
+                        },
+                        defaultDate: '2017-05-12',
+                        draggable: true,
+                        resizeable: true,
+                        theme: true,
+                        navLinks: true, // Can click day/week names to navigate views
+                        editable: true,
+                        eventClick: function (calendarEvent, jsEvent, view) {
+                            console.log("Calendar Event: ", calendarEvent);
+                            console.log("JS Event: ", jsEvent);
+                            console.log("View Event: ", view);
+
+                            $('#calendar_event_dialog').modal("open");
+                        },
+                        eventLimit: true, // Allow "more" link when too many events
+                        events: [
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                data: [
+                                    "Chapter 1: Overview of Financial Markets and Regulation",
+                                    "Chapter 2: Registered Representatives and Financial Firms"
+                                ],
+                                start: '2017-05-01'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-02'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-03'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-04'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-05'
+                            },
+
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-08'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-09'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-10'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-11'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-12'
+                            },
+
+                            {
+                                className: ['hoverable'],
+                                title: 'Reading Assignment',
+                                start: '2017-05-15'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Test your Knowledge',
+                                start: '2017-05-16'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Test your Knowledge',
+                                start: '2017-05-17'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Review Study Manual',
+                                start: '2017-05-18'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Test your Knowledge',
+                                start: '2017-05-19'
+                            },
+
+                            {
+                                className: ['hoverable'],
+                                title: 'Test your Knowledge',
+                                start: '2017-05-22'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Review Study Manual',
+                                start: '2017-05-23'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Test your Knowledge',
+                                start: '2017-05-24'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Test your Knowledge',
+                                start: '2017-05-25'
+                            },
+                            {
+                                className: ['hoverable'],
+                                title: 'Retake Failed Exams',
+                                start: '2017-05-26'
+                            }
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Reading Assignment',
+//                                start: '2017-05-07',
+//                                end: '2017-05-10'
+//                            },
+//                            {
+//                                id: 999,
+//                                className: ['hoverable'],
+//                                title: 'Repeating Event',
+//                                start: '2017-05-09T16:00:00'
+//                            },
+//                            {
+//                                id: 999,
+//                                className: ['hoverable'],
+//                                title: 'Repeating Event',
+//                                start: '2017-05-16T16:00:00'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Conference',
+//                                start: '2017-05-11',
+//                                end: '2017-05-13'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Meeting',
+//                                start: '2017-05-12T10:30:00',
+//                                end: '2017-05-12T12:30:00'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Lunch',
+//                                start: '2017-05-12T12:00:00'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Meeting',
+//                                start: '2017-05-12T14:30:00'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Happy Hour',
+//                                start: '2017-05-12T17:30:00'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Dinner',
+//                                start: '2017-05-12T20:00:00'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Birthday Party',
+//                                start: '2017-05-13T07:00:00'
+//                            },
+//                            {
+//                                className: ['hoverable'],
+//                                title: 'Click for Google',
+//                                url: 'http://google.com/',
+//                                start: '2017-05-28'
+//                            }
+                        ]
+                    });
+
+                    var $nextButton = $('.ui-icon-circle-triangle-e');
+                    $nextButton.removeClass("ui-icon-circle-triangle-e");
+                    $nextButton.addClass("valign-wrapper");
+                    $nextButton.append($('<i class="material-icons">chevron_right</i>'));
+
+                    var $previousButton = $('.ui-icon-circle-triangle-w');
+                    $previousButton.removeClass("ui-icon-circle-triangle-w");
+                    $previousButton.addClass("valign-wrapper");
+                    $previousButton.append($('<i class="material-icons">chevron_left</i>'));
+
+                    var $button = $('button');
+                    $button.addClass("btn-flat");
+                    $button.addClass("waves-effect");
+
+                    $('.fc-center').append($("<br><h4>Series 7 Four-Week Study Calendar</h4>"));
+
+                    var $todayButton = $('.fc-today-button');
+                    $todayButton.remove();
+
+                    var $todayContainer = $("<div></div>");
+                    $todayContainer.addClass("fc-button-group");
+                    $todayContainer.append($todayButton);
+                    $('.fc-left').append($todayContainer);
+
+                    $('.fc-toolbar h2').css("float", "unset");
+
+                    var $container = $('.card-content');
+                    $container.hide();
+                    $container.show(300);
+                });
+
+        </script>
+
+    </body>
+
+</html>

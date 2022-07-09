@@ -1,0 +1,63 @@
+@import dialsheets._
+
+@(showSpaceAfter: Boolean = true)
+<div id="all_pages_dial_sheet_wrapper" class="indigo top-padding-small bottom-padding-small bottom_shadow">
+
+    <div id="dial_sheet_spinner" class="progress indigo no-margin">
+
+        <div class="full-width indeterminate indigo lighten-1"></div>
+
+    </div>
+
+    <div id="all_pages_dial_sheet" style="display: none;">
+
+        <div class="row" id="dial_sheet_content">
+
+            <div class="scroll-overflow-x all-pages-dial-sheet-status-container bottom-margin top-margin indigo lighten-1">
+
+                @DialSheetMainItemSmall("Dials", "dials")
+
+                @DialSheetMainItemSmall("Contacts", "contacts")
+
+                @for(state <- utilities.ProfileUtility.getDialSheetObjectionStates) {
+                    @DialSheetContactItemSmall(state)
+                }
+
+            </div>
+
+            <div class="row"></div>
+
+            <div class="col s12">
+
+                <ul id="all_pages_dial_sheet-appointments" data-collapsible="accordion"
+                class="top-margin horizontal-margin green collapsible centered bordered">
+                    <li class="bordered">
+                        <div class="green collapsible-header dial_sheet_appointment">
+                            <h4 class="black-text">
+                                <i class="material-icons black-text">schedule</i>
+                                Appointments -
+                                <span id="appointments_count">0</span>
+                            </h4>
+                        </div>
+                        <div class="white collapsible-body" id="appointments_container">
+
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="dial_sheet_actions" class="card-actions right-content hide right-padding">
+        <a class="btn-flat white-text waves-effect hide" id="all_pages_dial_sheet-toggle"
+        onclick="toggleDialSheetHeight()">Show Prospecting Sheet</a>
+    </div>
+
+</div>
+
+@if(showSpaceAfter) {
+    <div class="row"></div>
+}

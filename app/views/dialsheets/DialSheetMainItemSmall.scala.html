@@ -1,0 +1,24 @@
+@(title: String, id: String, count: Int = -1)
+<div class="blue all_pages_dial_sheet_content centered-content bordered">
+    <h5 class="black-text">@title</h5>
+    <div class="bordered white lighten-3 valign-wrapper centered-content">
+        @if(id.equals("dials")) {
+            <button id="dial_sheet_subtract_@id" class="left-margin right-margin-small btn-icon btn-flat waves-effect waves-light black-text">
+                <i class="material-icons">remove</i>
+            </button>
+        }
+
+        @if(count != -1) {
+            <h5 class="black-text inline dial-sheet-@id-count">@count</h5>
+        } else {
+            <h5 class="black-text inline dial-sheet-@id-count"></h5>
+        }
+
+        @if(id.equals("dials")) {
+            <button id="dial_sheet_add_@id" class="right-margin left-margin-small btn-icon btn-flat waves-effect waves-light black-text">
+                <i class="material-icons">add</i>
+            </button>
+        }
+
+    </div>
+</div>

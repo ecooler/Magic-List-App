@@ -1,0 +1,74 @@
+@(appointmentList: java.util.List[model.dialsheet.DialSheetAppointment], isReadOnly: Boolean = false)
+    @for(appointment: model.dialsheet.DialSheetAppointment <- appointmentList) {
+        <ul class="appointment_@appointment.getAppointmentId collection black-text" data-person-name="@appointment.getPerson.getName"
+        style="display: inline" id="appointments-list">
+            <li class="collection-item appointment-collection-item avatar left-content">
+                <span class="title">
+                    <i class="material-icons circle">person</i>
+                    <a class="indigo-text person_name_@appointment.getPerson.getId"
+                    href="/person/@appointment.getPerson.getId">@appointment.getPerson.getName</a>
+                </span>
+                <p>
+                    @appointment.getPerson.getCompanyName <br>
+                    @appointment.getPerson.getJobTitle <br>
+                    @appointment.getPerson.getEmail <br>
+                    @appointment.getPerson.getPhoneNumber <br>
+                </p>
+
+                <p>
+                Call Outcome: &nbsp;
+                    <span data-state="@appointment.getPerson.getState.getStateType"
+                    id="current-status-@appointment.getAppointmentId" data-state-class="@appointment.getPerson.getState.getStateClass"
+                    class="regular-padding-small status-state @appointment.getPerson.getState.getStateClass">@appointment.getPerson.getState.getStateDescription</span>
+                </p>
+
+                <div class="row"></div>
+
+                <span class="secondary-content indigo-text" style="top: 8px;">
+                    <span class="appointment_location_@appointment.getAppointmentId"
+                    data-is-conference-call="@appointment.isConferenceCall">@appointment.getLocation</span>
+                    <br>
+                    <span class="appointment_date_@appointment.getAppointmentId" data="@appointment.getAppointmentDate">
+                        <b>@utilities.DateUtility.getDateWithTimeForUi(appointment.getAppointmentDate)</b>
+                    </span>
+                    <br>
+                    <span>
+                    Type: &nbsp;
+                        <span class="appointment_type_@appointment.getAppointmentId" data="@appointment.getAppointmentType.getStateType">
+                        @appointment.getAppointmentType.getStateDescription
+                        </span>
+                    </span>
+                    <br>
+                    <span class="hide appointment_notes_@appointment.getAppointmentId">@appointment.getNotes</span>
+                    <a class="btn-flat waves-effect side-padding-small"
+                    onclick="showAppointmentNotesDialog('@appointment.getAppointmentId', '@appointment.getPerson.getId')">
+                Notes
+                        <i class="material-icons black-text left">speaker_notes</i>
+                    </a>
+                    <br>
+                    @if(!isReadOnly) {
+                        <button class="btn-flat side-padding-small dropdown-button" data-beloworigin="false"
+                        data-activates="dropdown-@appointment.getAppointmentId">
+                            <i class="material-icons">more_horiz</i>
+                        </button>
+                    }
+                </span>
+            </li>
+        </ul>
+
+        @if(!isReadOnly) {
+            <ul id="dropdown-@appointment.getAppointmentId" class="dropdown-content">
+                <li><a onclick="showGetAppointmentTemplatesDialog('@appointment.getAppointmentId')">
+                    Export to Calendar</a></li>
+                <li><a onclick="showEditAppointmentDialog('@appointment.getAppointmentId', '@appointment.getPerson.getId')">
+                    Edit</a></li>
+                <li>
+                    <a onclick="showDeleteAppointmentDialog('@appointment.getAppointmentId')">
+                        Delete
+                    </a>
+                </li>
+            </ul>
+        }
+
+        <div class="divider"></div>
+    }

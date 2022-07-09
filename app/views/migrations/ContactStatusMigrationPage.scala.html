@@ -1,0 +1,116 @@
+@import model.lists.ProspectSearch
+@import model.prospect.Prospect
+@import components._
+
+@(migrationList: model.PagedList[Prospect], sortByCriteria: ProspectSearch.Criteria, isAscending: Boolean)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+    </head>
+
+    <body>
+
+        @BaseBodyHeader("Contact Status Migration")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet()
+
+            <div class="row">
+
+                <div class="col s12 l8 offset-l2 m10 offset-m1">
+
+                @migrations.MigrationsHelpCard(migrationList.getTotalNumberOfItems, false)
+
+                </div>
+
+                <div class="col s12">
+
+                    <div class="card">
+
+                        <div class="card-content regular-padding">
+
+                        @search.SearchResultsPersonTable(migrationList, sortByCriteria, isAscending, null)
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        <form class="hide" action="@routes.PersonController.getPeopleForMigration" method="GET" id="search_form">
+
+            <input type="text" id="sort_by_input" value="@sortByCriteria.getRawText" name="@BaseController.KEY_SORT_BY">
+            <label for="sort_by_input"></label>
+
+            <input type="text" id="ascending_input" value="@isAscending" name="@BaseController.KEY_ASCENDING">
+            <label for="ascending_input"></label>
+
+        </form>
+
+        @components.AllDialogs()
+
+        @BaseFooter()
+
+        <script>
+
+                function onSortByClick(sortByRawString) {
+                    const $sortBy = $('#sort_by_input');
+
+                    var currentValue = $sortBy.val();
+                    if (currentValue === sortByRawString) {
+                        $('#ascending_input').val(!@isAscending);
+                    } else {
+                        $('#ascending_input').val(true);
+                    }
+
+                    $sortBy.val(sortByRawString);
+
+                    $('#search_form').submit();
+                }
+
+                function personStateClickFunction(personId, personName, stateType, stateDescription, stateClass) {
+                    var $stateNode = $('#contact-status-button-' + personId);
+
+                    var oldStateType = $stateNode.attr("data-state");
+                    var oldStateDescription = $stateNode.html();
+                    var oldStateClass = $stateNode.attr("data-state-class");
+
+                    contactStatus.showDialogForStateClickIfNecessary(stateType, personId);
+
+                    if (oldStateType === stateType) {
+                        return;
+                    }
+
+                    var json = {
+                        state: stateType
+                    };
+
+                    doPost("/person/migrate/" + personId, json,
+                            function () {
+                                showToast("Status for " + personName + " has been updated to " + stateDescription);
+
+                                const $amountLeftNode = $('#migration-count');
+                                $amountLeftNode.html(parseInt($amountLeftNode.html()) - 1);
+
+                                contactStatus.onStateClick(personId, stateType, stateDescription, stateClass);
+                            },
+                            function () {
+                                showToast('Could not change the contact status of ' + personName);
+                                contactStatus.onStateClickFailure(personId, oldStateType, oldStateDescription, oldStateClass);
+                            }
+                    );
+                }
+
+                contactStatus.onClickFunctions.person.push(personStateClickFunction);
+
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,60 @@
+@import model.account.Account
+@(pageTitle: String = controllers.BaseController.APP_NAME, showNavigationDrawer: Boolean = true,
+        showNavigationDrawerFixed: Boolean = false)
+
+<header id="nav-header">
+
+    <nav class="push-pin" data-target="nav-header">
+
+        <div class="nav-wrapper horizontal-margin">
+
+            @if(Account.getAccountFromSession.getToken != null && showNavigationDrawer && !showNavigationDrawerFixed) {
+                <ul class="left main">
+                    <li>
+                        <a id="navigation_drawer_button" data-activates="navigation-drawer">
+                            <i class="material-icons">menu</i>
+                        </a>
+                    </li>
+                </ul>
+            }
+
+            @components.BaseBodyHeaderDesktop(pageTitle)
+
+            @components.BaseBodyHeaderPhone(pageTitle)
+
+            @if(Account.getAccountFromSession.getToken == null) {
+                <ul class="right">
+                @defining(request().path()) { route: String =>
+                    @if(!route.equals(routes.UserController.getLoginPage.url)) {
+                        <li>
+                            <a href="@routes.UserController.getLoginPage().url">Login</a>
+                        </li>
+                        @if(route.equals(routes.MainController.index.url)) {
+
+                        } else {
+                            <li>
+                                <a href="@routes.UserController.getProfilePage.url">Dashboard</a>
+                            </li>
+                        }
+                    }
+                    @if(!route.equals(routes.UserController.getCreateAccountPage.url)) {
+                        <li>
+                            <a href="@routes.UserController.getCreateAccountPage.url">Create Account</a>
+                        </li>
+                    }
+                }
+                </ul>
+            }
+
+        </div>
+
+    </nav>
+
+    @if(Account.getAccountFromSession.getToken != null && showNavigationDrawer) {
+        @components.NavigationDrawer(showNavigationDrawerFixed)
+
+            <!--suppress JSUnresolvedFunction -->
+        <script>$("#navigation_drawer_button").sideNav();</script>
+    }
+
+</header>

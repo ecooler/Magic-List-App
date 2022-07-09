@@ -1,0 +1,33 @@
+@import controllers.AppointmentsController.KEY_APPOINTMENT_LINK_SUCCESS
+@import controllers.PersonController.KEY_PERSON_ERROR
+@import play.mvc.Http.Context
+
+@()
+@dialogs.AppointmentDialog()
+@dialogs.AppointmentTemplatesDialog()
+@dialogs.ConfirmationDialog()
+@dialogs.CoWorkersDialog()
+@dialogs.CreateListDialog()
+@dialogs.DateWithTimeDialog()
+@dialogs.DeleteDialog()
+@dialogs.EditNotesDialog()
+@dialogs.EditPersonDialog()
+@dialogs.EditSingleLineDialog()
+@dialogs.NotificationDialog()
+@dialogs.ProgressDialog()
+@dialogs.CalendarPreviewDialog()
+@dialogs.ReadOnlyDialog()
+
+<script src="@routes.Assets.versioned("javascripts/dialogs.js")"></script>
+
+@defining(Context.current().flash().get(KEY_APPOINTMENT_LINK_SUCCESS)) { text =>
+    @if(text != null) {
+        <script>showToast("@text")</script>
+    }
+}
+
+@defining(Context.current().flash().get(KEY_PERSON_ERROR)) { text =>
+    @if(text != null) {
+        <script>showToast('@text')</script>
+    }
+}

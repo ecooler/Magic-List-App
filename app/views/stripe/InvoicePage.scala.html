@@ -1,0 +1,175 @@
+@import java.util
+@import components._
+@import com.stripe.model.Invoice
+@import utilities.PriceUtility
+@import utilities.DateUtility
+@(invoice: Invoice)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+        <main>
+
+            <div class="row"></div>
+
+            <div class="row">
+
+                <div class="col l10 offset-l1 m12 s12">
+
+                    <div class="col l9 m7 s12">
+
+                        <div class="card z-depth-3">
+
+                            <div class="card-content">
+
+                            @if(invoice != null) {
+
+                                <span class="card-title grey-text text-darken-4">
+                                    Customer Invoice - @DateUtility.getShortDateForUi(invoice.getPeriodEnd * 1000)
+                                </span>
+
+                                <div class="row"></div>
+
+                                <table class="responsive-table bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Period
+                                            </th>
+                                            <th>
+                                                Description
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span>@DateUtility.getLongDateForUi(invoice.getPeriodStart * 1000)</span>
+                                                <span>-</span>
+                                                <span>@DateUtility.getLongDateForUi(invoice.getPeriodEnd * 1000)</span>
+                                            </td>
+                                            <td>
+                                                Monthly Subscription to Magic List
+                                            </td>
+                                            <td>
+                                            @PriceUtility.getPriceFromStripe(invoice.getTotal)
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            } else {
+                                <span class="card-title grey-text text-darken-4">
+                                    You have no invoices to show yet
+                                </span>
+
+                                <div class="row"></div>
+
+                                <h6 class="grey-text">
+                                    As the upcoming billing period approaches, you will receive your first invoice.
+                                </h6>
+                            }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col l3 m5 s12">
+                    @if(!invoice.getPaid) {
+                        <div id="message-panel" class="card-panel red">
+                            <h6 id="status-message" class="white-text">
+                                Status: <b>Not Paid</b>
+                            </h6>
+
+                            <span id="extra-status-message" class="white-text">
+                            @if(invoice.getChargeObject != null) {
+                                @invoice.getChargeObject.getOutcome.getSellerMessage
+                            } else {
+                                No message to show
+                            }
+                            </span>
+
+                            @if(invoice.getAttempted && !invoice.getPaid) {
+                                <div class="top-padding-small bottom-padding-small center-align">
+                                    <a id="payment-retry" class="white-text waves-effect btn-icon tooltipped"
+                                    data-tooltip="Retry Payment"
+                                    onclick="retryPayment();">
+                                        <i class="material-icons">replay</i>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    } else {
+                        <div id="message-panel" class="card-panel green">
+                            <h6 id="status-message" class="white-text">
+                                Status: <b>Paid</b>
+                            </h6>
+
+                            <span id="extra-status-message" class="white-text">
+                            @if(invoice.getChargeObject != null) {
+                                @invoice.getChargeObject.getOutcome.getSellerMessage
+                            } else {
+                                No message to show
+                            }
+                            </span>
+                        </div>
+                    }
+                    </div>
+
+                </div>
+
+            </div>
+
+            @AllDialogs()
+
+        </main>
+
+        @BaseFooter()
+
+        @if(invoice.getAttempted && !invoice.getPaid) {
+            <script>
+
+                    function retryPayment() {
+                        $('#confirmation_dialog_title').html("Retry Payment?");
+                        $('#confirmation_dialog_content').html("Are you sure you want to retry your payment for this invoice?");
+                        $('#confirmation_dialog_submit').html("Retry");
+
+                        showConfirmationDialog(function() {
+                            doPost("/api/plan/payment/retry", {}, success, error);
+
+                            function success() {
+                                $('.modal').modal("close");
+                                showToast("Your payment was successful");
+                                const $panel = $('#message-panel');
+                                $panel.removeClass("red");
+                                $panel.addClass("green");
+                                $('#status-message').html("Status Message: Paid");
+                                $('#extra-status-message').html("No messages to show");
+                                $('#payment-retry').remove();
+                            }
+
+                            function error(xhr) {
+                                $('.modal').modal("close");
+                                const json = JSON.parse(xhr.responseText);
+                                showToast("Error: " + json.reason);
+                            }
+
+                        });
+                    }
+
+            </script>
+        }
+
+    </body>
+
+</html>

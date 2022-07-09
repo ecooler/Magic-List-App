@@ -1,0 +1,238 @@
+@import components._
+@import model.manager.Candidate
+@(candidate: Candidate)
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        @BaseHead()
+
+    <style>
+        p {
+            padding: 8px;
+        }
+    </style>
+    </head>
+    <body>
+
+        @BaseBodyHeader("Candidate Details")
+
+        <div class="row"></div>
+        <div class="row"></div>
+
+        <main>
+
+            <div id="candidates_container" class="row">
+
+                <div class="grid-item col l4 m6 s12">
+
+                    <div class="card z-depth-2">
+
+                        <div class="card-content bottom-padding">
+
+                            <div>
+                                <h4>
+                                    <span class="inline candidate_name_@candidate.getCandidateId">@candidate.getName</span>
+                                    <a class="btn-flat waves-effect activator tooltipped right" data-delay="50" data-tooltip="View Notes">
+                                        <i class="material-icons">speaker_notes</i>
+                                    </a>
+                                </h4>
+                            </div>
+
+                            <p class="candidate_email_@candidate.getCandidateId">@candidate.getEmail</p>
+                            <p class="candidate_phone_@candidate.getCandidateId">@candidate.getPhone</p>
+                            <p>
+                                Resume Source:
+                                <span class="candidate_resume_source_@candidate.getCandidateId">LinkedIn</span>
+                            </p>
+                            <div class="inline @candidate.getState.getStatusType">
+                                @components.CandidateStatusComponent(candidate)
+                            </div>
+
+                            <div class="row"></div>
+                            <div class="divider"></div>
+
+                            <div class="right-align">
+                                <div class="row"></div>
+                                <a class="btn-flat btn-icon horizontal-margin-small waves-effect tooltipped" data-delay="50" data-tooltip="Manage Files">
+                                    <i class="material-icons">attach_file</i>
+                                </a>
+                                <a class="btn-flat btn-icon horizontal-margin-small waves-effect tooltipped" data-delay="50" data-tooltip="Create Study Calendar">
+                                    <i class="material-icons">event_available</i>
+                                </a>
+                                <a class="btn-flat btn-icon horizontal-margin-small waves-effect tooltipped" data-delay="50" data-tooltip="View Study Calendar">
+                                    <i class="material-icons">event_note</i>
+                                </a>
+                                <a class="btn-flat btn-icon horizontal-margin-small waves-effect tooltipped" data-delay="50" data-tooltip="Edit Candidate">
+                                    <i class="material-icons">mode_edit</i>
+                                </a>
+                                <a class="btn-flat btn-icon horizontal-margin-small waves-effect tooltipped" data-delay="50" data-tooltip="Delete Candidate">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            </div>
+
+                        </div>
+
+                        <div class="card-reveal">
+                            <span class="card-title">
+                                Additional Notes
+                                <i class="material-icons right">close</i>
+                            </span>
+                            <span class="candidate_notes_@candidate.getCandidateId">@candidate.getNotes</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="grid-item col l6 m6 s12">
+
+                    <div class="card z-depth-2">
+
+                        <div class="card-content bottom-padding">
+
+                            <h4>Business Plan</h4>
+
+                            <span>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eget sapien vestibulum,
+                                viverra risus in, mollis dui. Ut rutrum condimentum lorem sed fermentum. Praesent nibh
+                                augue, malesuada non enim ut, feugiat aliquet purus. Nam consectetur porta elit, ut
+                                egestas sem viverra vel. Mauris cursus tortor nec dapibus mollis. In semper.
+                            </span>
+
+                            <div class="row"></div>
+                            <div class="divider"></div>
+                            <div class="row"></div>
+
+                            <div class="right-align">
+                                <a class="btn-flat btn-icon horizontal-margin-small waves-effect tooltipped"
+                                data-delay="50" data-tooltip="Edit Business Plan">
+                                    <i class="material-icons">mode_edit</i>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="grid-item col l6 m8 s12">
+
+                    <div class="card z-depth-2">
+
+                        <div class="card-content">
+
+                            <h4>Candidate Status <i>Audit Trail</i></h4>
+
+                            <table class="responsive-table bordered highlight">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="not_contacted">
+                                        <td>Candidate Imported into Magic List</td>
+                                        <td>April 4, 2017</td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    <tr class="first_interview">
+                                        <td>1st. Interview</td>
+                                        <td>April 5, 2017</td>
+                                        <td>
+                                            <a class="btn-flat btn-icon waves-effect dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="second_interview">
+                                        <td>2nd. Interview</td>
+                                        <td>April 11, 2017</td>
+                                        <td>
+                                            <a class="btn-flat btn-icon waves-effect dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="third_interview">
+                                        <td>3rd. Interview</td>
+                                        <td>April 18, 2017</td>
+                                        <td>
+                                            <a class="btn-flat btn-icon waves-effect dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="life_and_health">
+                                        <td>Life & Health</td>
+                                        <td>April 24, 2017</td>
+                                        <td>
+                                            <a class="btn-flat btn-icon waves-effect dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="series_seven">
+                                        <td>Series 7</td>
+                                        <td>May 1, 2017</td>
+                                        <td>
+                                            <a class="btn-flat btn-icon waves-effect dropdown-button">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="row"></div>
+                            <div class="divider"></div>
+                            <div class="row"></div>
+
+                            <p><b>Total Duration in System: 27 days</b></p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+            <div class="row"></div>
+
+        </main>
+
+        @dialogs.CandidateDialog()
+
+        @dialogs.StudyCalendarDialog()
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        <script>
+
+                $('#candidates_container').masonry({
+                    columnWidth: $(this).find('.col')[0],
+                    itemSelector: '.col',
+                    percentPosition: true
+                });
+
+                $(document).ready(function () {
+                    $('#candidates_container').masonry("layout");
+                });
+
+        </script>
+
+    </body>
+
+</html>

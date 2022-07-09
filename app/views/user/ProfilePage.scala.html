@@ -1,0 +1,192 @@
+@import components._
+@import model.account.Account
+@import model.dialsheet.HomePageDialSheet
+@import model.profile.HomePageAgenda
+@import model.prospect.Prospect
+@(account: Account, isActiveSubscription: Boolean, formattedDate: String, dialSheet: HomePageDialSheet,
+        agenda: HomePageAgenda, versionChanges: model.server.VersionChanges, migrationList: model.PagedList[Prospect])
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+
+    <body>
+
+        @BaseBodyHeader()
+
+        <main>
+
+            <div class="row top-margin left-margin right-margin">
+
+                @if(!versionChanges.isDismissed) {
+
+                    <div id="whats-new-card" class="col l8 offset-l2 m10 offset-m1 s12 scale-transition scale-out scale-in">
+
+                        <div class="card z-depth-2">
+
+                            <div class="card-content">
+
+                                <span class="card-title grey-text text-darken-4">
+                                    What's New?
+                                    <a onclick="dismissVersionChanges()"
+                                    class="btn-flat waves-effect side-padding-small right">
+                                        <i class="material-icons">close</i>
+                                    </a>
+                                </span>
+
+                                <p>
+                                @Html(versionChanges.getVersionChanges)
+                                </p>
+
+                                <div class="row"></div>
+
+                                <span class="small-text">@utilities.DateUtility.getLongDateForUi(versionChanges.getReleaseDate)</span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row"></div>
+
+                }
+
+                @if(migrationList != null && migrationList.getTotalNumberOfItems > 0) {
+                    <div class="col s12">
+
+                        <div class="col s12">
+
+                        @migrations.MigrationsHelpCard(migrationList.getTotalNumberOfItems)
+
+                        </div>
+
+                    </div>
+
+                    <div class="row"></div>
+                }
+
+                <div class="col l3 m12 s12">
+
+                    @defining(Http.Context.current().flash().get(BaseController.KEY_SUCCESS)) { flashText: String =>
+                        @if(flashText != null) {
+                            <div class="card-panel z-depth-3 indigo">
+
+                                <h5 class="white-text center-align">Message:</h5>
+
+                                <span class="white-text">@flashText</span>
+
+                            </div>
+
+                            <script>showToast('@flashText')</script>
+                        }
+                    }
+
+                    <div class="col s12">
+
+                    @user.UserProfileAlerts(isActiveSubscription, agenda)
+
+                    </div>
+
+                    <div class="col l12 m6">
+
+                        <div class="card z-depth-2">
+
+                            <div class="card-content center-align">
+
+                                <span class="card-title grey-text text-darken-4">Quick Links</span>
+
+                                <a class="btn-flat waves-effect waves-light top-margin full-width side-padding-small"
+                                target="_blank" href="https://axa.com">
+                                    <img class="left" style="width: 32px;
+                                        height: 32px" src="@routes.Assets.versioned("images/axa-logo.png")">
+                                    Axa Advisors
+                                </a>
+
+                                <a class="btn-flat waves-effect waves-light top-margin full-width side-padding-small"
+                                target="_blank" href="https://zoominfo.com">
+                                    <img class="left" style="width: 32px;
+                                        height: 32px" src="@routes.Assets.versioned("images/zoom-info-logo.png")">
+                                    Zoom Info
+                                </a>
+
+                                <a class="btn-flat waves-effect waves-light top-margin full-width side-padding-small"
+                                target="_blank" href="https://linkedin.com">
+                                    <img class="left" style="width: 32px;
+                                        height: 32px" src="@routes.Assets.versioned("images/linkedin-logo.png")">
+                                    LinkedIn
+                                </a>
+
+                                <a class="btn-flat waves-effect waves-light top-margin full-width side-padding-small"
+                                target="_blank" href="https://client.gryphonnetworks.com">
+                                    <img class="left" style="width: 32px;
+                                        height: 32px" src="@routes.Assets.versioned("images/gryphon-logo.png")">
+                                    Gryphon
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col l12 m6">
+
+                        <div class="card z-depth-2">
+
+                            <div class="card-content">
+
+                                <span class="card-title grey-text text-darken-4">Our Promise</span>
+
+                                <p>
+                                    Magic List was created for advisors by advisors. Living by that motto, we are always
+                                    looking to make the service as helpful as possible to your business.
+                                    <br>
+                                    If you think of any ways to better our service, please send us a suggestion, which
+                                    can be found on the bottom of every page.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                @if(isActiveSubscription) {
+                    @user.UserProfileGoodSubscribed(account, formattedDate, agenda, dialSheet)
+                } else {
+                    @user.UserProfileBadSubscription()
+                }
+
+                <div class="row"></div>
+
+            </div>
+
+        </main>
+
+        @BaseFooter()
+
+        @AllDialogs()
+
+        <script>
+
+                $(document).ready(function () {
+                    Materialize.updateTextFields();
+                });
+
+                function dismissVersionChanges() {
+                    $('#whats-new-card').removeClass("scale-in");
+                    setTimeout(function () {
+                        $('#whats-new-card').remove();
+                    }, 300);
+
+                    doPost("/user/settings/versionRevision/dismiss", {});
+                }
+
+        </script>
+
+    </body>
+
+</html>

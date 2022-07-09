@@ -1,0 +1,508 @@
+@import java.util
+
+@import model.prospect.{Appointment, ContactStatusAuditItem, Notification, Prospect, ProspectState}
+@import components._
+@import utilities.DateUtility
+@import model.account.Account
+@import utilities.ProfileUtility
+@(prospect: Prospect, isOwner: Boolean, upcomingNotificationList: util.List[Notification],
+        currentNotificationList: util.List[Notification], pastNotificationList: util.List[Notification],
+        contactStatusAuditTrail: util.List[ContactStatusAuditItem], appointmentList: util.List[Appointment],
+        sharedUserList: util.List[model.user.User])
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+
+        @BaseHead()
+
+    <script type="text/javascript" src="@routes.Assets.versioned("javascripts/masonry.pkgd.min.js")"></script>
+
+    <style>
+            .collection {
+                border: 0 solid #000 !important;
+            }
+
+            .collection-item {
+                border-bottom: 0 solid #000 !important;
+            }
+    </style>
+
+    </head>
+    <body>
+
+        @BaseBodyHeader("Person Details")
+
+        <main>
+
+            @dialsheets.AllPagesDialSheet()
+
+            <div id="masonry-grid" class="row">
+
+                <div class="col s12 m10 offset-m1 l6">
+
+                    <div class="card allow-overflow-y">
+
+                        <div class="card-content scroll-overflow-x allow-overflow-y">
+
+                            <span class="card-title activator">
+                                <span class="grey-text text-darken-4 person_name_@prospect.getId">@prospect.getName</span>
+                                <i class="material-icons right">visibility</i>
+                            </span>
+
+                            <ul class="collection allow-overflow">
+                                <li class="collection-item">
+                                    <span class="side-padding person_email_@prospect.getId">@prospect.getEmail</span>
+                                </li>
+                                <li class="collection-item">
+                                    <span class="side-padding person_phone_@prospect.getId">@prospect.getPhoneNumber</span>
+                                </li>
+                                <li class="collection-item">
+                                    <span class="side-padding person_company_name_@prospect.getId">@prospect.getCompanyName</span>
+                                </li>
+                                <li class="collection-item">
+                                    <span class="side-padding person_job_title_@prospect.getId">@prospect.getJobTitle</span>
+                                </li>
+                                <li class="collection-item" id="person_details_status_container">
+                                @components.ContactStatus(prospect.getId, prospect.getName, prospect.getState,
+                                    true, false, ProspectState.ClickType.PERSON)
+                                </li>
+                            </ul>
+
+                        </div>
+
+                        <div class="card-reveal">
+                            <span class="card-title">
+                                <span class="grey-text text-darken-4">Team Members that Can see this Person</span>
+                                <i class="material-icons right">close</i>
+                            </span>
+
+                            <ul class="collection">
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle red white-text">star</i>
+                                    @if(Account.getAccountFromSession.getUserId.equals(sharedUserList.get(0).getUserId)) {
+                                        <span class="title"><b>@sharedUserList.get(0).getName</b></span>
+                                    } else {
+                                        <span class="title">@sharedUserList.get(0).getName</span>
+                                    }
+                                    <p>Owner</p>
+                                </li>
+                                @for(i <- 1 until sharedUserList.size) {
+                                    <li class="collection-item avatar">
+                                        <i class="material-icons circle red white-text">account_circle</i>
+                                        @if(Account.getAccountFromSession.getUserId.equals(sharedUserList.get(i).getUserId)) {
+                                            <span class="title"><b>@sharedUserList.get(i).getName</b></span>
+                                        } else {
+                                            <span class="title">@sharedUserList.get(i).getName</span>
+                                        }
+                                        <p>Shared with</p>
+                                    </li>
+                                }
+
+                            </ul>
+
+                        </div>
+
+                        <div class="card-action right-content">
+
+                            <span id="notes_text_@prospect.getId" style="display: none;">@prospect.getNotes</span>
+                            <a class="btn-flat btn-icon black-text horizontal-margin-small tooltipped"
+                            id="notes_button" data-position="bottom" data-delay="50" data-tooltip="Contact Notes"
+                            onclick="showEditPersonNotesDialog('@prospect.getId')">
+                                <i class="material-icons">speaker_notes</i>
+                            </a>
+
+                            <a class="btn-flat btn-icon horizontal-margin-small black-text tooltipped"
+                            data-position="bottom" data-delay="50" data-tooltip="Edit Person" id="edit_contact_button"
+                            onclick="showEditPersonDialog('@prospect.getId')">
+                                <i class="material-icons">mode_edit</i>
+                            </a>
+
+                            <a class="btn-flat btn-icon horizontal-margin-small black-text tooltipped"
+                            data-position="bottom" data-delay="50" data-tooltip="Schedule Appointment"
+                            id="create_appointment_button" onclick="showCreateAppointmentDialog('@prospect.getId')">
+                                <i class="material-icons">schedule</i>
+                            </a>
+
+                            <a id="create_notification_button"
+                            onclick="showCreateNotificationDialog('@prospect.getId', onCreateNotificationComplete)"
+                            class="btn-flat btn-icon horizontal-margin-small black-text tooltipped" data-position="bottom"
+                            data-delay="50" data-tooltip="Create Notification">
+                                <i class="material-icons">notifications</i>
+                            </a>
+
+                            <a class="btn-flat btn-icon black-text horizontal-margin-small tooltipped" data-position="bottom"
+                            data-delay="50" data-tooltip="Share with Team"
+                            onclick="showTransferUserProspectsDialog('@prospect.getId')">
+                                <i class="material-icons">share</i>
+                            </a>
+
+                            @if(isOwner) {
+                                <a class="btn-flat btn-icon black-text horizontal-margin-small tooltipped" data-position="bottom"
+                                data-delay="50" data-tooltip="Delete"
+                                onclick="showDeletePersonDialog('@prospect.getId', onDeletePersonComplete)">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                @person.NotificationTable(prospect, currentNotificationList, Notification.Type.CURRENT)
+
+                @person.NotificationTable(prospect, upcomingNotificationList, Notification.Type.UPCOMING)
+
+                @person.NotificationTable(prospect, pastNotificationList, Notification.Type.PAST)
+
+                <div class="col s12 m10 offset-m1 l6">
+
+                    <div class="card z-depth-2">
+
+                        <div class="card-content scroll-overflow-x">
+
+                            <span class="card-title">Daily Contact Status <i>Audit Trail</i></span>
+
+                            <table id="contact_status_table" class="bordered highlight">
+
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <i class="material-icons left">arrow_drop_up</i>Date
+                                        </th>
+                                        <th>
+                                            Contact Status
+                                        </th>
+                                        <th>
+                                            Contactor
+                                        </th>
+                                        <th>
+                                            Activity Sheet
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                @for(contactStatus: ContactStatusAuditItem <- contactStatusAuditTrail) {
+                                    <tr class="@contactStatus.getState.getStateClass"
+                                    data-state-class="@contactStatus.getState.getStateClass">
+                                    @if(contactStatus.getState.getStateType.equals(ProspectState.NOT_CONTACTED.getStateType)) {
+                                        <td>@DateUtility.getShortDateForUi(contactStatus.getDate)</td>
+                                        <td>Contact created</td>
+                                        <td></td>
+                                        <td></td>
+                                    } else {
+                                        @if(contactStatus.getContacter.getUserId.equals(Account.getAccountFromSession.getUserId)) {
+                                            <td>
+                                                <a id="audit-item-@contactStatus.getDialSheetId"
+                                                class="btn-icon waves-effect left contact-status-edit-time"
+                                                data-sheet-id="@contactStatus.getDialSheetId"
+                                                data-date="@contactStatus.getDate">
+                                                    <i class="material-icons black-text tiny">mode_edit</i>
+                                                </a>
+                                                <b id="activity-sheet-contact-@contactStatus.getDialSheetId">@DateUtility.getDateWithTimeForUi(contactStatus.getDate)</b>
+                                            </td>
+                                            <td>
+                                                <b>@contactStatus.getState.toString</b>
+                                            </td>
+                                            <td>
+                                                <b>@contactStatus.getContacter.getName</b>
+                                            </td>
+                                            <td>
+                                                <a class="btn-flat side-padding-small truncate waves-effect waves-light"
+                                                href="@routes.DialSheetController.getDialSheetDetails(contactStatus.getDialSheetId)">
+                                                    View <i class="material-icons right">pageview</i>
+                                                </a>
+                                            </td>
+                                        } else {
+                                            <td>
+                                            @DateUtility.getDateWithTimeForUi(contactStatus.getDate)
+                                            </td>
+                                            <td>
+                                            @contactStatus.getState.toString
+                                            </td>
+                                            <td>
+                                            @contactStatus.getContacter.getName
+                                            </td>
+                                            <td>
+                                            </td>
+                                        }
+                                    }
+                                    </tr>
+                                }
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col s12 m10 offset-m1 l6">
+
+                    <div class="card z-depth-2">
+
+                        <div class="card-content scroll-overflow-x">
+
+                            <span class="card-title">@prospect.getName's Appointments</span>
+
+                            <table id="appointments_table" class="highlight bordered">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <i class="material-icons left">arrow_drop_down</i>
+                                            Appointment Date
+                                        </th>
+                                        <th>
+                                            Location
+                                        </th>
+                                        <th>
+                                            Creator
+                                        </th>
+                                        <th>
+                                            Appointment Type
+                                        </th>
+                                        <th>
+                                            Options
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="no-appointments" class="hide">
+                                        <td colspan="5" class="no-results-found no-overflow">
+                                            @prospect.getName has no scheduled appointments
+                                        </td>
+                                    </tr>
+                                    @for(appointment: Appointment <- appointmentList) {
+                                        <tr class="appointment_@appointment.getAppointmentId" data-person-name="@appointment.getPerson.getName">
+                                            <td class="appointment_date_@appointment.getAppointmentId" data="@appointment.getAppointmentDate">
+                                                <b>@DateUtility.getDateWithTimeForUi(appointment.getAppointmentDate)</b>
+                                            </td>
+
+                                            @if(appointment.isConferenceCall) {
+                                                <td class="appointment_location_@appointment.getAppointmentId" data-is-conference-call="true">
+                                                    Conference Call
+                                                </td>
+                                            } else {
+                                                <td class="appointment_location_@appointment.getAppointmentId" data-is-conference-call="false">
+                                                    In Person
+                                                </td>
+                                            }
+
+                                            <td>
+                                            @defining(Account.getAccountFromSession.getUserId) { userId: String =>
+                                                @if(userId.equals(appointment.getCreator.getUserId)) {
+                                                    <span class="green-text text-darken-1">@appointment.getCreator.getName</span>
+                                                } else {
+                                                    <span>@appointment.getCreator.getName</span>
+                                                }
+                                            }
+                                            </td>
+
+                                            <td class="appointment_type_@appointment.getAppointmentId"
+                                            data="@appointment.getAppointmentType.getStateType">@appointment.getAppointmentType.getStateDescription</td>
+
+                                            <td>
+                                                <a class="dropdown-button btn-flat waves-effect side-padding-small"
+                                                data-activates="dropdown-person_details-@appointment.getAppointmentId">
+                                                    <i class="material-icons">more_vert</i>
+                                                </a>
+
+                                                <ul id="dropdown-person_details-@appointment.getAppointmentId" class="dropdown-content">
+                                                    <li>
+                                                        <span class="hide appointment_notes_@appointment.getAppointmentId">@appointment.getNotes</span>
+                                                        <a onclick="showAppointmentNotesDialog('@appointment.getAppointmentId', '@prospect.getId')">
+                                                        View Notes
+                                                        </a>
+                                                    </li>
+                                                    @if(appointment.getCreator.getUserId.equals(Account.getAccountFromSession.getUserId)) {
+                                                        <li>
+                                                            <a onclick="showGetAppointmentTemplatesDialog('@appointment.getAppointmentId')">
+                                                                Export to Calendar
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a onclick="showEditAppointmentDialog('@appointment.getAppointmentId', '@appointment.getPerson.getId')">
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a onclick="showDeleteAppointmentDialog('@appointment.getAppointmentId')">
+                                                                Delete
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            @AllDialogs()
+
+        </main>
+
+        @BaseFooter()
+
+        <script>
+
+                $(document).ready(function () {
+                    $('.contact-status-edit-time').click(function () {
+                        const sheetId = $(this).attr("data-sheet-id");
+                        const contactTime = parseInt($(this).attr("data-date"));
+                        showEditContactTimeDialog('@prospect.getId', sheetId, contactTime);
+                    });
+                });
+
+        </script>
+
+        <script>
+        @if(appointmentList.isEmpty) {
+        $('#no-appointments').removeClass('hide');
+        }
+
+        function onDeletePersonComplete() {
+            window.history.back();
+        }
+
+        const notificationVisibility = {
+            past: @ProfileUtility.getConfiguredExpandPastNotifications,
+            current: @ProfileUtility.getConfiguredExpandCurrentNotifications,
+            upcoming: @ProfileUtility.getConfiguredExpandUpcomingNotifications
+        };
+
+        $('#upcoming-notifications-title').click(function () {
+            $('#upcoming-notification-wrapper').slideToggle(300);
+
+            notificationVisibility.upcoming = !notificationVisibility.upcoming;
+            $('#upcoming-notifications-expansion-icon').animate({deg: notificationVisibility.upcoming ? -180 : 0}, {
+                        duration: 300,
+                        step: function (now) {
+                            $(this).css('-webkit-transform', 'rotate(' + now + 'deg)');
+                            $(this).css('transform', 'rotate(' + now + 'deg)');
+
+                            if ($grid) {
+                                $grid.masonry();
+                            }
+                        }
+                    }
+            );
+
+        });
+
+        $('#current-notifications-title').click(function () {
+            $('#current-notification-wrapper').slideToggle(300);
+
+            notificationVisibility.current = !notificationVisibility.current;
+            $('#current-notifications-expansion-icon').animate({deg: notificationVisibility.current ? -180 : 0}, {
+                        duration: 300,
+                        step: function (now) {
+                            $(this).css('-webkit-transform', 'rotate(' + now + 'deg)');
+                            $(this).css('transform', 'rotate(' + now + 'deg)');
+
+                            if ($grid) {
+                                $grid.masonry();
+                            }
+                        }
+                    }
+            );
+
+        });
+
+        $('#past-notifications-title').click(function () {
+            $('#past-notification-wrapper').slideToggle(300);
+
+            notificationVisibility.past = !notificationVisibility.past;
+            $('#past-notifications-expansion-icon').animate({deg: notificationVisibility.past ? -180 : 0}, {
+                        duration: 300,
+                        step: function (now) {
+                            $(this).css('-webkit-transform', 'rotate(' + now + 'deg)');
+                            $(this).css('transform', 'rotate(' + now + 'deg)');
+
+                            if ($grid) {
+                                $grid.masonry();
+                            }
+                        }
+                    }
+            );
+
+        });
+
+        </script>
+
+        <script>
+                var $grid;
+                $(document).ready(function () {
+                    $('select').material_select();
+
+                    $grid = $('#masonry-grid').masonry({columnWidth: '.col', itemSelector: '.col'});
+
+                    notificationCountWatcher.onChange(notificationTypes.past);
+                    notificationCountWatcher.onChange(notificationTypes.current);
+                    notificationCountWatcher.onChange(notificationTypes.upcoming);
+
+                    setTimeout(function () {
+                        $grid.masonry('layout');
+                    }, 350);
+                });
+
+                if (notificationVisibility.current) {
+                    $('#current-notifications-title').click();
+                }
+
+                if (notificationVisibility.past) {
+                    $('#past-notifications-title').click();
+                }
+
+                if (notificationVisibility.upcoming) {
+                    $('#upcoming-notifications-title').click();
+                }
+
+                function onCreateNotificationComplete(notification) {
+                    var type;
+                    if (moment(notification.notification_date).isSame(moment(), 'day')) {
+                        type = 'current';
+                    } else {
+                        type = 'upcoming';
+                    }
+
+                    addNotificationToTableUi(notification, type);
+
+                    notificationCountWatcher.onChange($('#' + notification.notification_id).attr('data-type'));
+
+                    setTimeout(function () {
+                        $grid.masonry('layout');
+                    }, 300);
+                }
+
+                notificationCallbacks.onDeleteNotification = function () {
+                    $grid.masonry('layout');
+                };
+
+                notificationCallbacks.onArchiveNotification = function () {
+                    $grid.masonry('layout');
+                };
+
+                notificationCallbacks.onUnarchiveNotification = function () {
+                    $grid.masonry('layout');
+                }
+
+        </script>
+
+    </body>
+
+</html>

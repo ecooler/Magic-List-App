@@ -1,0 +1,199 @@
+@import model.account.Account
+@import utilities.ProfileUtility
+
+@(isDrawerFixed: Boolean)
+
+@showFixed(shouldShowNavigationDrawerFixed: Boolean) = {
+@if(shouldShowNavigationDrawerFixed) {
+    fixed
+}
+}
+
+@isSelected(route: String) = {
+@if(request.path().equals(route)) {
+    indigo-text
+}
+}
+
+<ul id="navigation-drawer" class="side-nav @showFixed(isDrawerFixed)">
+    <li>
+        <div class="userView">
+            <div class="background indigo">
+                <img class="drawer-background" src="@routes.Assets.versioned("images/indigo-material.png")">
+            </div>
+            <img class="profile-image" src="@routes.Assets.versioned("images/ms-icon-310x310.png")">
+            <span class="white-text name">@Account.getAccountFromSession.getName</span>
+            <span class="white-text email">@Account.getAccountFromSession.getEmail</span>
+        </div>
+    </li>
+
+    <li>
+        <a class="waves-effect @isSelected(routes.UserController.getProfilePage().url)"
+        href="@routes.UserController.getProfilePage().url">
+            <i class="right-padding material-icons @isSelected(routes.UserController.getProfilePage().url)">
+                home
+            </i>
+            Home
+        </a>
+    </li>
+
+    @defining(Account.getAccountFromSession) { account =>
+
+        @if(account.isAdmin) {
+            <li>
+                <div class="divider"></div>
+            </li>
+
+            <li>
+                <a class="subheader">Admin Portal</a>
+            </li>
+
+            <li>
+                <a class="waves-effect @isSelected(routes.AdminController.getAdminConsolePage().url)"
+                href="@routes.AdminController.getAdminConsolePage().url">
+                    <i class="right-padding material-icons @isSelected(routes.AdminController.getAdminConsolePage().url)">
+                        build
+                    </i>
+                    Admin Home
+                </a>
+            </li>
+        }
+
+    <li class="manager_content">
+        <div class="divider"></div>
+    </li>
+
+    <li class="manager_content">
+        <a class="subheader">Management Portal</a>
+    </li>
+
+    <li class="manager_content">
+        <a class="waves-effect @isSelected(routes.ManagerMiscController.getManagementPortalHomepage.url)"
+        href="@routes.ManagerMiscController.getManagementPortalHomepage.url">
+            <i class="right-padding material-icons @isSelected(routes.ManagerMiscController.getManagementPortalHomepage.url)">
+                    supervisor_account
+            </i>
+            Management Home
+        </a>
+    </li>
+
+        @if(!account.isManager) {
+            <script>$('.manager_content').hide()</script>
+        }
+    }
+
+    <li>
+        <div class="divider"></div>
+    </li>
+
+    <li>
+        <a class="subheader">List Management</a>
+    </li>
+
+    <li>
+        <a class="waves-effect @isSelected(routes.ListsController.getLists().url)"
+        href="@routes.ListsController.getLists().url">
+            <i class="right-padding material-icons @isSelected(routes.ListsController.getLists().url)">
+                view_list
+            </i>
+            Lists
+        </a>
+    </li>
+
+    <li>
+        <a class="waves-effect @isSelected(routes.ListsController.getUploadNewListPage().url)"
+        href="@routes.ListsController.getUploadNewListPage().url">
+            <i class="right-padding material-icons @isSelected(routes.ListsController.getUploadNewListPage().url)">
+                cloud_upload
+            </i>
+            Upload Excel File
+        </a>
+    </li>
+
+    <li>
+        <div class="divider"></div>
+    </li>
+
+    <li>
+        <a class="subheader">Prospect Management</a>
+    </li>
+
+    <li>
+        <a class="waves-effect"
+        href="@routes.SearchesController.getSearchDetails.url">
+            <i class="right-padding material-icons">
+                contacts
+            </i>
+            View All Contacts
+        </a>
+    </li>
+
+    @for(quickLink <- ProfileUtility.getPersonStatusQuickLinks) {
+        <li>
+            <a class="waves-effect"
+            href="@quickLink.getUrl">
+                <i class="right-padding material-icons">
+                @quickLink.getMaterialIcon
+                </i>
+                @quickLink.getUiText
+            </a>
+        </li>
+    }
+
+    <li>
+        <div class="divider"></div>
+    </li>
+
+    <li>
+        <a class="subheader">Activity Sheets</a>
+    </li>
+
+    <li>
+        <a class="waves-effect @isSelected(routes.DialSheetController.getPastDialSheets().url)"
+        href=@routes.DialSheetController.getPastDialSheets().url>
+            <i class="right-padding material-icons @isSelected(routes.DialSheetController.getPastDialSheets().url)">
+                perm_phone_msg
+            </i>
+            Activity Sheet History
+        </a>
+    </li>
+
+    <li>
+        <div class="divider"></div>
+    </li>
+
+    <li>
+        <a class="subheader">Appointment Management</a>
+    </li>
+
+    <li>
+        <a class="waves-effect @isSelected(routes.AppointmentsController.getUpcomingUserAppointments.url)"
+        href="@routes.AppointmentsController.getUpcomingUserAppointments.url">
+            <i class="right-padding material-icons @isSelected(routes.AppointmentsController.getUpcomingUserAppointments.url)">
+                contact_mail
+            </i>
+            Scheduled Appointments
+        </a>
+    </li>
+
+    <li>
+        <a class="waves-effect @isSelected(routes.OutlookController.getUserTemplatesPage.url)"
+        href="@routes.OutlookController.getUserTemplatesPage.url">
+            <i class="right-padding material-icons @isSelected(routes.OutlookController.getUserTemplatesPage.url)">
+                event_note
+            </i>
+            Appointment Templates
+        </a>
+    </li>
+
+    <li>
+        <a class="waves-effect @isSelected(routes.OutlookController.createNewTemplate.url)"
+        href="@routes.OutlookController.getCreateTemplatePage.url">
+            <i class="right-padding material-icons @isSelected(routes.OutlookController.createNewTemplate.url)">
+                event_available
+            </i>
+            Create Template
+        </a>
+    </li>
+
+</ul>

@@ -1,0 +1,92 @@
+@import model.prospect.Notification
+
+@(notificationType: Notification.Type, notificationList: model.PagedList[Notification])
+<div class="row" id="@notificationType.getRawText-content">
+
+    <div class="col s12 m10 offset-m1 l10 offset-l1 top-margin bottom-margin allow-overflow">
+
+        <div class="card">
+
+            <div class="card-content">
+
+                <div>
+                    <span class="card-title inline">@notificationType.getText Notifications</span>
+
+                    <a id="notification-help-@notificationType.getRawText" data-tooltip="Help"
+                    class="btn-flat waves-effect btn-icon right tooltipped" data-delay="50"
+                    onclick="showNotificationHelpDialog()">
+                        <i class="material-icons indigo-text">help</i>
+                    </a>
+
+                    @notifications.NotificationSorter(notificationType)
+
+                    <div class="row"></div>
+
+                    <span class="table-title">
+                    @notificationList.getHtmlRangeForUi("notification-" + notificationType.getRawText)
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col s12 m10 offset-m1 l10 offset-l1">
+
+        <ul class="collection z-depth-2 allow-overflow" style="min-width: 550px" id="notifications-@notificationType.getRawText">
+
+            <li id="notification-@notificationType.getRawText-no-results" style="display: none"
+            class="collection-item no-results-@notificationType.getRawText`">
+                <h5 class="no-results-found bordered">
+
+                    <span class="center-align display-block">
+                        <i class="material-icons large green-text">wb_sunny</i>
+                    </span>
+
+                    @if(notificationType == Notification.Type.PAST) {
+                        <span>
+                            You have no past notifications to show.
+                            <br>
+                            <br>
+                            Past notifications are notifications that you no longer need to manage.
+                        </span>
+                    } else {
+                        @if(notificationType == Notification.Type.CURRENT) {
+                            Congrats! You have no current notifications to show.
+                            <br>
+                            <br>
+                            Create a notification to more easily track and follow-up with contacts.
+                        } else {
+                            You have no new notifications to show.
+                            <br>
+                            <br>
+                            Create a notification to more easily track and follow-up with contacts.
+                        }
+                    }
+                </h5>
+            </li>
+
+            @for(notification <- notificationList) {
+                @notifications.NotificationItem(notification, notificationType)
+            }
+
+            <li id="progress-@notificationType.getRawText" class="white-background regular-padding center-align" style="display: none;">
+            @components.ProgressSpinner()
+            </li>
+
+            @if(notificationList.size < notificationList.getTotalNumberOfItems) {
+                <li id="load-more-@notificationType.getRawText" class="center-align white-background regular-padding">
+                    <a data-type="@notificationType.getRawText" class="load-more btn-flat waves-effect">
+                        Load More
+                    </a>
+                </li>
+            }
+
+        </ul>
+
+    </div>
+
+</div>

@@ -1,0 +1,104 @@
+@import java.util.Calendar
+@import model.account.Account
+@()
+<footer class="page-footer grey darken-3">
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col s12">
+
+                @defining(Account.getAccountFromSession) { account =>
+                    @if(account.getToken == null) {
+                        @* The user is not logged in *@
+                        <ul>
+                            <li>
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MainController.getPrivacyStatement.url">
+                                    Privacy Statement
+                                </a>
+                            </li>
+                            <li>
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MainController.getTermsOfUse.url">
+                                    Terms of Use
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="footer-copy-right grey-text lighten-2-text">
+                            © @controllers.BaseController.COMPANY_NAME @Calendar.getInstance().get(Calendar.YEAR)
+                        </div>
+                    } else {
+                        <ul class="left">
+                            <li>
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MiscellaneousController.getReportBugPage.url">
+                                    Found a Bug
+                                </a>
+                            </li>
+                            <li>
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MiscellaneousController.getCreateSuggestionPage.url">
+                                    Submit a Suggestion
+                                </a>
+                            </li>
+                            <li>
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MiscellaneousController.getCreateUserQuotePage.url">
+                                    Submit a Quote
+                                </a>
+                            </li>
+                            <li class="divider hide-on-med-and-up"></li>
+                            <li class="hide-on-med-and-up">
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MainController.getPrivacyStatement.url">
+                                    Privacy Statement
+                                </a>
+                            </li>
+                            <li class="hide-on-med-and-up">
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MainController.getTermsOfUse.url">
+                                    Terms of Use
+                                </a>
+                            </li>
+                        </ul>
+
+                        <ul class="right hide-on-small-only">
+                            <li>
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MainController.getPrivacyStatement.url">
+                                    Privacy Statement
+                                </a>
+                            </li>
+                            <li>
+                                <a class="btn-flat grey-text text-lighten-3 waves-light"
+                                href="@routes.MainController.getTermsOfUse.url">
+                                    Terms of Use
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="row">
+
+                            <div class="col s12 footer-copy-right grey-text lighten-2-text">
+                                © @controllers.BaseController.COMPANY_NAME @Calendar.getInstance().get(Calendar.YEAR)
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+<script>
+        if ($('.bottom_shadow').length === 0) {
+            $('header').addClass("bottom_shadow");
+        }
+</script>

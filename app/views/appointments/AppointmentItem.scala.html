@@ -1,0 +1,129 @@
+@(appointment: model.prospect.Appointment, isUpcoming: Boolean)
+
+@src(calendarEvent: model.calendar.CalendarEvent) = {
+@if(calendarEvent.getProvider == model.calendar.CalendarProvider.OUTLOOK) {
+    @routes.Assets.versioned("images/outlook.png")
+}
+}
+
+@defining(appointment.getPerson) { prospect: model.prospect.Prospect =>
+    <li class="collection-item avatar allow-overflow" id="appointment-@appointment.getAppointmentId"
+    data-person-id="@appointment.getPerson.getId">
+        <i class="material-icons indigo-text white circle">person</i>
+        <div style="min-height: 96px">
+            <span class="title">
+                <b>
+                    <a class="black-text waves-effect person_name_@prospect.getId"
+                    href="@routes.PersonController.getPersonById(prospect.getId).url">
+                    @prospect.getName
+                    </a>
+                </b>
+            </span>
+
+            @if(prospect.getEmail != null) {
+                <p>@prospect.getEmail</p>
+            }
+            @if(prospect.getPhoneNumber != null) {
+                <p>@prospect.getPhoneNumber</p>
+            }
+            @if(prospect.getJobTitle != null && prospect.getCompanyName != null) {
+                <p>@prospect.getJobTitle at @prospect.getCompanyName</p>
+            }
+            @if(prospect.getJobTitle == null && prospect.getCompanyName != null) {
+                <p>Works at @prospect.getCompanyName</p>
+            }
+            @if(prospect.getJobTitle != null && prospect.getCompanyName == null) {
+                <p>Job Title: @prospect.getJobTitle</p>
+            }
+            <div class="row"></div>
+
+            <p>
+                Last Contacted: &nbsp;
+                <span id="last-contacted-@appointment.getAppointmentId">
+                @if(appointment.getLastContacted == -1) {
+                    Not Contacted
+                } else {
+                    @utilities.DateUtility.getDateWithTimeForUi(appointment.getLastContacted)
+                }
+                </span>
+            </p>
+
+            <div class="row"></div>
+
+            <p>
+                Current Status: &nbsp; <span data-state="@prospect.getState.getStateType"
+            id="current-status-@appointment.getAppointmentId" data-state-class="@prospect.getState.getStateClass"
+            class="regular-padding-small status-state @prospect.getState.getStateClass">@prospect.getState.getStateDescription</span>
+            </p>
+            <div class="row"></div>
+            <p>
+                Meeting Outcome: &nbsp; @components.ContactStatus(appointment.getAppointmentId, null,
+                    appointment.getAppointmentOutcome, shouldSendStateClicksToServer = false,
+                isDisabled = isUpcoming, model.prospect.ProspectState.ClickType.APPOINTMENTS, true)
+            </p>
+            <div class="row"></div>
+        </div>
+
+        <span class="secondary-content indigo-text">
+            @utilities.DateUtility.getDateWithTimeForUi(appointment.getAppointmentDate)
+            <br>
+            <span>
+                Type: &nbsp;
+                <span class="appointment_type_@appointment.getAppointmentId" data="@appointment.getAppointmentType.getStateType">
+                @appointment.getAppointmentType.getStateDescription
+                </span>
+            </span>
+            <br>
+            <span class="hide appointment_notes_@appointment.getAppointmentId">@appointment.getNotes</span>
+            <a class="btn-flat waves-effect side-padding-small"
+            onclick="showAppointmentNotesDialog('@appointment.getAppointmentId', '@prospect.getId')">
+                Notes
+                <i class="material-icons black-text left">speaker_notes</i>
+            </a>
+            <br>
+        </span>
+
+        <ul class="collapsible" data-collapsible="popout">
+            <li>
+                <div class="collapsible-header">
+                    <i class="material-icons green-text left">event</i>
+                    Linked Calendar Events
+                </div>
+                <div class="collapsible-body">
+                    @if(appointment.getCalendarEvents.isEmpty) {
+                        <h6 class="grey-text">There are no calendar events linked to this appointment.
+                            <a onclick="showGetAppointmentTemplatesDialog('@appointment.getAppointmentId')">
+                                Get started</a>
+                        </h6>
+                    }
+
+                    @for(calendarEvent: model.calendar.CalendarEvent <- appointment.getCalendarEvents) {
+                        <div id="calendar-event-@calendarEvent.getEventId">
+                            <div>
+                                <img class="outlook-logo-extra-small no-vertical-margin left horizontal-margin" src="@src(calendarEvent)">
+                                <div>
+                                    <a class="calendar-event-link" target="_blank" href="@calendarEvent.getHyperLink">
+                                        <span class="truncate">@calendarEvent.getSubject</span>
+                                    </a>
+                                    <a class="btn-icon btn-flat waves-effect right" onclick="showDeleteCalendarProviderEventDialog('@calendarEvent.getEventId')">
+                                        <i class="material-icons">delete</i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row"></div>
+                            <div class="divider"></div>
+                            <div class="row"></div>
+                        </div>
+                    }
+
+                    @if(!appointment.getCalendarEvents.isEmpty) {
+                        <h6 class="grey-text">
+                            <a onclick="showGetAppointmentTemplatesDialog('@appointment.getAppointmentId')">
+                                Link more calendar events</a>
+                        </h6>
+                    }
+                </div>
+            </li>
+        </ul>
+    </li>
+}

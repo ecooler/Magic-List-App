@@ -1,0 +1,111 @@
+@import model.prospect.Notification
+
+@import utilities.DateUtility
+@import model.prospect.ProspectState
+@(notification: Notification, notificationType: Notification.Type)
+@defining(notification.getProspect) { prospect: model.prospect.Prospect =>
+    <li class="collection-item avatar allow-overflow notification-@notificationType.getRawText"
+    data-type="@notificationType.getRawText" id="@notification.getNotificationId" data-person-id="@prospect.getId">
+        <i class="material-icons indigo-text white circle">notifications</i>
+        <span class="title inline">
+            <b>
+                <a class="black-text waves-effect person_name_@prospect.getId" href="@routes.PersonController.getPersonById(prospect.getId).url">
+                @prospect.getName
+                </a>
+            </b>
+        </span>
+
+        @if(prospect.getEmail != null) {
+            <p>@prospect.getEmail</p>
+        }
+        @if(prospect.getPhoneNumber != null) {
+            <p>@prospect.getPhoneNumber</p>
+        }
+        @if(prospect.getJobTitle != null && prospect.getCompanyName != null) {
+            <p>@prospect.getJobTitle at @prospect.getCompanyName</p>
+        }
+        @if(prospect.getJobTitle == null && prospect.getCompanyName != null) {
+            <p>Works at @prospect.getCompanyName</p>
+        }
+        @if(prospect.getJobTitle != null && prospect.getCompanyName == null) {
+            <p>Job Title: @prospect.getJobTitle</p>
+        }
+        <div class="row"></div>
+        <p>
+            Last Contacted: &nbsp;
+            <span id="last-contacted-@notification.getNotificationId">
+            @if(notification.getLastContactedTime == -1) {
+                Not Contacted
+            } else {
+                @DateUtility.getDateWithTimeForUi(notification.getLastContactedTime)
+            }
+            </span>
+        </p>
+        <div class="row"></div>
+        <p>
+            Current Status: &nbsp;
+            <span data-state="@prospect.getState.getStateType"
+            id="current-status-@notification.getNotificationId" data-state-class="@prospect.getState.getStateClass"
+            class="regular-padding-small status-state @prospect.getState.getStateClass">@prospect.getState.getStateDescription</span>
+        </p>
+        <div class="row"></div>
+        <p>
+            Call Outcome: &nbsp; @components.ContactStatus(notification.getNotificationId, prospect.getName,
+            notification.getOutcome, shouldSendStateClicksToServer = false,
+            isDisabled = notificationType == Notification.Type.PAST, ProspectState.ClickType.NOTIFICATIONS)
+        </p>
+
+        <span class="secondary-content center-align">
+
+            <span id="@notification.getNotificationId-date" data-date="@notification.getNotificationDate"
+            class="indigo-text">@DateUtility.getDateWithTimeForUi(notification.getNotificationDate)</span>
+            <br>
+            <a class="btn-flat waves-effect" onclick="showNotificationMessageDialog('@notification.getNotificationId')">
+                <i class="material-icons left">speaker_notes</i>
+                Notes
+                <span class="hide" id="@notification.getNotificationId-message">@notification.getMessage</span>
+            </a>
+            @if(notificationType == Notification.Type.CURRENT || notificationType == Notification.Type.PAST) {
+                <a id="@notification.getNotificationId-push" class="btn-flat waves-effect"
+                onclick="pushNotificationForward('@notification.getNotificationId', notificationCallbacks.onPushNotification)">
+                    <i class="material-icons left">forward</i>
+                    Push Forward
+                </a>
+            }
+
+            @if(notificationType == Notification.Type.CURRENT) {
+                <a id="@notification.getNotificationId-archive" class="btn-flat waves-effect"
+                onclick="archiveNotification('@notification.getNotificationId')">
+                    <i class="material-icons left">done</i>
+                    Done
+                </a>
+            }
+            @if(notificationType == Notification.Type.PAST) {
+                <a id="@notification.getNotificationId-unarchive" class="btn-flat waves-effect side-padding-small"
+                onclick="unArchiveNotification('@notification.getNotificationId')">
+                    <i class="material-icons left">unarchive</i>
+                    Unarchive
+                </a>
+            }
+            <a class="btn-flat waves-effect dropdown-button" data-activates="@notification.getNotificationId-menu"
+            data-constrainwidth="false" data-beloworigin="true" data-alignment="right">
+                <i class="material-icons left">more_vert</i>
+                Options
+            </a>
+            <ul id="@notification.getNotificationId-menu" class="dropdown-content">
+                <li onclick="showEditNotificationDialog('@notification.getNotificationId')">
+                    <a class="waves-effect">
+                        <i class="material-icons left">mode_edit</i>
+                        Edit
+                    </a>
+                </li>
+                <li onclick="showDeleteNotificationDialog('@notification.getNotificationId', notificationCallbacks.onDeleteNotification)">
+                    <a class="waves-effect">
+                        <i class="material-icons left">delete</i>
+                        Delete
+                    </a>
+                </li>
+            </ul>
+        </span>
+    </li>
+}

@@ -1,0 +1,158 @@
+@import components._
+@import model.outlook.CalendarAppointment
+@(outlookAccountId: String)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    <script src="@routes.Assets.versioned("ckeditor/ckeditor.js")"></script>
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+        <main>
+
+            @if(outlookAccountId == null) {
+                <div class="row"></div>
+
+                <div class="no-accounts container row hide-on-load-only">
+
+                    <div class="col s10 offset-s1">
+
+                        <div class="card-panel z-depth-3 white-background center-align">
+
+                            <i class="material-icons indigo-text promo-caption">person_add</i>
+
+                            <p class="promo-caption grey-text">
+                                You have no linked accounts yet.
+                            </p>
+                            <p class="promo-caption grey-text">
+                                <a href="@routes.OAuthController.getAccounts.url">Get started and link one</a>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            } else {
+                <div class="container row white card black-text top-margin bottom-margin z-depth-2">
+
+                    <div class="card-content col l12 m12 s12 centered top-margin">
+
+                        <span class="card-title inline">
+                            Create an Outlook Event Template
+                        </span>
+
+                        <a id="create_outlook_template_help" class="btn-flat indigo-text right">
+                            <i class="material-icons">help</i>
+                        </a>
+
+                        <div class="row"></div>
+
+                        <form onsubmit="return validateCreateOutlookTemplate()" method="POST"
+                        enctype="application/x-www-form-urlencoded"
+                        action="@routes.OutlookController.createNewTemplate().url">
+
+                            @helper.CSRF.formField
+
+                            @outlook.CalendarInviteItem(outlookAccountId, null)
+
+                            <div class="center-align top-margin bottom-margin">
+
+                                <button type="submit" class="btn waves-effect waves-light">Create</button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            }
+
+        </main>
+
+        @dialogs.CreateOutlookTemplateHelpDialog()
+
+        @AllDialogs()
+
+        @BaseFooter()
+
+        @if(outlookAccountId != null) {
+            <script>
+                    $(document).ready(function () {
+                        Materialize.updateTextFields();
+                        $('select').material_select();
+                    });
+
+                    $(document).ready(function () {
+                        $(window).keydown(function (event) {
+                            if (event.keyCode === 13) {
+                                event.preventDefault();
+                                return false;
+                            }
+                        });
+                    });
+
+                    var $categoriesNode = $('#categories_chip');
+
+                    $categoriesNode.material_chip({
+                        placeholder: '+Category',
+                        secondaryPlaceholder: 'Event categories for your calendar'
+                    });
+
+                    var id;
+
+                    $categoriesNode.on('chip.add', function (e, chip) {
+                        chip.id = id++;
+                        var $input = $("<input type='text' hidden name='@CalendarAppointment.KEY_CATEGORIES'>");
+                        $input.attr('id', 'categories_' + chip.id);
+                        $input.val(chip.tag);
+                        $('form').append($input);
+                    });
+
+                    $categoriesNode.on('chip.delete', function (e, chip) {
+                        $('#categories_' + chip.id).remove();
+                    });
+
+                    var $attendeesNode = $('#attendees_chip');
+
+                    $attendeesNode.material_chip({
+                        placeholder: '+Email',
+                        secondaryPlaceholder: 'Default emails to include'
+                    });
+
+                    $attendeesNode.on('chip.add', function (e, chip) {
+                        chip.id = id++;
+                        var $input = $("<input type='text' hidden name='@CalendarAppointment.KEY_ATTENDEES'>");
+                        $input.attr('id', 'attendees_' + chip.id);
+                        $input.val(chip.tag);
+                        $('form').append($input);
+                    });
+
+                    $attendeesNode.on('chip.delete', function (e, chip) {
+                        $('#attendees_' + chip.id).remove();
+                    });
+            </script>
+
+            <script>
+                    CKEDITOR.replace('template_body');
+                    function validateCreateOutlookTemplate() {
+                        var $editor = $('#template_body');
+                        $editor.val(CKEDITOR.instances.template_body.getData());
+                        return true;
+                    }
+            </script>
+
+            <script>
+                    $('#create_outlook_template_help').click(function () {
+                        $('#create_event_template_dialog').modal('open');
+                    });
+            </script>
+        }
+
+    </body>
+
+</html>

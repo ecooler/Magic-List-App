@@ -1,0 +1,119 @@
+@import model.prospect.Appointment
+@import views.html.components._
+@(appointmentList: model.PagedList[model.prospect.Appointment], sortBy: Appointment.Sorter,
+        isAscending: Boolean)
+<head>
+    @components.BaseHead()
+</head>
+<body>
+
+    @BaseBodyHeader()
+
+    <main>
+
+        @dialsheets.AllPagesDialSheet()
+
+        <div class="container row">
+
+            <div class="row"></div>
+
+            <div class="row">
+
+                <div class="col s12">
+
+                    <div class="card">
+
+                        <div class="card-content">
+
+                            <h6 class="table-title inline">
+                            @appointmentList.getHtmlRangeForUi
+                            </h6>
+
+                            <div class="inline right right-margin">
+
+                                <form action="@routes.AppointmentsController.getAppointmentsForToday()">
+
+                                    @selected(currentSortBy: Appointment.Sorter, selectedSortBy: Appointment.Sorter) = {
+                                    @if(currentSortBy == selectedSortBy) {
+                                        selected
+                                    }
+                                    }
+
+                                    <div class="input-field inline">
+                                        <select name="sort_by" id="sort-by-select" onchange="$('form').submit()">
+                                        @for(sorter <- Appointment.Sorter.values) {
+                                            <option value="@sorter.getRawText" @selected(sorter, sortBy)>@sorter.toUiString</option>
+                                        }
+                                        </select>
+                                        <label for="sort-by-select">Sort By</label>
+                                    </div>
+
+                                    <div class="left-margin input-field inline">
+                                        <select name="ascending" id="ascending-select" onchange="$('form').submit()">
+                                        @if(isAscending) {
+                                            <option selected value="true">Ascending</option>
+                                            <option value="false">Descending</option>
+                                        } else {
+                                            <option value="true">Ascending</option>
+                                            <option selected value="false">Descending</option>
+                                        }
+                                        </select>
+                                        <label for="ascending-select">Order</label>
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col s12">
+
+                    <div class="card">
+
+                        <div class="card-content">
+
+                            <ul class="collection allow-overflow">
+                                @if(appointmentList.isEmpty) {
+                                    <li class="collection-item">
+                                        <h5 class="no-results-found">
+                                            You have no appointments to show. Get started and schedule some appointments!
+                                        </h5>
+                                    </li>
+                                }
+                                @for(appointment <- appointmentList) {
+                                    @appointments.AppointmentItem(appointment, isUpcoming = false)
+                                }
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col s12">
+
+                @TablePagination(appointmentList.getCurrentPage, appointmentList.getMaxPage)
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    @BaseFooter()
+
+    @AllDialogs()
+
+    <script>
+            $('select').material_select();
+    </script>
+
+</body>

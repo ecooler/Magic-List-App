@@ -1,0 +1,143 @@
+@import java.util
+@import components._
+@import model.stripe.Plan
+@(plans: util.List[Plan], selectedPlanId: String)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @BaseHead()
+    </head>
+    <body>
+
+        @BaseBodyHeader()
+
+    <main>
+
+        <div class="row container">
+
+            <div class="row"></div>
+
+            <div class="col l6 offset-l3 m8 offset-m2 s12">
+
+                <div class="card z-depth-3">
+
+                    <div class="card-content">
+
+                        <span class="card-title">Change Your Subscription</span>
+
+                        <ul>
+                            <li class="error" id="radioError"></li>
+                        </ul>
+
+                        <div class="row"></div>
+
+                        @for(plan <- plans) {
+                            <p>
+                                @if(plan.getStripePlanId.equals(selectedPlanId)) {
+                                    <input type="radio" id="@plan.getStripePlanId" name="options" checked
+                                    onchange="onCheckChanged('@plan.getStripePlanId')" class="payment_plan">
+                                } else {
+                                    <input type="radio" id="@plan.getStripePlanId" name="options"
+                                    onchange="onCheckChanged('@plan.getStripePlanId')" class="payment_plan">
+                                }
+                            <label for="@plan.getStripePlanId">@plan.toString</label>
+                            </p>
+                            <br>
+                        }
+
+                        <div class="row"></div>
+                        <div class="row"></div>
+
+                        <div class="center-align bottom-margin-small">
+
+                            <a onclick="window.history.back();" id="cancelButton" class="btn waves-effect waves-light">
+                            Cancel
+                            </a>
+
+                            <a onclick="submitSubscriptionChange()" id="submitButton"
+                            class="btn indigo waves-effect waves-light disabled">
+                                Submit
+                            </a>
+
+                            @components.ProgressSpinner()
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        @AllDialogs()
+
+    </main>
+
+        @BaseFooter()
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.progress-bar').hide();
+        });
+
+        var originalId = "@selectedPlanId";
+        function onCheckChanged(planId) {
+            var $submitButton = $('#submitButton');
+            if (originalId === planId) {
+                $submitButton.addClass("disabled");
+            } else {
+                $submitButton.removeClass("disabled");
+            }
+        }
+
+        function submitSubscriptionChange() {
+            $('#radioError').css('display', 'none');
+            var subscriptionId;
+
+            var radios = document.getElementsByClassName("payment_plan");
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    subscriptionId = radios[i].id;
+                }
+            }
+
+            var json = {};
+            json.stripe_plan_id = subscriptionId;
+
+            $('#submitButton').hide();
+            $('#cancelButton').hide();
+            $('.progress-bar').show();
+
+            doPost("@routes.PlanApiController.updateSubscription().url",
+                    json,
+                    function () {
+                        if (subscriptionId === "canceled") {
+                            $('#read_only_dialog_content').html("Your subscription has been canceled and billing has been immediately stopped.");
+                            $('#read_only_dialog').modal('open');
+                            originalId = subscriptionId;
+                            onCheckChanged(originalId);
+
+                            $('#submitButton').show();
+                            $('#cancelButton').show();
+                            $('.progress-bar').hide();
+                        } else {
+                            window.location.reload();
+                        }
+                    },
+                    function () {
+                        showToast("An error occurred. Please try again or submit a bug to the support team.");
+                        $('#submitButton').show();
+                        $('#cancelButton').show();
+                        $('.progress-bar').hide();
+                    }
+            );
+        }
+
+            </script>
+
+    </body>
+
+</html>
